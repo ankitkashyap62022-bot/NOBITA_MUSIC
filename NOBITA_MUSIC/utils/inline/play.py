@@ -39,24 +39,26 @@ def stream_markup_timer(_, videoid, chat_id, played, dur):
     duration_sec = time_to_seconds(dur)
     percentage = (played_sec / duration_sec) * 100
     umm = math.floor(percentage)
+    
+    # 🔥 THE MONSTER PROGRESS BAR 🔥
     if 0 < umm <= 10:
         bar = "◉—————————"
     elif 10 < umm < 20:
         bar = "—◉————————"
     elif 20 <= umm < 30:
-        bar = "——𝚴———————"
+        bar = "——𝐌———————"
     elif 30 <= umm < 40:
         bar = "———𝐎——————"
     elif 40 <= umm < 50:
-        bar = "————𝐁—————"
+        bar = "————𝐍—————"
     elif 50 <= umm < 60:
-        bar = "—————𝚰————"
+        bar = "—————𝐒————"
     elif 60 <= umm < 70:
         bar = "——————𝐓———"
     elif 70 <= umm < 80:
-        bar = "———————𝚲——"
+        bar = "———————𝐄——"
     elif 80 <= umm < 95:
-        bar = "————————◉—"
+        bar = "————————𝐑—"
     else:
         bar = "—————————◉"
 
@@ -76,10 +78,10 @@ def stream_markup_timer(_, videoid, chat_id, played, dur):
         ],
         [
             InlineKeyboardButton(
-                text="𝖮ᴡɴᴇʀ 🥀", url="https://t.me/MONSTER_FUCK_BITCHES",
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
             ),
             InlineKeyboardButton(
-                text="𝖲ᴜᴘᴘᴏʀᴛ 🥀", url="https://t.me/FUCK_BY_REFLEX",
+                text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
             )
         ],
          [InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data="close")],
