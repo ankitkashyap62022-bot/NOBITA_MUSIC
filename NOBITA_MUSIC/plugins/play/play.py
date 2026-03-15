@@ -113,7 +113,7 @@ async def play_commnd(
     mystic = await message.reply_text(
         f"{get_rand_emo()} " + (_["play_2"].format(channel) if channel else _["play_1"])
     )
-    
+
     plist_id = None
     slider = None
     plist_type = None
@@ -387,7 +387,7 @@ async def play_commnd(
         if "-v" in query:
             query = query.replace("-v", "")
 
-        # 🔥 THE ULTIMATE BYPASS INJECTION (JioSaavn Fallback)
+        # 🔥 THE ULTIMATE BYPASS INJECTION (JioSaavn Fallback with KeyError Fix)
         if str(playmode) == "Direct" and not video:
             stream_url, js_title, js_thumb, js_dur = await jiosaavn_play_logic(query)
             if stream_url:
@@ -397,7 +397,9 @@ async def play_commnd(
                     "path": stream_url,
                     "dur": js_dur,
                     "duration_min": js_dur,
-                    "thumb": js_thumb
+                    "thumb": js_thumb,
+                    "vidid": "jiosaavn_bypass",  # 👈 KeyError Fix 1
+                    "views": "JioSaavn API"      # 👈 KeyError Fix 2
                 }
                 try:
                     await stream(
