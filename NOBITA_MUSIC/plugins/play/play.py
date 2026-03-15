@@ -387,7 +387,7 @@ async def play_commnd(
         if "-v" in query:
             query = query.replace("-v", "")
 
-        # 🔥 THE ULTIMATE BYPASS INJECTION (JioSaavn Fallback with Master KeyError Fix)
+        # 🔥 THE ULTIMATE BYPASS INJECTION (FULL KEYS FIX)
         if str(playmode) == "Direct" and not video:
             stream_url, js_title, js_thumb, js_dur = await jiosaavn_play_logic(query)
             if stream_url:
@@ -398,14 +398,14 @@ async def play_commnd(
                     "dur": js_dur,
                     "duration_min": js_dur,
                     "thumb": js_thumb,
-                    "vidid": "js_bypass",        # 👈 KeyError Fix 1
-                    "views": "JioSaavn API",     # 👈 KeyError Fix 2
-                    "channel": "JioSaavn Music"  # 👈 YEH NAYA ADD KIYA HAI (KeyError Fix 3)
+                    "vidid": "js_bypass",
+                    "views": "JioSaavn",
+                    "channel": "JioSaavn"
                 }
                 try:
                     await stream(
                         _, mystic, user_id, details, chat_id, user_name, message.chat.id, 
-                        video=video, streamtype="youtube", forceplay=fplay  # 👈 Isko "youtube" bana diya
+                        video=video, streamtype="telegram", forceplay=fplay # 👈 BACK TO TELEGRAM!
                     )
                 except Exception as e:
                     ex_type = type(e).__name__
