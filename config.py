@@ -7,11 +7,11 @@ from pyrogram import filters
 load_dotenv()
 
 # Get this value from my.telegram.org/apps
-API_ID = int(getenv("API_ID"))
-API_HASH = getenv("API_HASH")
+API_ID = int(getenv("API_ID", 22002688))
+API_HASH = getenv("API_HASH", "0c3bee507e2ea7621b903b12ef11fba9")
 
 # Get your token from @BotFather on Telegram.
-BOT_TOKEN = getenv("BOT_TOKEN")
+BOT_TOKEN = getenv("BOT_TOKEN", "8430966075:AAH8fOGA2CCZYiq8v4YuvYVmsg8XL-2KTPM")
 # -------------------------------------------------------
 OWNER_USERNAME = getenv("OWNER_USERNAME","ll_NOBITA_DEFAULTERS_ll")
 # --------------------------------------------------------
@@ -22,15 +22,15 @@ BOT_NAME = getenv("BOT_NAME")
 
 
 # Get your mongo url from cloud.mongodb.com
-MONGO_DB_URI = getenv("MONGO_DB_URI", None)
+MONGO_DB_URI = getenv("MONGO_DB_URI", "mongodb+srv://Billa:ZARA838180@billa.0srztoh.mongodb.net/ZARA_HACK_BOT?retryWrites=true&w=majority")
 
 DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 17000))
 
 # Chat id of a group for logging bot's activities
-LOGGER_ID = int(getenv("LOGGER_ID", -1002344707828))
+LOGGER_ID = int(getenv("LOGGER_ID", -1003201139840))
 
 # Get this value from @PURVI_HELP_BOT on Telegram by /id
-OWNER_ID = int(getenv("OWNER_ID", 5536473064))
+OWNER_ID = int(getenv("OWNER_ID", 7580691483))
 
 
 # make your bots privacy from telegra.ph and put your url here 
@@ -51,8 +51,8 @@ GIT_TOKEN = getenv(
     "GIT_TOKEN", None
 )  # Fill this variable if your upstream repository is private
 
-SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/NOB1TA_SUPPORT")
-SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/+WLTHgUAvkYVmNTg9")
+SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/MONSTER_FUCK_BITCHES")
+SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/FUCK_BY_REFLEX")
 
 # Set this to True if you want the assistant to automatically leave chats after an interval
 AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", False))
@@ -74,7 +74,7 @@ TG_VIDEO_FILESIZE_LIMIT = int(getenv("TG_VIDEO_FILESIZE_LIMIT", 1073741824))
 
 
 # Get your pyrogram v2 session from @StringFatherBot on Telegram
-STRING1 = getenv("STRING_SESSION", None)
+STRING1 = getenv("STRING_SESSION", "BQImFsUAwF9UPKoiu__sc8bT-QGgNSWJYjz5GVYV90Lz0NIxFGERUttPh7xFmCN5RyQgPcnXlsZl8_2o6g0jmk9pA4fDh6P2b20PFkQRY-6rE7jGt5Y6_OiMZ99DjAe484LFLrPP6ka46dmCl_WhZdOQSrTAQyyZ8fiq7EK1MmXYHaMWW73gFCqbJA67v8Vs9IVxS9h8t5Jd1lZ3cMCOCcVmECiSIEnccRSCW2eIQZG4TT-ydau1QWGgzlTfHWbiUC0zeG6IQgb4cgJdaR-j-nbZBLT2_Uzho6Wj9D_PwQRsimAio7GtztNTSkn1Usw9zi0d08Bfe3id00v1ggM4oEgTQ-LsmQAAAAHutjURAA")
 STRING2 = getenv("STRING_SESSION2", None)
 STRING3 = getenv("STRING_SESSION3", None)
 STRING4 = getenv("STRING_SESSION4", None)
@@ -90,21 +90,21 @@ confirmer = {}
 
 
 START_IMG_URL = getenv(
-    "START_IMG_URL", "https://files.catbox.moe/fcawaj.jpg"
+    "START_IMG_URL", "https://files.catbox.moe/s8bo2x.jpg"
 )
 PING_IMG_URL = getenv(
-    "PING_IMG_URL", "https://files.catbox.moe/tcz7s6.jpg"
+    "PING_IMG_URL", "https://files.catbox.moe/s8bo2x.jpg"
 )
-PLAYLIST_IMG_URL = "https://files.catbox.moe/fcawaj.jpg"
-STATS_IMG_URL = "https://files.catbox.moe/i7uj2i.jpg"
-TELEGRAM_AUDIO_URL = "https://files.catbox.moe/fcawaj.jpg"
-TELEGRAM_VIDEO_URL = "https://files.catbox.moe/fcawaj.jpg"
-STREAM_IMG_URL = "https://files.catbox.moe/fcawaj.jpg"
-SOUNCLOUD_IMG_URL = "https://files.catbox.moe/fcawaj.jpg"
-YOUTUBE_IMG_URL = "https://files.catbox.moe/fcawaj.jpg"
-SPOTIFY_ARTIST_IMG_URL = "https://files.catbox.moe/fcawaj.jpg"
-SPOTIFY_ALBUM_IMG_URL = "https://files.catbox.moe/fcawaj.jpg"
-SPOTIFY_PLAYLIST_IMG_URL = "https://files.catbox.moe/fcawaj.jpg"
+PLAYLIST_IMG_URL = "https://files.catbox.moe/s8bo2x.jpg"
+STATS_IMG_URL = "https://files.catbox.moe/s8bo2x.jpg"
+TELEGRAM_AUDIO_URL = "https://files.catbox.moe/s8bo2x.jpg"
+TELEGRAM_VIDEO_URL = "https://files.catbox.moe/s8bo2x.jpg"
+STREAM_IMG_URL = "https://files.catbox.moe/s8bo2x.jpg"
+SOUNCLOUD_IMG_URL = "https://files.catbox.moe/s8bo2x.jpg"
+YOUTUBE_IMG_URL = "https://files.catbox.moe/s8bo2x.jpg"
+SPOTIFY_ARTIST_IMG_URL = "https://files.catbox.moe/s8bo2x.jpg"
+SPOTIFY_ALBUM_IMG_URL = "https://files.catbox.moe/s8bo2x.jpg"
+SPOTIFY_PLAYLIST_IMG_URL = "https://files.catbox.moe/s8bo2x.jpg"
 
 
 def time_to_seconds(time):
