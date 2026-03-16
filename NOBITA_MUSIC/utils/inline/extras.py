@@ -1,13 +1,23 @@
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
 from config import SUPPORT_CHAT
 
+# ☠️ ANU MATRIX / REFLEX SYSTEM LINKS ☠️
+MY_MASTER_URL = "https://t.me/MONSTER_FUCK_BITCHES"
+MY_CLUB_URL = "https://t.me/FUCK_BY_REFLEX"
+OUR_SERVER_URL = "https://t.me/BMW_USERBOT_II"
 
 def botplaylist_markup(_):
+    # 🔥 PING COMMAND BUTTONS (CLEAN UI + NEW SERVER) 🔥
     buttons = [
         [
-            InlineKeyboardButton(text=_["S_B_9"], url=SUPPORT_CHAT),
-            InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data="close"),
+            InlineKeyboardButton(text="ᴍ ʏ . ᴄ ʟ ᴜ ʙ", url=MY_CLUB_URL),
+            InlineKeyboardButton(text="ᴍ ʏ . ᴍ ᴀ s ᴛ ᴇ ʀ", url=MY_MASTER_URL),
+        ],
+        [
+            InlineKeyboardButton(text="ᴏ ᴜ ʀ . s ᴇ ʀ ᴠ ᴇ ʀ", url=OUR_SERVER_URL),
+        ],
+        [
+            InlineKeyboardButton(text="ᴄ ʟ ᴏ s ᴇ", callback_data="close"),
         ],
     ]
     return buttons
@@ -18,7 +28,7 @@ def close_markup(_):
         [
             [
                 InlineKeyboardButton(
-                    text=_["CLOSE_BUTTON"],
+                    text="ᴄ ʟ ᴏ s ᴇ",
                     callback_data="close",
                 ),
             ]
@@ -32,8 +42,8 @@ def supp_markup(_):
         [
             [
                 InlineKeyboardButton(
-                    text=_["S_B_9"],
-                    url=SUPPORT_CHAT,
+                    text="ᴍ ʏ . ᴄ ʟ ᴜ ʙ",
+                    url=MY_CLUB_URL,
                 ),
             ]
         ]
