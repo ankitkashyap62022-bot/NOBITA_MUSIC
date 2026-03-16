@@ -46,7 +46,7 @@ def get_rand_emo():
     return random.choice(P_EMOJIS)
 
 # ==========================================
-# 🎵 SMART JIOSAAVN API BYPASS LOGIC
+# 🎵 JIOSAAVN API BYPASS LOGIC
 # ==========================================
 JIOSAAVN_CACHE = {}
 JIOSAAVN_API = "https://jiosavan-lilac.vercel.app/api/search/songs?query="
@@ -63,7 +63,6 @@ async def jiosaavn_play_logic(query):
                     songs = data.get("data", {}).get("results", []) or data.get("results", [])
                     if songs:
                         song = songs[0]
-                        # Safe get methods to avoid KeyError during fetch
                         stream_url = song.get("downloadUrl", [{}])[-1].get("url", song.get("downloadUrl", [{}])[-1].get("link", ""))
                         title = song.get("name", "Unknown Title").replace("&quot;", '"').replace("&#039;", "'")
                         thumb = song.get("image", [{}])[-1].get("url", song.get("image", [{}])[-1].get("link", ""))
@@ -112,7 +111,6 @@ async def play_commnd(
     fplay,
 ):
 
-    # 🔥 EMOJI INJECTION HERE
     mystic = await message.reply_text(
         f"{get_rand_emo()} " + (_["play_2"].format(channel) if channel else _["play_1"])
     )
@@ -168,7 +166,7 @@ async def play_commnd(
                 )
             except Exception as e:
                 ex_type = type(e).__name__
-                err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
+                err = e if ex_type == "AssistantErr" else _["general_2"].format(f"{ex_type} -> {str(e)}")
                 return await mystic.edit_text(err)
             return await mystic.delete()
         return
@@ -212,7 +210,7 @@ async def play_commnd(
                 )
             except Exception as e:
                 ex_type = type(e).__name__
-                err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
+                err = e if ex_type == "AssistantErr" else _["general_2"].format(f"{ex_type} -> {str(e)}")
                 return await mystic.edit_text(err)
             return await mystic.delete()
         return
@@ -345,7 +343,7 @@ async def play_commnd(
                 )
             except Exception as e:
                 ex_type = type(e).__name__
-                err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
+                err = e if ex_type == "AssistantErr" else _["general_2"].format(f"{ex_type} -> {str(e)}")
                 return await mystic.edit_text(err)
             return await mystic.delete()
         else:
@@ -375,7 +373,7 @@ async def play_commnd(
                 )
             except Exception as e:
                 ex_type = type(e).__name__
-                err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
+                err = e if ex_type == "AssistantErr" else _["general_2"].format(f"{ex_type} -> {str(e)}")
                 return await mystic.edit_text(err)
             return await play_logs(message, streamtype="M3u8 or Index Link")
     else:
@@ -390,11 +388,9 @@ async def play_commnd(
         if "-v" in query:
             query = query.replace("-v", "")
 
-        # 🔥 THE ULTIMATE SMART BYPASS (Fail-Safe Mega Dictionary)
         if str(playmode) == "Direct" and not video:
             stream_url, js_title, js_thumb, js_dur, js_dur_sec = await jiosaavn_play_logic(query)
             if stream_url:
-                # We inject every possible key that stream.py or yml might request
                 details = {
                     "title": js_title or "Unknown Track",
                     "link": stream_url,
@@ -411,19 +407,17 @@ async def play_commnd(
                     "filepath": stream_url
                 }
                 try:
-                    # using streamtype="soundcloud" enforces stream_1 format from YML
                     await stream(
                         _, mystic, user_id, details, chat_id, user_name, message.chat.id, 
                         video=video, streamtype="soundcloud", forceplay=fplay 
                     )
                 except Exception as e:
                     ex_type = type(e).__name__
-                    err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
+                    err = e if ex_type == "AssistantErr" else _["general_2"].format(f"{ex_type} -> {str(e)}")
                     return await mystic.edit_text(err)
                 await mystic.delete()
                 return await play_logs(message, streamtype="JioSaavn")
 
-        # 🛑 IF JIOSAAVN FAILS, GO TO YOUTUBE
         try:
             details, track_id = await YouTube.track(query)
         except:
@@ -467,7 +461,7 @@ async def play_commnd(
             )
         except Exception as e:
             ex_type = type(e).__name__
-            err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
+            err = e if ex_type == "AssistantErr" else _["general_2"].format(f"{ex_type} -> {str(e)}")
             return await mystic.edit_text(err)
         await mystic.delete()
         return await play_logs(message, streamtype=streamtype)
@@ -594,7 +588,7 @@ async def play_music(client, CallbackQuery, _):
         )
     except Exception as e:
         ex_type = type(e).__name__
-        err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
+        err = e if ex_type == "AssistantErr" else _["general_2"].format(f"{ex_type} -> {str(e)}")
         return await mystic.edit_text(err)
     return await mystic.delete()
 
@@ -692,7 +686,7 @@ async def play_playlists_command(client, CallbackQuery, _):
         )
     except Exception as e:
         ex_type = type(e).__name__
-        err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
+        err = e if ex_type == "AssistantErr" else _["general_2"].format(f"{ex_type} -> {str(e)}")
         return await mystic.edit_text(err)
     return await mystic.delete()
 
