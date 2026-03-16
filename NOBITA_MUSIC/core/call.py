@@ -38,6 +38,17 @@ from NOBITA_MUSIC.utils.stream.autoclear import auto_clean
 from NOBITA_MUSIC.utils.thumbnails import get_thumb
 from strings import get_string
 
+# 🔥 MONGODB DATABASE CONNECTION FOR /setply CUSTOM THUMBNAIL 🔥
+from NOBITA_MUSIC.core.mongo import mongodb
+ply_db = mongodb.custom_play_thumb
+
+async def fetch_custom_thumb():
+    """Fetches the custom play thumbnail from MongoDB."""
+    doc = await ply_db.find_one({"_id": "custom_thumb"})
+    if doc:
+        return doc.get("file_id")
+    return None
+
 autoend = {}
 counter = {}
 
@@ -366,6 +377,10 @@ class Call(PyTgCalls):
                 db[chat_id][0]["speed_path"] = None
                 db[chat_id][0]["speed"] = 1.0
             video = True if str(streamtype) == "video" else False
+            
+            # 👑 FETCH CUSTOM THUMBNAIL ONCE FOR AUTO-NEXT 👑
+            cthumb = await fetch_custom_thumb()
+            
             if "live_" in queued:
                 n, link = await YouTube.video(videoid, True)
                 if n == 0:
@@ -391,7 +406,7 @@ class Call(PyTgCalls):
                         original_chat_id,
                         text=_["call_6"],
                     )
-                img = await get_thumb(videoid)
+                img = cthumb if cthumb else await get_thumb(videoid)
                 button = telegram_markup(_, chat_id)
                 run = await app.send_photo(
                     chat_id=original_chat_id,
@@ -445,7 +460,7 @@ class Call(PyTgCalls):
                         original_chat_id,
                         text=_["call_6"],
                     )
-                img = await get_thumb(videoid)
+                img = cthumb if cthumb else await get_thumb(videoid)
                 button = stream_markup(_, videoid, chat_id)
                 await mystic.delete()
                 run = await app.send_photo(
@@ -479,9 +494,10 @@ class Call(PyTgCalls):
                         text=_["call_6"],
                     )
                 button = telegram_markup(_, chat_id)
+                img = cthumb if cthumb else config.STREAM_IMG_URL
                 run = await app.send_photo(
                     chat_id=original_chat_id,
-                    photo=config.STREAM_IMG_URL,
+                    photo=img,
                     caption=_["stream_2"].format(user),
                     reply_markup=InlineKeyboardMarkup(button),
                 )
@@ -508,13 +524,11 @@ class Call(PyTgCalls):
                     )
                 if videoid == "telegram":
                     button = telegram_markup(_, chat_id)
+                    default_tg = config.TELEGRAM_AUDIO_URL if str(streamtype) == "audio" else config.TELEGRAM_VIDEO_URL
+                    img = cthumb if cthumb else default_tg
                     run = await app.send_photo(
                         chat_id=original_chat_id,
-                        photo=(
-                            config.TELEGRAM_AUDIO_URL
-                            if str(streamtype) == "audio"
-                            else config.TELEGRAM_VIDEO_URL
-                        ),
+                        photo=img,
                         caption=_["stream_1"].format(
                             config.SUPPORT_CHAT, title[:23], check[0]["dur"], user
                         ),
@@ -524,9 +538,10 @@ class Call(PyTgCalls):
                     db[chat_id][0]["markup"] = "tg"
                 elif videoid == "soundcloud":
                     button = telegram_markup(_, chat_id)
+                    img = cthumb if cthumb else config.SOUNCLOUD_IMG_URL
                     run = await app.send_photo(
                         chat_id=original_chat_id,
-                        photo=config.SOUNCLOUD_IMG_URL,
+                        photo=img,
                         caption=_["stream_1"].format(
                             config.SUPPORT_CHAT, title[:23], check[0]["dur"], user
                         ),
@@ -535,7 +550,7 @@ class Call(PyTgCalls):
                     db[chat_id][0]["mystic"] = run
                     db[chat_id][0]["markup"] = "tg"
                 else:
-                    img = await get_thumb(videoid)
+                    img = cthumb if cthumb else await get_thumb(videoid)
                     button = stream_markup(_, videoid, chat_id)
                     run = await app.send_photo(
                         chat_id=original_chat_id,
