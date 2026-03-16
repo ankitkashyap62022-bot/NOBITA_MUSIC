@@ -71,12 +71,12 @@ async def jiosaavn_play_logic(query):
                         secs = int(duration_sec) % 60
                         duration_str = f"{mins}:{secs:02d}"
 
-                        result_tuple = (stream_url, title, thumb, duration_str)
+                        result_tuple = (stream_url, title, thumb, duration_str, duration_sec)
                         JIOSAAVN_CACHE[cache_key] = result_tuple
-                        return stream_url, title, thumb, duration_str
+                        return stream_url, title, thumb, duration_str, duration_sec
     except:
         pass
-    return None, None, None, None
+    return None, None, None, None, 0
 
 
 @app.on_message(
@@ -387,9 +387,9 @@ async def play_commnd(
         if "-v" in query:
             query = query.replace("-v", "")
 
-        # 🔥 THE ULTIMATE BYPASS INJECTION (MEGA DICTIONARY FIX)
+        # 🔥 THE ULTIMATE BYPASS INJECTION (SOUNDCLOUD MOCK FIX FOR KEYERROR)
         if str(playmode) == "Direct" and not video:
-            stream_url, js_title, js_thumb, js_dur = await jiosaavn_play_logic(query)
+            stream_url, js_title, js_thumb, js_dur, js_dur_sec = await jiosaavn_play_logic(query)
             if stream_url:
                 details = {
                     "title": js_title,
@@ -397,20 +397,19 @@ async def play_commnd(
                     "path": stream_url,
                     "dur": js_dur,
                     "duration_min": js_dur,
-                    "duration_sec": 0,
+                    "duration_sec": js_dur_sec,
                     "thumb": js_thumb,
                     "vidid": "js_bypass",
                     "videoid": "js_bypass",
-                    "views": "JioSaavn API",
-                    "channel": "JioSaavn Music",
+                    "views": "JioSaavn",
+                    "channel": "JioSaavn",
                     "file_name": js_title,
                     "filepath": stream_url
                 }
                 try:
-                    # Yahan wapas telegram kiya hai kyunki ye direct stream play karta hai
                     await stream(
                         _, mystic, user_id, details, chat_id, user_name, message.chat.id, 
-                        video=video, streamtype="telegram", forceplay=fplay 
+                        video=video, streamtype="soundcloud", forceplay=fplay # 👈 THIS IS THE MAGIC FIX
                     )
                 except Exception as e:
                     ex_type = type(e).__name__
