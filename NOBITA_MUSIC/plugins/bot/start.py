@@ -28,6 +28,7 @@ from strings import get_string
 # 🔥 MONGODB DATABASE FOR DYNAMIC START MEDIA 🔥
 from NOBITA_MUSIC.core.mongo import mongodb
 start_db = mongodb.start_media
+ply_db = mongodb.custom_play_thumb  # ☠️ Database for /setply
 
 async def get_start_media():
     """Fetches the custom start media from MongoDB."""
@@ -45,6 +46,13 @@ async def set_start_media(media_type, file_id):
         upsert=True
     )
 
+async def get_custom_thumb():
+    """Fetches the custom play thumbnail from MongoDB."""
+    doc = await ply_db.find_one({"_id": "custom_thumb"})
+    if doc:
+        return doc.get("file_id")
+    return None
+
 # ==========================================
 # ☠️ THE NEW /setstart COMMAND (OWNER ONLY)
 # ==========================================
@@ -52,21 +60,39 @@ async def set_start_media(media_type, file_id):
 async def set_start_cmd(client, message: Message):
     if not message.reply_to_message:
         return await message.reply_text("🌸 ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏ ᴘʜᴏᴛᴏ ᴏʀ ᴠɪᴅᴇᴏ ᴛᴏ sᴇᴛ ɪᴛ ᴀs sᴛᴀʀᴛ ᴍᴇᴅɪᴀ ᴍʏ ʟᴏʀᴅ! 😈")
-        
+
     mystic = await message.reply_text("⚡ ᴜᴘᴅᴀᴛɪɴɢ ᴀɴᴜ ᴍᴀᴛʀɪx ᴅᴀᴛᴀʙᴀsᴇ...")
-    
+
     if message.reply_to_message.photo:
         file_id = message.reply_to_message.photo.file_id
         await set_start_media("photo", file_id)
         return await mystic.edit_text("✅ **sᴛᴀʀᴛ ᴘʜᴏᴛᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ!** 😈")
-        
+
     elif message.reply_to_message.video:
         file_id = message.reply_to_message.video.file_id
         await set_start_media("video", file_id)
         return await mystic.edit_text("✅ **sᴛᴀʀᴛ ᴠɪᴅᴇᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ!** 😈")
-        
+
     else:
         return await mystic.edit_text("❌ ʙᴀʙʏ, ᴘʟᴇᴀsᴇ ʀᴇᴘʟʏ ᴏɴʟʏ ᴛᴏ ᴀ ᴘʜᴏᴛᴏ ᴏʀ ᴠɪᴅᴇᴏ!")
+
+# ==========================================
+# ☠️ THE NEW /setply COMMAND (OWNER ONLY)
+# ==========================================
+@app.on_message(filters.command(["setply", "setplay"]) & filters.user(config.OWNER_ID))
+async def set_ply_cmd(client, message: Message):
+    if not message.reply_to_message or not message.reply_to_message.photo:
+        return await message.reply_text("🌸 ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴘʜᴏᴛᴏ ᴛᴏ sᴇᴛ ɪᴛ ᴀs ᴘʟᴀʏ ᴛʜᴜᴍʙɴᴀɪʟ ᴍʏ ʟᴏʀᴅ! 😈")
+        
+    mystic = await message.reply_text("⚡ ᴜᴘᴅᴀᴛɪɴɢ ᴀɴᴜ ᴍᴀᴛʀɪx ᴅᴀᴛᴀʙᴀsᴇ...")
+    file_id = message.reply_to_message.photo.file_id
+    
+    await ply_db.update_one(
+        {"_id": "custom_thumb"},
+        {"$set": {"file_id": file_id}},
+        upsert=True
+    )
+    return await mystic.edit_text("✅ **ᴘʟᴀʏ ᴘʜᴏᴛᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ! ᴀʟʟ sᴏɴɢs ᴡɪʟʟ ᴜsᴇ ᴛʜɪs ɴᴏᴡ.** 😈")
 
 # ==========================================
 # 🚀 MAIN START COMMANDS
@@ -131,7 +157,7 @@ async def start_pm(client, message: Message, _):
             await message.reply_photo(photo=file_id, caption=_["start_2"].format(message.from_user.mention, app.mention), reply_markup=InlineKeyboardMarkup(out))
         else:
             await message.reply_video(video=file_id, caption=_["start_2"].format(message.from_user.mention, app.mention), reply_markup=InlineKeyboardMarkup(out))
-        
+
         if await is_on_off(2):
             return await app.send_message(
                 chat_id=config.LOGGER_ID,
@@ -145,12 +171,12 @@ async def start_gp(client, message: Message, _):
     out = start_panel(_)
     uptime = int(time.time() - _boot_)
     media_type, file_id = await get_start_media() # Fetch Custom Media
-    
+
     if media_type == "photo":
         await message.reply_photo(photo=file_id, caption=_["start_1"].format(app.mention, get_readable_time(uptime)), reply_markup=InlineKeyboardMarkup(out))
     else:
         await message.reply_video(video=file_id, caption=_["start_1"].format(app.mention, get_readable_time(uptime)), reply_markup=InlineKeyboardMarkup(out))
-    
+
     return await add_served_chat(message.chat.id)
 
 
@@ -182,12 +208,12 @@ async def welcome(client, message: Message):
 
                 out = start_panel(_)
                 media_type, file_id = await get_start_media() # Fetch Custom Media
-                
+
                 if media_type == "photo":
                     await message.reply_photo(photo=file_id, caption=_["start_3"].format(message.from_user.mention, app.mention, message.chat.title, app.mention), reply_markup=InlineKeyboardMarkup(out))
                 else:
                     await message.reply_video(video=file_id, caption=_["start_3"].format(message.from_user.mention, app.mention, message.chat.title, app.mention), reply_markup=InlineKeyboardMarkup(out))
-                    
+
                 await add_served_chat(message.chat.id)
                 await message.stop_propagation()
         except Exception as ex:
