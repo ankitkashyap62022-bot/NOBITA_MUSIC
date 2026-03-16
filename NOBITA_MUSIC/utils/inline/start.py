@@ -18,7 +18,7 @@ def start_panel(_):
 
 
 def private_panel(_):
-    # ☠️ PRIVATE DM START BUTTONS (SOURCE REMOVED) ☠️
+    # ☠️ PRIVATE DM START BUTTONS (FIXED GC LINK) ☠️
     buttons = [
         [
             InlineKeyboardButton(
@@ -27,8 +27,9 @@ def private_panel(_):
             )
         ],
         [
+            # 👑 Owner ID & 🕸️ Support Group Chat 
             InlineKeyboardButton(text="👑 ᴏᴡɴᴇʀ", user_id=config.OWNER_ID),
-            InlineKeyboardButton(text="👾 ᴍʏ ʟᴏʀᴅ", url=config.SUPPORT_CHANNEL),
+            InlineKeyboardButton(text="🕸️ ᴍʏ ᴄʟᴜʙ", url=config.SUPPORT_CHAT),
         ],
         [
             InlineKeyboardButton(text="🛠 ʜᴇʟᴩ & ᴄᴏᴍᴍᴀɴᴅs", callback_data="settings_back_helper")
