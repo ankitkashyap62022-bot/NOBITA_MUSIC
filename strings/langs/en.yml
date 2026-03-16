@@ -178,6 +178,7 @@ stream_1 : "<b><blockquote>❖  𝛅ᴛᴧʀᴛєᴅ  𝛅ᴛʀєᴧϻɪηɢ  </
 stream_2 : "<b><blockquote>❖  𝛅ᴛᴧʀᴛєᴅ  𝛅тʀєᴧϻɪηɢ  </blockquote></b>\n<blockquote><b>❍ 𝛅ᴛʀєᴧϻ ᴛʏᴘᴇ :</b> ʟɪᴠᴇ sᴛʀᴇᴀᴍ [ᴜʀʟ]\n<b>❍ ᴘʟᴧʏ ʙʏ :</b> {0}</blockquote>"
 
 CLOSE_BUTTON  : "🥂 ᴄʟᴏsᴇ 🥂"
+CLOSEMENU_BUTTON  : "🥂 ᴄʟᴏsᴇ 🥂"
 BACK_BUTTON : "ʙᴀᴄᴋ"
 NEXT_PAGE: ">"
 BACK_PAGE: "<"
