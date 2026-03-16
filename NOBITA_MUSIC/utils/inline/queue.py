@@ -18,7 +18,7 @@ def queue_markup(
                 callback_data=f"GetQueued {CPLAY}|{videoid}",
             ),
             InlineKeyboardButton(
-                text=_["CLOSE_BUTTON"],
+                text="🏴‍☠️ ᴄ ʟ ᴏ ꜱ ᴇ 🏴‍☠️",
                 callback_data="close",
             ),
         ]
@@ -36,7 +36,7 @@ def queue_markup(
                 callback_data=f"GetQueued {CPLAY}|{videoid}",
             ),
             InlineKeyboardButton(
-                text=_["CLOSE_BUTTON"],
+                text="🏴‍☠️ ᴄ ʟ ᴏ ꜱ ᴇ 🏴‍☠️",
                 callback_data="close",
             ),
         ],
@@ -54,7 +54,7 @@ def queue_back_markup(_, CPLAY):
                     callback_data=f"queue_back_timer {CPLAY}",
                 ),
                 InlineKeyboardButton(
-                    text=_["CLOSE_BUTTON"],
+                    text="🏴‍☠️ ᴄ ʟ ᴏ ꜱ ᴇ 🏴‍☠️",
                     callback_data="close",
                 ),
             ]
@@ -64,13 +64,15 @@ def queue_back_markup(_, CPLAY):
 
 
 def aq_markup(_, chat_id):
+    # ☠️ THE PREMIUM ANU MATRIX MUSIC CONTROLS ☠️
     buttons = [
         [
-            InlineKeyboardButton(text="▷", callback_data=f"ADMIN Resume|{chat_id}"),
-            InlineKeyboardButton(text="II", callback_data=f"ADMIN Pause|{chat_id}"),
-            InlineKeyboardButton(text="‣‣I", callback_data=f"ADMIN Skip|{chat_id}"),
-            InlineKeyboardButton(text="▢", callback_data=f"ADMIN Stop|{chat_id}"),
+            InlineKeyboardButton(text="▶", callback_data=f"ADMIN Resume|{chat_id}"),
+            InlineKeyboardButton(text="⏸", callback_data=f"ADMIN Pause|{chat_id}"),
+            InlineKeyboardButton(text="⏭", callback_data=f"ADMIN Skip|{chat_id}"),
+            InlineKeyboardButton(text="⏹", callback_data=f"ADMIN Stop|{chat_id}"),
         ],
-        [InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data="close")],
+        [InlineKeyboardButton(text="〆 ᴄ ʟ ᴏ ꜱ ᴇ 〆", callback_data="close")],
     ]
     return buttons
+
