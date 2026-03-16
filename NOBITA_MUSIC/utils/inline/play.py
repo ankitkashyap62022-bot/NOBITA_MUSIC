@@ -19,15 +19,17 @@ def track_markup(_, videoid, user_id, channel, fplay):
         ],
         [
             InlineKeyboardButton(
-                text=_["CLOSE_BUTTON"],
-                callback_data=f"forceclose {videoid}|{user_id}",
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+            ),
+            InlineKeyboardButton(
+                text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
             )
         ],
         [
             InlineKeyboardButton(
-                text="Replay", callback_data=f"ADMIN Replay|{chat_id}"
-            ),
-            InlineKeyboardButton(text="End", callback_data=f"ADMIN Stop|{chat_id}"),
+                text=_["CLOSE_BUTTON"],
+                callback_data=f"forceclose {videoid}|{user_id}",
+            )
         ],
     ]
 
@@ -99,7 +101,14 @@ def stream_markup(_, videoid, chat_id):
             InlineKeyboardButton(text="‣‣I", callback_data=f"ADMIN Skip|{chat_id}"),
             InlineKeyboardButton(text="▢", callback_data=f"ADMIN Stop|{chat_id}"),
          ],
-
+        [
+            InlineKeyboardButton(
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+            ),
+            InlineKeyboardButton(
+                text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
+            )
+        ],
         [InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data="close")],
     ]
 
@@ -120,6 +129,14 @@ def playlist_markup(_, videoid, user_id, ptype, channel, fplay):
         ],
         [
             InlineKeyboardButton(
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+            ),
+            InlineKeyboardButton(
+                text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
+            )
+        ],
+        [
+            InlineKeyboardButton(
                 text=_["CLOSE_BUTTON"],
                 callback_data=f"forceclose {videoid}|{user_id}",
             ),
@@ -135,6 +152,14 @@ def livestream_markup(_, videoid, user_id, mode, channel, fplay):
                 text=_["P_B_3"],
                 callback_data=f"LiveStream {videoid}|{user_id}|{mode}|{channel}|{fplay}",
             ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+            ),
+            InlineKeyboardButton(
+                text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
+            )
         ],
         [
             InlineKeyboardButton(
@@ -173,6 +198,14 @@ def slider_markup(_, videoid, user_id, query, query_type, channel, fplay):
                 callback_data=f"slider F|{query_type}|{query}|{user_id}|{channel}|{fplay}",
             ),
         ],
+        [
+            InlineKeyboardButton(
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+            ),
+            InlineKeyboardButton(
+                text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
+            )
+        ],
     ]
     return buttons
 
@@ -190,6 +223,14 @@ def queue_markup(_, videoid, chat_id):
             InlineKeyboardButton(text="‣‣I", callback_data=f"ADMIN Skip|{chat_id}"),
             InlineKeyboardButton(text="▢", callback_data=f"ADMIN Stop|{chat_id}"),
         ],
+        [
+            InlineKeyboardButton(
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+            ),
+            InlineKeyboardButton(
+                text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
+            )
+        ],
         [InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data="close")],
     ]
 
@@ -204,6 +245,14 @@ def telegram_markup(_, chat_id):
             InlineKeyboardButton(text="↻", callback_data=f"ADMIN Replay|{chat_id}"),
             InlineKeyboardButton(text="‣‣I", callback_data=f"ADMIN Skip|{chat_id}"),
             InlineKeyboardButton(text="▢", callback_data=f"ADMIN Stop|{chat_id}"),
+        ],
+        [
+            InlineKeyboardButton(
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+            ),
+            InlineKeyboardButton(
+                text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
+            )
         ],
         [
             InlineKeyboardButton(text=_["CLOSEMENU_BUTTON"], callback_data="close"),
@@ -423,6 +472,14 @@ def telegram_markup_timer(_, chat_id, played, dur):
             InlineKeyboardButton(text="↻", callback_data=f"ADMIN Replay|{chat_id}"),
             InlineKeyboardButton(text="‣‣I", callback_data=f"ADMIN Skip|{chat_id}"),
             InlineKeyboardButton(text="▢", callback_data=f"ADMIN Stop|{chat_id}"),
+        ],
+        [
+            InlineKeyboardButton(
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+            ),
+            InlineKeyboardButton(
+                text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
+            )
         ],
         [
             InlineKeyboardButton(text=_["CLOSEMENU_BUTTON"], callback_data="close"),
