@@ -12,6 +12,16 @@ from NOBITA_MUSIC.utils.stream.autoclear import auto_clean
 from NOBITA_MUSIC.utils.thumbnails import get_thumb
 from config import BANNED_USERS
 
+# 🔥 MONGODB DATABASE CONNECTION FOR /setply CUSTOM THUMBNAIL 🔥
+from NOBITA_MUSIC.core.mongo import mongodb
+ply_db = mongodb.custom_play_thumb
+
+async def fetch_custom_thumb():
+    """Fetches the custom play thumbnail from MongoDB."""
+    doc = await ply_db.find_one({"_id": "custom_thumb"})
+    if doc:
+        return doc.get("file_id")
+    return None
 
 @app.on_message(
     filters.command(["skip", "cskip", "next", "cnext"], prefixes=["/", "!", "."])
@@ -50,7 +60,7 @@ async def skip(cli, message: Message, _, chat_id):
                                         ),
                                         reply_markup=close_markup(_),
                                     )
-                                    await VILLAIN.stop_stream(chat_id)
+                                    await NOBITA.stop_stream(chat_id) # ☠️ Fixed VILLAIN Bug
                                 except:
                                     return
                                 break
@@ -77,7 +87,7 @@ async def skip(cli, message: Message, _, chat_id):
                     reply_markup=close_markup(_),
                 )
                 try:
-                    return await VILLAIN.stop_stream(chat_id)
+                    return await NOBITA.stop_stream(chat_id) # ☠️ Fixed VILLAIN Bug
                 except:
                     return
         except:
@@ -91,6 +101,7 @@ async def skip(cli, message: Message, _, chat_id):
                 return await NOBITA.stop_stream(chat_id)
             except:
                 return
+                
     queued = check[0]["file"]
     title = (check[0]["title"]).title()
     user = check[0]["by"]
@@ -104,6 +115,10 @@ async def skip(cli, message: Message, _, chat_id):
         db[chat_id][0]["seconds"] = check[0]["old_second"]
         db[chat_id][0]["speed_path"] = None
         db[chat_id][0]["speed"] = 1.0
+        
+    # 👑 FETCH CUSTOM THUMBNAIL ONCE PER SKIP 👑
+    cthumb = await fetch_custom_thumb()
+
     if "live_" in queued:
         n, link = await YouTube.video(videoid, True)
         if n == 0:
@@ -117,7 +132,7 @@ async def skip(cli, message: Message, _, chat_id):
         except:
             return await message.reply_text(_["call_6"])
         button = telegram_markup(_, chat_id)
-        img = await get_thumb(videoid)
+        img = cthumb if cthumb else await get_thumb(videoid)
         run = await message.reply_photo(
             photo=img,
             caption=_["stream_1"].format(
@@ -154,11 +169,11 @@ async def skip(cli, message: Message, _, chat_id):
         except:
             image = None
         try:
-            await RAUSHAN.skip_stream(chat_id, file_path, video=status, image=image)
+            await NOBITA.skip_stream(chat_id, file_path, video=status, image=image) # ☠️ Fixed RAUSHAN Bug
         except:
             return await mystic.edit_text(_["call_6"])
         button = stream_markup(_, videoid, chat_id)
-        img = await get_thumb(videoid)
+        img = cthumb if cthumb else await get_thumb(videoid)
         run = await message.reply_photo(
             photo=img,
             caption=_["stream_1"].format(
@@ -178,8 +193,9 @@ async def skip(cli, message: Message, _, chat_id):
         except:
             return await message.reply_text(_["call_6"])
         button = telegram_markup(_, chat_id)
+        img = cthumb if cthumb else config.STREAM_IMG_URL
         run = await message.reply_photo(
-            photo=config.STREAM_IMG_URL,
+            photo=img,
             caption=_["stream_2"].format(user),
             reply_markup=InlineKeyboardMarkup(button),
         )
@@ -199,14 +215,13 @@ async def skip(cli, message: Message, _, chat_id):
             await NOBITA.skip_stream(chat_id, queued, video=status, image=image)
         except:
             return await message.reply_text(_["call_6"])
+            
         if videoid == "telegram":
             button = telegram_markup(_, chat_id)
+            default_tg = config.TELEGRAM_AUDIO_URL if str(streamtype) == "audio" else config.TELEGRAM_VIDEO_URL
+            img = cthumb if cthumb else default_tg
             run = await message.reply_photo(
-                photo=(
-                    config.TELEGRAM_AUDIO_URL
-                    if str(streamtype) == "audio"
-                    else config.TELEGRAM_VIDEO_URL
-                ),
+                photo=img,
                 caption=_["stream_1"].format(
                     config.SUPPORT_CHAT, title[:23], check[0]["dur"], user
                 ),
@@ -216,12 +231,10 @@ async def skip(cli, message: Message, _, chat_id):
             db[chat_id][0]["markup"] = "tg"
         elif videoid == "soundcloud":
             button = telegram_markup(_, chat_id)
+            default_sc = config.SOUNCLOUD_IMG_URL if str(streamtype) == "audio" else config.TELEGRAM_VIDEO_URL
+            img = cthumb if cthumb else default_sc
             run = await message.reply_photo(
-                photo=(
-                    config.SOUNCLOUD_IMG_URL
-                    if str(streamtype) == "audio"
-                    else config.TELEGRAM_VIDEO_URL
-                ),
+                photo=img,
                 caption=_["stream_1"].format(
                     config.SUPPORT_CHAT, title[:23], check[0]["dur"], user
                 ),
@@ -231,7 +244,7 @@ async def skip(cli, message: Message, _, chat_id):
             db[chat_id][0]["markup"] = "tg"
         else:
             button = stream_markup(_, videoid, chat_id)
-            img = await get_thumb(videoid)
+            img = cthumb if cthumb else await get_thumb(videoid)
             run = await message.reply_photo(
                 photo=img,
                 caption=_["stream_1"].format(
