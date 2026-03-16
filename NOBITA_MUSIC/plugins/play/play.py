@@ -387,7 +387,7 @@ async def play_commnd(
         if "-v" in query:
             query = query.replace("-v", "")
 
-        # 🔥 THE ULTIMATE BYPASS INJECTION (FULL KEYS FIX)
+        # 🔥 THE ULTIMATE BYPASS INJECTION (MEGA DICTIONARY FIX)
         if str(playmode) == "Direct" and not video:
             stream_url, js_title, js_thumb, js_dur = await jiosaavn_play_logic(query)
             if stream_url:
@@ -397,15 +397,20 @@ async def play_commnd(
                     "path": stream_url,
                     "dur": js_dur,
                     "duration_min": js_dur,
+                    "duration_sec": 0,
                     "thumb": js_thumb,
                     "vidid": "js_bypass",
-                    "views": "JioSaavn",
-                    "channel": "JioSaavn"
+                    "videoid": "js_bypass",
+                    "views": "JioSaavn API",
+                    "channel": "JioSaavn Music",
+                    "file_name": js_title,
+                    "filepath": stream_url
                 }
                 try:
+                    # Yahan wapas telegram kiya hai kyunki ye direct stream play karta hai
                     await stream(
                         _, mystic, user_id, details, chat_id, user_name, message.chat.id, 
-                        video=video, streamtype="telegram", forceplay=fplay # 👈 BACK TO TELEGRAM!
+                        video=video, streamtype="telegram", forceplay=fplay 
                     )
                 except Exception as e:
                     ex_type = type(e).__name__
