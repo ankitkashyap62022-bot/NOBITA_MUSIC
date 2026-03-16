@@ -5,7 +5,6 @@ from pyrogram.enums import ChatType
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from youtubesearchpython.__future__ import VideosSearch
 
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
 import config
 from NOBITA_MUSIC import app
 from NOBITA_MUSIC.misc import _boot_
@@ -26,34 +25,67 @@ from NOBITA_MUSIC.utils.inline import help_pannel, private_panel, start_panel
 from config import BANNED_USERS
 from strings import get_string
 
-#--------------------------
+# 🔥 MONGODB DATABASE FOR DYNAMIC START MEDIA 🔥
+from NOBITA_MUSIC.core.mongo import mongodb
+start_db = mongodb.start_media
 
-NEXI_VID = [
-"https://telegra.ph/file/1a3c152717eb9d2e94dc2.mp4",
-"https://files.catbox.moe/ln00jb.mp4",
-"https://graph.org/file/83ebf52e8bbf138620de7.mp4",
-"https://files.catbox.moe/0fq20c.mp4",
-"https://graph.org/file/318eac81e3d4667edcb77.mp4",
-"https://graph.org/file/7c1aa59649fbf3ab422da.mp4",
-"https://files.catbox.moe/t0nepm.mp4",
+async def get_start_media():
+    """Fetches the custom start media from MongoDB."""
+    doc = await start_db.find_one({"_id": "custom_start"})
+    if doc:
+        return doc.get("type"), doc.get("file_id")
+    # ☠️ Fallback Video if nothing is set yet
+    return "video", "https://telegra.ph/file/1a3c152717eb9d2e94dc2.mp4"
 
-]
+async def set_start_media(media_type, file_id):
+    """Saves the custom start media to MongoDB."""
+    await start_db.update_one(
+        {"_id": "custom_start"},
+        {"$set": {"type": media_type, "file_id": file_id}},
+        upsert=True
+    )
 
+# ==========================================
+# ☠️ THE NEW /setstart COMMAND (OWNER ONLY)
+# ==========================================
+@app.on_message(filters.command(["setstart"]) & filters.user(config.OWNER_ID))
+async def set_start_cmd(client, message: Message):
+    if not message.reply_to_message:
+        return await message.reply_text("🌸 ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏ ᴘʜᴏᴛᴏ ᴏʀ ᴠɪᴅᴇᴏ ᴛᴏ sᴇᴛ ɪᴛ ᴀs sᴛᴀʀᴛ ᴍᴇᴅɪᴀ ᴍʏ ʟᴏʀᴅ! 😈")
+        
+    mystic = await message.reply_text("⚡ ᴜᴘᴅᴀᴛɪɴɢ ᴀɴᴜ ᴍᴀᴛʀɪx ᴅᴀᴛᴀʙᴀsᴇ...")
+    
+    if message.reply_to_message.photo:
+        file_id = message.reply_to_message.photo.file_id
+        await set_start_media("photo", file_id)
+        return await mystic.edit_text("✅ **sᴛᴀʀᴛ ᴘʜᴏᴛᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ!** 😈")
+        
+    elif message.reply_to_message.video:
+        file_id = message.reply_to_message.video.file_id
+        await set_start_media("video", file_id)
+        return await mystic.edit_text("✅ **sᴛᴀʀᴛ ᴠɪᴅᴇᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ!** 😈")
+        
+    else:
+        return await mystic.edit_text("❌ ʙᴀʙʏ, ᴘʟᴇᴀsᴇ ʀᴇᴘʟʏ ᴏɴʟʏ ᴛᴏ ᴀ ᴘʜᴏᴛᴏ ᴏʀ ᴠɪᴅᴇᴏ!")
 
-
+# ==========================================
+# 🚀 MAIN START COMMANDS
+# ==========================================
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
 async def start_pm(client, message: Message, _):
     await add_served_user(message.from_user.id)
+    media_type, file_id = await get_start_media() # Fetch Custom Media
+
     if len(message.text.split()) > 1:
         name = message.text.split(None, 1)[1]
         if name[0:4] == "help":
             keyboard = help_pannel(_)
-            return await message.reply_video(
-                random.choice(NEXI_VID),
-                caption=_["help_1"].format(config.SUPPORT_CHAT),
-                reply_markup=keyboard,
-            )
+            if media_type == "photo":
+                return await message.reply_photo(photo=file_id, caption=_["help_1"].format(config.SUPPORT_CHAT), reply_markup=keyboard)
+            else:
+                return await message.reply_video(video=file_id, caption=_["help_1"].format(config.SUPPORT_CHAT), reply_markup=keyboard)
+
         if name[0:3] == "sud":
             await sudoers_list(client=client, message=message, _=_)
             if await is_on_off(2):
@@ -62,6 +94,7 @@ async def start_pm(client, message: Message, _):
                     text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>sᴜᴅᴏʟɪsᴛ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
                 )
             return
+
         if name[0:3] == "inf":
             m = await message.reply_text("🔎")
             query = (str(name)).replace("info_", "", 1)
@@ -76,9 +109,7 @@ async def start_pm(client, message: Message, _):
                 channel = result["channel"]["name"]
                 link = result["link"]
                 published = result["publishedTime"]
-            searched_text = _["start_6"].format(
-                title, duration, views, published, channellink, channel, app.mention
-            )
+            searched_text = _["start_6"].format(title, duration, views, published, channellink, channel, app.mention)
             key = InlineKeyboardMarkup(
                 [
                     [
@@ -88,12 +119,7 @@ async def start_pm(client, message: Message, _):
                 ]
             )
             await m.delete()
-            await app.send_photo(
-                chat_id=message.chat.id,
-                photo=thumbnail,
-                caption=searched_text,
-                reply_markup=key,
-            )
+            await app.send_photo(chat_id=message.chat.id, photo=thumbnail, caption=searched_text, reply_markup=key)
             if await is_on_off(2):
                 return await app.send_message(
                     chat_id=config.LOGGER_ID,
@@ -101,11 +127,11 @@ async def start_pm(client, message: Message, _):
                 )
     else:
         out = private_panel(_)
-        await message.reply_video(
-            random.choice(NEXI_VID),
-            caption=_["start_2"].format(message.from_user.mention, app.mention),
-            reply_markup=InlineKeyboardMarkup(out),
-        )
+        if media_type == "photo":
+            await message.reply_photo(photo=file_id, caption=_["start_2"].format(message.from_user.mention, app.mention), reply_markup=InlineKeyboardMarkup(out))
+        else:
+            await message.reply_video(video=file_id, caption=_["start_2"].format(message.from_user.mention, app.mention), reply_markup=InlineKeyboardMarkup(out))
+        
         if await is_on_off(2):
             return await app.send_message(
                 chat_id=config.LOGGER_ID,
@@ -118,11 +144,13 @@ async def start_pm(client, message: Message, _):
 async def start_gp(client, message: Message, _):
     out = start_panel(_)
     uptime = int(time.time() - _boot_)
-    await message.reply_video(
-        random.choice(NEXI_VID),
-        caption=_["start_1"].format(app.mention, get_readable_time(uptime)),
-        reply_markup=InlineKeyboardMarkup(out),
-    )
+    media_type, file_id = await get_start_media() # Fetch Custom Media
+    
+    if media_type == "photo":
+        await message.reply_photo(photo=file_id, caption=_["start_1"].format(app.mention, get_readable_time(uptime)), reply_markup=InlineKeyboardMarkup(out))
+    else:
+        await message.reply_video(video=file_id, caption=_["start_1"].format(app.mention, get_readable_time(uptime)), reply_markup=InlineKeyboardMarkup(out))
+    
     return await add_served_chat(message.chat.id)
 
 
@@ -153,16 +181,13 @@ async def welcome(client, message: Message):
                     return await app.leave_chat(message.chat.id)
 
                 out = start_panel(_)
-                await message.reply_video(
-                    random.choice(NEXI_VID),
-                    caption=_["start_3"].format(
-                        message.from_user.mention,
-                        app.mention,
-                        message.chat.title,
-                        app.mention,
-                    ),
-                    reply_markup=InlineKeyboardMarkup(out),
-                )
+                media_type, file_id = await get_start_media() # Fetch Custom Media
+                
+                if media_type == "photo":
+                    await message.reply_photo(photo=file_id, caption=_["start_3"].format(message.from_user.mention, app.mention, message.chat.title, app.mention), reply_markup=InlineKeyboardMarkup(out))
+                else:
+                    await message.reply_video(video=file_id, caption=_["start_3"].format(message.from_user.mention, app.mention, message.chat.title, app.mention), reply_markup=InlineKeyboardMarkup(out))
+                    
                 await add_served_chat(message.chat.id)
                 await message.stop_propagation()
         except Exception as ex:
