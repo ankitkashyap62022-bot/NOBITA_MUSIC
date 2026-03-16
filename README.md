@@ -1,7 +1,7 @@
-[![Typing SVG](https://readme-typing-svg.herokuapp.com/?lines=ㅤ+𝚆𝙴𝙻𝙲𝙾𝙼𝙴+𝚃𝙾+𝙽𝙾𝙱𝙸𝚃𝙰+𝙼𝚄𝚂𝙸𝙲+𝚁𝙴𝙿𝙾+;ㅤ+𝚃𝙷𝙸𝚂+𝙸𝚂+𝙰+𝙰𝙳𝚅𝙰𝙽𝙲𝙴+𝙼𝚄𝚂𝙸𝙲+𝙱𝙾𝚃;𝙿𝙾𝚆𝙴𝚁𝙴𝙳+𝙱𝚈+☞+𝙽𝙾𝙱𝙸𝚃𝙰+𝙺𝙸𝙽𝙶+𝙾𝙵+𝚃𝙶)]()
+[![Typing SVG](https://readme-typing-svg.herokuapp.com/?lines=ㅤ+𝚆𝙴𝙻𝙲𝙾𝙼𝙴+𝚃𝙾+𝙰𝙽𝚄+𝙼𝙰𝚃𝚁𝙸𝚇+𝚁𝙴𝙿𝙾+;ㅤ+𝚃𝙷𝙸𝚂+𝙸𝚂+𝙰𝙽+𝙰𝙳𝚅𝙰𝙽𝙲𝙴+𝙼𝚄𝚂𝙸𝙲+𝙱𝙾𝚃;𝙿𝙾𝚆𝙴𝚁𝙴𝙳+𝙱𝚈+☞+𝙼𝙾𝙽𝚂𝚃𝙴𝚁+𝚇+𝚁𝙴𝙵𝙻𝙴𝚇)]()
 
 <p align="center">  
- <img src="https://files.catbox.moe/tcz7s6.jpg">
+ <img src="https://telegra.ph/file/82b13eddfc5eb944b76e2.jpg">
 </p>
 
 ![Typing SVG](https://readme-typing-svg.herokuapp.com/?lines=𝗙𝗢𝗥𝗞+𝗧𝗛𝗜𝗦+𝗥𝗘𝗣𝗢+𝗕𝗘𝗙𝗢𝗥𝗘+𝗗𝗘𝗣𝗟𝗢𝗬)
@@ -21,11 +21,11 @@ sᴏ ᴜsᴇ ʏᴏᴜʀ ᴀɴʏ ᴏᴛʜᴇʀ ɪ'ᴅ sᴇssɪᴏɴ 👈🏻
 ## 🖇 Generating Pyrogram String Session  
 
 <p align="center">
-<a href="https://t.me/StringSesssionGeneratorRobot-Gen">
+<a href="https://t.me/StringFatherBot">
 <img src="https://img.shields.io/badge/TG%20String%20Gen%20Bot-blueviolet?style=for-the-badge&logo=appveyor" width="200""/>
 </a>  
-<a href="https://t.me/NOBITA_MUSIC_ROBOT">
-<img src="https://img.shields.io/badge/NOBITA%20MUSIC%20Bot-blueviolet?style=for-the-badge&logo=appveyor" width="200""/>
+<a href="https://t.me/AnuxMusicBot">
+<img src="https://img.shields.io/badge/ANU%20MATRIX%20Bot-blueviolet?style=for-the-badge&logo=appveyor" width="200""/>
 </a>
 </p>
 
@@ -35,16 +35,16 @@ sᴏ ᴜsᴇ ʏᴏᴜʀ ᴀɴʏ ᴏᴛʜᴇʀ ɪ'ᴅ sᴇssɪᴏɴ 👈🏻
 
 ### 🚀 Deployment Options  
 
-</h3>
+<p align="center"><a href="https://dashboard.heroku.com/new?template=https://github.com/YOUR_GITHUB_USERNAME/ANU_MATRIX"> <img src="https://www.herokucdn.com/deploy/button.svg"></a></p>
 
-<p align="center"><a href="https://dashboard.heroku.com/new?template=https://github.com/iamnobita09/NOBITA_MUSIC"> <img src="https://www.herokucdn.com/deploy/button.svg"></a></p>
-</a>
-
-<a href="https://app.koyeb.com/deploy?type=git&repository=github.com/iamnobita09/NOBITA_MUSIC&branch=main&name=nobita-music">
+<p align="center">
+<a href="https://app.koyeb.com/deploy?type=git&repository=github.com/YOUR_GITHUB_USERNAME/ANU_MATRIX&branch=main&name=anu-matrix-music">
 <img src="https://www.koyeb.com/static/images/deploy/button.svg" width="200"/>
 </a>
+</p>
 
-<a href="https://render.com/deploy?repo=https://github.com/iamnobita09/NOBITA_MUSIC">
+<p align="center">
+<a href="https://render.com/deploy?repo=https://github.com/YOUR_GITHUB_USERNAME/ANU_MATRIX">
 <img src="https://render.com/images/deploy-to-render-button.svg" width="200"/>
 </a>
 </p>
@@ -52,14 +52,16 @@ sᴏ ᴜsᴇ ʏᴏᴜʀ ᴀɴʏ ᴏᴛʜᴇʀ ɪ'ᴅ sᴇssɪᴏɴ 👈🏻
 ---
 
 <p align="center">
-<a href="https://t.me/ll_NOBITA_DEFAULTERS_ll">
-<img src="https://img.shields.io/badge/-☆𝐃𝐌 𝐓𝐎 𝐍𝐎𝐁𝐈𝐓𝐀%20☆-blue.svg?style=for-the-badge&logo=Telegram">
+<a href="https://t.me/FUCK_BY_REFLEX">
+<img src="https://img.shields.io/badge/-☆𝐃𝐌 𝐓𝐎 𝐌𝐎𝐍𝐒𝐓𝐄𝐑%20☆-blue.svg?style=for-the-badge&logo=Telegram">
 </a>
 </p>
 
 ---
 
 ### 📞 Contact  
-<a href="https://t.me/ll_NOBITA_DEFAULTERS_ll">
+<p align="center">
+<a href="https://t.me/MONSTER_FUCK_BITCHES">
 <img title="Telegram" src="https://img.shields.io/badge/Telegram-%23000000.svg?&style=for-the-badge&logo=telegram&logoColor=61DAFB">
 </a>
+</p>
