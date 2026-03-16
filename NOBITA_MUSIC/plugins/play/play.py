@@ -46,7 +46,7 @@ def get_rand_emo():
     return random.choice(P_EMOJIS)
 
 # ==========================================
-# 🎵 JIOSAAVN API BYPASS LOGIC
+# 🎵 SMART JIOSAAVN API BYPASS LOGIC
 # ==========================================
 JIOSAAVN_CACHE = {}
 JIOSAAVN_API = "https://jiosavan-lilac.vercel.app/api/search/songs?query="
@@ -63,18 +63,21 @@ async def jiosaavn_play_logic(query):
                     songs = data.get("data", {}).get("results", []) or data.get("results", [])
                     if songs:
                         song = songs[0]
-                        stream_url = song["downloadUrl"][-1]["url"] if "downloadUrl" in song else song["downloadUrl"][-1]["link"]
-                        title = song["name"].replace("&quot;", '"').replace("&#039;", "'")
-                        thumb = song["image"][-1]["url"] if "image" in song else song["image"][-1]["link"]
+                        # Safe get methods to avoid KeyError during fetch
+                        stream_url = song.get("downloadUrl", [{}])[-1].get("url", song.get("downloadUrl", [{}])[-1].get("link", ""))
+                        title = song.get("name", "Unknown Title").replace("&quot;", '"').replace("&#039;", "'")
+                        thumb = song.get("image", [{}])[-1].get("url", song.get("image", [{}])[-1].get("link", ""))
                         duration_sec = song.get("duration", 0)
+                        
                         mins = int(duration_sec) // 60
                         secs = int(duration_sec) % 60
                         duration_str = f"{mins}:{secs:02d}"
 
-                        result_tuple = (stream_url, title, thumb, duration_str, duration_sec)
-                        JIOSAAVN_CACHE[cache_key] = result_tuple
-                        return stream_url, title, thumb, duration_str, duration_sec
-    except:
+                        if stream_url:
+                            result_tuple = (stream_url, title, thumb, duration_str, duration_sec)
+                            JIOSAAVN_CACHE[cache_key] = result_tuple
+                            return result_tuple
+    except Exception:
         pass
     return None, None, None, None, 0
 
@@ -387,29 +390,31 @@ async def play_commnd(
         if "-v" in query:
             query = query.replace("-v", "")
 
-        # 🔥 THE ULTIMATE BYPASS INJECTION (SOUNDCLOUD MOCK FIX FOR KEYERROR)
+        # 🔥 THE ULTIMATE SMART BYPASS (Fail-Safe Mega Dictionary)
         if str(playmode) == "Direct" and not video:
             stream_url, js_title, js_thumb, js_dur, js_dur_sec = await jiosaavn_play_logic(query)
             if stream_url:
+                # We inject every possible key that stream.py or yml might request
                 details = {
-                    "title": js_title,
+                    "title": js_title or "Unknown Track",
                     "link": stream_url,
                     "path": stream_url,
-                    "dur": js_dur,
-                    "duration_min": js_dur,
-                    "duration_sec": js_dur_sec,
-                    "thumb": js_thumb,
+                    "dur": js_dur or "0:00",
+                    "duration_min": js_dur or "0:00",
+                    "duration_sec": js_dur_sec or 0,
+                    "thumb": js_thumb or config.YOUTUBE_IMG_URL,
                     "vidid": "js_bypass",
                     "videoid": "js_bypass",
-                    "views": "JioSaavn",
+                    "views": "Smart Bypass",
                     "channel": "JioSaavn",
-                    "file_name": js_title,
+                    "file_name": js_title or "Audio",
                     "filepath": stream_url
                 }
                 try:
+                    # using streamtype="soundcloud" enforces stream_1 format from YML
                     await stream(
                         _, mystic, user_id, details, chat_id, user_name, message.chat.id, 
-                        video=video, streamtype="soundcloud", forceplay=fplay # 👈 THIS IS THE MAGIC FIX
+                        video=video, streamtype="soundcloud", forceplay=fplay 
                     )
                 except Exception as e:
                     ex_type = type(e).__name__
