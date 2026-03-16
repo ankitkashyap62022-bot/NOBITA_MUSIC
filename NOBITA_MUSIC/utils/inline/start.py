@@ -5,30 +5,33 @@ from NOBITA_MUSIC import app
 
 
 def start_panel(_):
+    # 🔥 GROUP START BUTTONS 🔥
     buttons = [
         [
             InlineKeyboardButton(
-                text=_["S_B_1"], url=f"https://t.me/{app.username}?startgroup=true"
+                text="✚ ᴀᴅᴅ ᴍᴇ ʙᴀʙʏ ✚", url=f"https://t.me/{app.username}?startgroup=true"
             ),
-            InlineKeyboardButton(text=_["S_B_2"], url=config.SUPPORT_CHAT),
+            InlineKeyboardButton(text="🕸️ ᴍʏ ᴄʟᴜʙ", url=config.SUPPORT_CHAT),
         ],
     ]
     return buttons
 
 
 def private_panel(_):
+    # ☠️ PRIVATE DM START BUTTONS (SOURCE REMOVED) ☠️
     buttons = [
         [
             InlineKeyboardButton(
-                text=_["S_B_3"],
+                text="✚ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴩ ✚",
                 url=f"https://t.me/{app.username}?startgroup=true",
             )
         ],
         [
-            InlineKeyboardButton(text=_["S_B_5"], user_id=config.OWNER_ID),
-            InlineKeyboardButton(text=_["S_B_7"], callback_data="gib_source"),
-            InlineKeyboardButton(text=_["S_B_6"], url=config.SUPPORT_CHANNEL),
+            InlineKeyboardButton(text="👑 ᴏᴡɴᴇʀ", user_id=config.OWNER_ID),
+            InlineKeyboardButton(text="👾 ᴍʏ ʟᴏʀᴅ", url=config.SUPPORT_CHANNEL),
         ],
-        [InlineKeyboardButton(text=_["S_B_4"], callback_data="settings_back_helper")],
+        [
+            InlineKeyboardButton(text="🛠 ʜᴇʟᴩ & ᴄᴏᴍᴍᴀɴᴅs", callback_data="settings_back_helper")
+        ],
     ]
     return buttons
