@@ -5,34 +5,35 @@ from NOBITA_MUSIC import app
 
 
 def start_panel(_):
-    # 🔥 GROUP START BUTTONS 🔥
+    # 🔥 ANU MATRIX GROUP START BUTTONS 🔥
     buttons = [
         [
             InlineKeyboardButton(
-                text="✚ ᴀᴅᴅ ᴍᴇ ʙᴀʙʏ ✚", url=f"https://t.me/{app.username}?startgroup=true"
+                text="🍷 ᴀᴅᴅ ᴀɴᴜ ᴍᴀᴛʀɪx 🍷", url=f"https://t.me/{app.username}?startgroup=true"
             ),
-            InlineKeyboardButton(text="🕸️ ᴍʏ ᴄʟᴜʙ", url=config.SUPPORT_CHAT),
+            InlineKeyboardButton(text="☠️ ꜱʏꜱᴛᴇᴍ ᴄʜᴀᴛ ☠️", url=config.SUPPORT_CHAT),
         ],
     ]
     return buttons
 
 
 def private_panel(_):
-    # ☠️ PRIVATE DM START BUTTONS (FIXED GC LINK) ☠️
+    # ☠️ ANU MATRIX PRIVATE DM START BUTTONS ☠️
     buttons = [
         [
             InlineKeyboardButton(
-                text="✚ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴩ ✚",
+                text="🍷 ᴀᴅᴅ ᴀɴᴜ ᴍᴀᴛʀɪx ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ 🍷",
                 url=f"https://t.me/{app.username}?startgroup=true",
             )
         ],
         [
-            # 👑 Owner ID & 🕸️ Support Group Chat 
-            InlineKeyboardButton(text="👑 ᴏᴡɴᴇʀ", user_id=config.OWNER_ID),
-            InlineKeyboardButton(text="🕸️ ᴍʏ ᴄʟᴜʙ", url=config.SUPPORT_CHAT),
+            # 👑 Owner ID & ☠️ System Chat 
+            InlineKeyboardButton(text="👑 ꜱᴜᴘʀᴇᴍᴇ ᴄᴏᴍᴍᴀɴᴅᴇʀ", user_id=config.OWNER_ID),
+            InlineKeyboardButton(text="☠️ ꜱʏꜱᴛᴇᴍ ᴄʜᴀᴛ ☠️", url=config.SUPPORT_CHAT),
         ],
         [
-            InlineKeyboardButton(text="🛠 ʜᴇʟᴩ & ᴄᴏᴍᴍᴀɴᴅs", callback_data="settings_back_helper")
+            InlineKeyboardButton(text="💎 ᴄᴏᴍᴍᴀɴᴅꜱ & ʜᴇʟᴘ 💎", callback_data="settings_back_helper")
         ],
     ]
     return buttons
+
