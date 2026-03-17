@@ -9,9 +9,9 @@ def start_panel(_):
     buttons = [
         [
             InlineKeyboardButton(
-                text="🍷 ᴀᴅᴅ ᴀɴᴜ ᴍᴀᴛʀɪx 🍷", url=f"https://t.me/{app.username}?startgroup=true"
+                text="🍷 ᴀᴅᴅ ᴀɴᴜ 🍷", url=f"https://t.me/{app.username}?startgroup=true"
             ),
-            InlineKeyboardButton(text="☠️ ꜱʏꜱᴛᴇᴍ ᴄʜᴀᴛ ☠️", url=config.SUPPORT_CHAT),
+            InlineKeyboardButton(text="☠️ ꜱʏꜱᴛᴇᴍ", url=config.SUPPORT_CHAT),
         ],
     ]
     return buttons
@@ -22,18 +22,17 @@ def private_panel(_):
     buttons = [
         [
             InlineKeyboardButton(
-                text="🍷 ᴀᴅᴅ ᴀɴᴜ ᴍᴀᴛʀɪx ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ 🍷",
+                text="🍷 ᴀᴅᴅ ᴀɴᴜ ᴛᴏ ɢʀᴏᴜᴘ 🍷",
                 url=f"https://t.me/{app.username}?startgroup=true",
             )
         ],
         [
-            # 👑 Owner ID & ☠️ System Chat 
-            InlineKeyboardButton(text="👑 ꜱᴜᴘʀᴇᴍᴇ ᴄᴏᴍᴍᴀɴᴅᴇʀ", user_id=config.OWNER_ID),
-            InlineKeyboardButton(text="☠️ ꜱʏꜱᴛᴇᴍ ᴄʜᴀᴛ ☠️", url=config.SUPPORT_CHAT),
+            # 👑 Owner ID & ☠️ System Chat (Perfectly sized)
+            InlineKeyboardButton(text="👑 ᴏᴡɴᴇʀ", user_id=config.OWNER_ID),
+            InlineKeyboardButton(text="☠️ ꜱʏꜱᴛᴇᴍ", url=config.SUPPORT_CHAT),
         ],
         [
-            InlineKeyboardButton(text="💎 ᴄᴏᴍᴍᴀɴᴅꜱ & ʜᴇʟᴘ 💎", callback_data="settings_back_helper")
+            InlineKeyboardButton(text="💎 ʜᴇʟᴘ & ᴄᴏᴍᴍᴀɴᴅꜱ 💎", callback_data="settings_back_helper")
         ],
     ]
     return buttons
-
