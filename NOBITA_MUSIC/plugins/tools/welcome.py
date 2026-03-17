@@ -4,24 +4,15 @@ from pyrogram.types import ChatMemberUpdated, InlineKeyboardMarkup, InlineKeyboa
 from os import environ
 from typing import Union, Optional
 from PIL import Image, ImageDraw, ImageFont
-from os import environ
 import random
-from pyrogram import Client, filters
-from pyrogram.types import ChatJoinRequest, InlineKeyboardButton, InlineKeyboardMarkup
-from PIL import Image, ImageDraw, ImageFont
+from pyrogram import Client, filters, enums
+from pyrogram.types import ChatJoinRequest
 import asyncio, os, time, aiohttp
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFont, ImageEnhance
+from PIL import ImageEnhance, ImageChops
 from asyncio import sleep
-from pyrogram import filters, Client, enums
-from pyrogram.enums import ParseMode
 from logging import getLogger
 from NOBITA_MUSIC.utils.NOBITA_ban import admin_filter
-from PIL import ImageDraw, Image, ImageFont, ImageChops
-from pyrogram import *
-from pyrogram.types import *
-from logging import getLogger
-
 
 random_photo = [
     "https://telegra.ph/file/1949480f01355b4e87d26.jpg",
@@ -30,11 +21,6 @@ random_photo = [
     "https://telegra.ph/file/6f19dc23847f5b005e922.jpg",
     "https://telegra.ph/file/2973150dd62fd27a3a6ba.jpg",
 ]
-# --------------------------------------------------------------------------------- #
-
-
-
-
 
 LOGGER = getLogger(__name__)
 
@@ -47,7 +33,7 @@ class WelDatabase:
 
     async def add_wlcm(self, chat_id):
         if chat_id not in self.data:
-            self.data[chat_id] = {"state": "on"}  # Default state is "on"
+            self.data[chat_id] = {"state": "on"}
 
     async def rm_wlcm(self, chat_id):
         if chat_id in self.data:
@@ -62,7 +48,6 @@ class temp:
     MELCOW = {}
     U_NAME = None
     B_NAME = None
-
 
 
 def circle(pfp, size=(500, 500), brightness_factor=10):
@@ -84,10 +69,7 @@ def welcomepic(pic, user, chatname, id, uname, brightness_factor=1.3):
     pfp = pfp.resize((500, 500))
     draw = ImageDraw.Draw(background)
     font = ImageFont.truetype('NOBITA_MUSIC/assets/font.ttf', size=60)
-    welcome_font = ImageFont.truetype('NOBITA_MUSIC/assets/font.ttf', size=60)
     
- #   draw.text((630, 230), f"USERNAME : {uname}", fill=(255, 255, 255), font=font)
-   # draw.text((630, 300), f'NAME: {user}', fill=(255, 255, 255), font=font)
     draw.text((630, 450), f'ID: {id}', fill=(255, 255, 255), font=font)
 
     pfp_position = (48, 88)
@@ -127,7 +109,6 @@ async def auto_state(_, message):
         await message.reply("**sᴏʀʀʏ ᴏɴʟʏ ᴀᴅᴍɪɴs ᴄᴀɴ ᴇɴᴀʙʟᴇ ᴡᴇʟᴄᴏᴍᴇ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ!**")
 
 
-
 @app.on_chat_member_updated(filters.group, group=-3)
 async def greet_new_member(_, member: ChatMemberUpdated):
     chat_id = member.chat.id
@@ -138,9 +119,7 @@ async def greet_new_member(_, member: ChatMemberUpdated):
 
     user = member.new_chat_member.user if member.new_chat_member else member.from_user
     
-    # Add the modified condition here
     if member.new_chat_member and not member.old_chat_member and member.new_chat_member.status != "kicked":
-    
         try:
             pic = await app.download_media(
                 user.photo.big_file_id, file_name=f"pp{user.id}.png"
@@ -156,27 +135,27 @@ async def greet_new_member(_, member: ChatMemberUpdated):
             welcomeimg = welcomepic(
                 pic, user.first_name, member.chat.title, user.id, user.username
             )
-            button_text = "๏ ᴠɪᴇᴡ ɴᴇᴡ ᴍᴇᴍʙᴇʀ ๏"
-            add_button_text = "✙ ᴋɪᴅɴᴀᴘ ᴍᴇ ✙"
+            # ☠️ THE PREMIUM BUTTONS ☠️
+            button_text = "☠️ ᴠɪᴇᴡ ᴛᴀʀɢᴇᴛ ☠️"
+            add_button_text = "🍷 ᴀᴅᴅ ᴀɴᴜ ᴍᴀᴛʀɪx 🍷"
             deep_link = f"tg://openmessage?user_id={user.id}"
             add_link = f"https://t.me/{app.username}?startgroup=true"
+            
+            # 💎 THE PREMIUM WELCOME CAPTION 💎
             temp.MELCOW[f"welcome-{member.chat.id}"] = await app.send_photo(
                 member.chat.id,
                 photo=welcomeimg,
                 caption=f"""
-**⎊─────☵ ᴡᴇʟᴄᴏᴍᴇ ☵─────⎊**
+<emoji id=6310024990456550445>🌟</emoji> <b>ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ᴛʜᴇ ᴀɴᴜ ᴍᴀᴛʀɪx</b> <emoji id=6310024990456550445>🌟</emoji>
 
-**▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬**
+➻ <emoji id=5039643719511311434>💖</emoji> <b>ɴᴀᴍᴇ :</b> {user.mention}
+➻ <emoji id=5438436750114439411>🏴‍☠️</emoji> <b>ᴜsᴇʀ ɪᴅ :</b> <code>{user.id}</code>
+➻ <emoji id=5256131095094652290>🥂</emoji> <b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{user.username}
+➻ <emoji id=6089186666973500770>🎶</emoji> <b>ᴍᴇᴍʙᴇʀ ɴᴏ :</b> {count}
 
-**☉ ɴᴀᴍᴇ ⧽** {user.mention}
-**☉ ɪᴅ ⧽** `{user.id}`
-**☉ ᴜ_ɴᴀᴍᴇ ⧽** @{user.username}
-**☉ ᴛᴏᴛᴀʟ ᴍᴇᴍʙᴇʀs ⧽** {count}
-
-**▬▭▬▭▬▭▬▭▬▭▬▭▬▭▬**
-
-**⎉──────▢✭ 侖 ✭▢──────⎉**
+<emoji id=5438436750114439411>☠️</emoji> <b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/MONSTER_FUCK_BITCHES'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a></b>
 """,
+                parse_mode=enums.ParseMode.HTML,
                 reply_markup=InlineKeyboardMarkup([
                     [InlineKeyboardButton(button_text, url=deep_link)],
                     [InlineKeyboardButton(text=add_button_text, url=add_link)],
