@@ -1,31 +1,21 @@
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
+import config
 
 def stats_buttons(_, status):
-    not_sudo = [
-        InlineKeyboardButton(
-            text=_["SA_B_1"],
-            callback_data="TopOverall",
-        )
-    ]
+    not_sudo = [InlineKeyboardButton(text="🦋 ɴᴇᴛᴡᴏʀᴋ ꜱᴛᴀᴛꜱ", callback_data="TopOverall")]
+    
     sudo = [
-        InlineKeyboardButton(
-            text=_["SA_B_2"],
-            callback_data="bot_stats_sudo",
-        ),
-        InlineKeyboardButton(
-            text=_["SA_B_3"],
-            callback_data="TopOverall",
-        ),
+        InlineKeyboardButton(text="🪐 ꜱᴇʀᴠᴇʀ ꜱᴛᴀᴛꜱ", callback_data="bot_stats_sudo"),
+        InlineKeyboardButton(text="☄️ ɴᴇᴛᴡᴏʀᴋ ꜱᴛᴀᴛꜱ", callback_data="TopOverall"),
     ]
+    
     upl = InlineKeyboardMarkup(
         [
             sudo if status else not_sudo,
             [
-                InlineKeyboardButton(
-                    text=_["CLOSE_BUTTON"],
-                    callback_data="close",
-                ),
+                # ☠️ HERE IS YOUR GC LINK BUTTON ☠️
+                InlineKeyboardButton(text="☠️ ꜱʏꜱᴛᴇᴍ ᴄʜᴀᴛ ☠️", url=config.SUPPORT_CHAT),
+                InlineKeyboardButton(text="🛑 ᴀʙᴏʀᴛ", callback_data="close"),
             ],
         ]
     )
@@ -36,14 +26,12 @@ def back_stats_buttons(_):
     upl = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton(
-                    text=_["BACK_BUTTON"],
-                    callback_data="stats_back",
-                ),
-                InlineKeyboardButton(
-                    text=_["CLOSE_BUTTON"],
-                    callback_data="close",
-                ),
+                # ☠️ GC LINK BUTTON ON BACK PAGE TOO ☠️
+                InlineKeyboardButton(text="☠️ ꜱʏꜱᴛᴇᴍ ᴄʜᴀᴛ ☠️", url=config.SUPPORT_CHAT),
+            ],
+            [
+                InlineKeyboardButton(text="🍷 ʀᴇᴛᴜʀɴ", callback_data="stats_back"),
+                InlineKeyboardButton(text="🛑 ᴀʙᴏʀᴛ", callback_data="close"),
             ],
         ]
     )
