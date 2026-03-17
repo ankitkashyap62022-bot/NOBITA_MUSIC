@@ -18,118 +18,96 @@ from NOBITA_MUSIC.utils.decorators.language import language, languageCB
 from NOBITA_MUSIC.utils.inline.stats import back_stats_buttons, stats_buttons
 from config import BANNED_USERS
 
+# ☠️ FALLBACK IMAGE IF CONFIG FAILS
+FALLBACK_STATS_IMG = "https://telegra.ph/file/2973150dd62fd27a3a6ba.jpg"
+STATS_IMG = config.STATS_IMG_URL if config.STATS_IMG_URL else FALLBACK_STATS_IMG
 
-@app.on_message(filters.command(["stats", "gstats"]) & filters.group & ~BANNED_USERS)
+
+# ☠️ BUG FIXED: Removed 'filters.group' so it works in PM too!
+@app.on_message(filters.command(["stats", "gstats"]) & ~BANNED_USERS)
 @language
 async def stats_global(client, message: Message, _):
-    upl = stats_buttons(_, True if message.from_user.id in SUDOERS else False)
-    await message.reply_photo(
-        photo=config.STATS_IMG_URL,
-        caption=_["gstats_2"].format(app.mention),
-        reply_markup=upl,
-    )
+    upl = stats_buttons(_, True if message.fromuser.id in SUDOERS else False)
+    
+    # 💎 NEW PREMIUM UI INJECTED
+    caption = f"""<emoji id=4929369656797431200>🪐</emoji> **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ ꜱᴛᴀᴛꜱ** <emoji id=4929369656797431200>🪐</emoji>\n\n➻ <emoji id=6123040393769521180>☄️</emoji> **ꜱᴛᴀᴛᴜꜱ :** ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ!\n➻ <emoji id=6154635934135490309>💗</emoji> **ᴘɪɴɢ :** ᴜʟᴛʀᴀ ꜰᴀꜱᴛ\n\n<emoji id=6310022800023229454>✡️</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/MONSTER_FUCK_BITCHES'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
+    
+    try:
+        await message.reply_photo(photo=STATS_IMG, caption=caption, reply_markup=upl)
+    except Exception as e:
+        await message.reply_text(caption, reply_markup=upl)
 
 
 @app.on_callback_query(filters.regex("stats_back") & ~BANNED_USERS)
 @languageCB
 async def home_stats(client, CallbackQuery, _):
     upl = stats_buttons(_, True if CallbackQuery.from_user.id in SUDOERS else False)
-    await CallbackQuery.edit_message_text(
-        text=_["gstats_2"].format(app.mention),
-        reply_markup=upl,
-    )
+    caption = f"""<emoji id=4929369656797431200>🪐</emoji> **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ ꜱᴛᴀᴛꜱ** <emoji id=4929369656797431200>🪐</emoji>\n\n➻ <emoji id=6123040393769521180>☄️</emoji> **ꜱᴛᴀᴛᴜꜱ :** ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ!\n➻ <emoji id=6154635934135490309>💗</emoji> **ᴘɪɴɢ :** ᴜʟᴛʀᴀ ꜰᴀꜱᴛ\n\n<emoji id=6310022800023229454>✡️</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/MONSTER_FUCK_BITCHES'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
+    
+    try:
+        await CallbackQuery.edit_message_caption(caption=caption, reply_markup=upl)
+    except:
+        await CallbackQuery.edit_message_text(text=caption, reply_markup=upl)
 
 
 @app.on_callback_query(filters.regex("TopOverall") & ~BANNED_USERS)
 @languageCB
 async def overall_stats(client, CallbackQuery, _):
-    await CallbackQuery.answer()
+    await CallbackQuery.answer("⚡ Fetching Overall Stats...")
     upl = back_stats_buttons(_)
-    try:
-        await CallbackQuery.answer()
-    except:
-        pass
-    await CallbackQuery.edit_message_text(_["gstats_1"].format(app.mention))
+    
     served_chats = len(await get_served_chats())
     served_users = len(await get_served_users())
-    text = _["gstats_3"].format(
-        app.mention,
-        len(assistants),
-        len(BANNED_USERS),
-        served_chats,
-        served_users,
-        len(ALL_MODULES),
-        len(SUDOERS),
-        config.AUTO_LEAVING_ASSISTANT,
-        config.DURATION_LIMIT_MIN,
-    )
-    med = InputMediaPhoto(media=config.STATS_IMG_URL, caption=text)
+    
+    # 💎 NEW OVERALL STATS UI
+    text = f"""<emoji id=6310022800023229454>✡️</emoji> **ᴀɴᴜ ᴍᴀᴛʀɪx ɴᴇᴛᴡᴏʀᴋ** <emoji id=6310022800023229454>✡️</emoji>\n
+➻ <emoji id=6307605493644793241>📒</emoji> **ᴛᴏᴛᴀʟ ᴄʜᴀᴛꜱ :** {served_chats}
+➻ <emoji id=6152142357727811958>🦋</emoji> **ᴛᴏᴛᴀʟ ᴜꜱᴇʀꜱ :** {served_users}
+➻ <emoji id=6123040393769521180>☄️</emoji> **ᴀꜱꜱɪꜱᴛᴀɴᴛꜱ :** {len(assistants)}
+➻ <emoji id=5998881015320287132>💊</emoji> **ᴍᴏᴅᴜʟᴇꜱ ʟᴏᴀᴅᴇᴅ :** {len(ALL_MODULES)}
+➻ <emoji id=6310044717241340733>🔄</emoji> **ꜱᴜᴅᴏᴇʀꜱ ᴀᴄᴛɪᴠᴇ :** {len(SUDOERS)}
+➻ <emoji id=4926993814033269936>🖕</emoji> **ʙʟᴏᴄᴋᴇᴅ ᴛʀᴀꜱʜ :** {len(BANNED_USERS)}"""
+
+    med = InputMediaPhoto(media=STATS_IMG, caption=text)
     try:
         await CallbackQuery.edit_message_media(media=med, reply_markup=upl)
     except MessageIdInvalid:
-        await CallbackQuery.message.reply_photo(
-            photo=config.STATS_IMG_URL, caption=text, reply_markup=upl
-        )
+        await CallbackQuery.message.reply_photo(photo=STATS_IMG, caption=text, reply_markup=upl)
 
 
 @app.on_callback_query(filters.regex("bot_stats_sudo"))
 @languageCB
 async def bot_stats(client, CallbackQuery, _):
     if CallbackQuery.from_user.id not in SUDOERS:
-        return await CallbackQuery.answer(_["gstats_4"], show_alert=True)
+        return await CallbackQuery.answer("❌ You are not the Supreme Commander!", show_alert=True)
+    
+    await CallbackQuery.answer("⚡ Hacking Server Status...")
     upl = back_stats_buttons(_)
-    try:
-        await CallbackQuery.answer()
-    except:
-        pass
-    await CallbackQuery.edit_message_text(_["gstats_1"].format(app.mention))
+    
     p_core = psutil.cpu_count(logical=False)
-    t_core = psutil.cpu_count(logical=True)
     ram = str(round(psutil.virtual_memory().total / (1024.0**3))) + " ɢʙ"
+    
     try:
         cpu_freq = psutil.cpu_freq().current
-        if cpu_freq >= 1000:
-            cpu_freq = f"{round(cpu_freq / 1000, 2)}ɢʜᴢ"
-        else:
-            cpu_freq = f"{round(cpu_freq, 2)}ᴍʜᴢ"
+        cpu_freq = f"{round(cpu_freq / 1000, 2)}ɢʜᴢ" if cpu_freq >= 1000 else f"{round(cpu_freq, 2)}ᴍʜᴢ"
     except:
-        cpu_freq = "ғᴀɪʟᴇᴅ ᴛᴏ ғᴇᴛᴄʜ"
+        cpu_freq = "ʟᴏᴄᴋᴇᴅ 🔒"
+        
     hdd = psutil.disk_usage("/")
     total = hdd.total / (1024.0**3)
     used = hdd.used / (1024.0**3)
-    free = hdd.free / (1024.0**3)
-    call = await mongodb.command("dbstats")
-    datasize = call["dataSize"] / 1024
-    storage = call["storageSize"] / 1024
-    served_chats = len(await get_served_chats())
-    served_users = len(await get_served_users())
-    text = _["gstats_5"].format(
-        app.mention,
-        len(ALL_MODULES),
-        platform.system(),
-        ram,
-        p_core,
-        t_core,
-        cpu_freq,
-        pyver.split()[0],
-        pyrover,
-        pytgver,
-        str(total)[:4],
-        str(used)[:4],
-        str(free)[:4],
-        served_chats,
-        served_users,
-        len(BANNED_USERS),
-        len(await get_sudoers()),
-        str(datasize)[:6],
-        storage,
-        call["collections"],
-        call["objects"],
-    )
-    med = InputMediaPhoto(media=config.STATS_IMG_URL, caption=text)
+    
+    # 💎 NEW SERVER/BOT STATS UI
+    text = f"""<emoji id=4929369656797431200>🪐</emoji> **ᴍᴏɴꜱᴛᴇʀ ᴋᴇʀɴᴇʟ ꜱᴇʀᴠᴇʀ** <emoji id=4929369656797431200>🪐</emoji>\n
+➻ <emoji id=6123040393769521180>☄️</emoji> **ᴏꜱ :** {platform.system()}
+➻ <emoji id=6154635934135490309>💗</emoji> **ʀᴀᴍ :** {ram}
+➻ <emoji id=6307605493644793241>📒</emoji> **ᴄᴘᴜ :** {cpu_freq} ({p_core} ᴄᴏʀᴇꜱ)
+➻ <emoji id=6310022800023229454>✡️</emoji> **ꜱᴛᴏʀᴀɢᴇ :** {str(used)[:4]}ɢʙ / {str(total)[:4]}ɢʙ
+➻ <emoji id=5998881015320287132>💊</emoji> **ᴘʏʀᴏɢʀᴀᴍ :** ᴠ{pyrover}
+➻ <emoji id=6152142357727811958>🦋</emoji> **ᴘʏᴛɢᴄᴀʟʟꜱ :** ᴠ{pytgver}"""
+
+    med = InputMediaPhoto(media=STATS_IMG, caption=text)
     try:
         await CallbackQuery.edit_message_media(media=med, reply_markup=upl)
     except MessageIdInvalid:
-        await CallbackQuery.message.reply_photo(
-            photo=config.STATS_IMG_URL, caption=text, reply_markup=upl
-        )
+        await CallbackQuery.message.reply_photo(photo=STATS_IMG, caption=text, reply_markup=upl)
