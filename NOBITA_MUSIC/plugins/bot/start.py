@@ -3,6 +3,7 @@ import random
 from pyrogram import filters
 from pyrogram.enums import ChatType
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from pyrogram.enums import ParseMode
 from youtubesearchpython.__future__ import VideosSearch
 
 import config
@@ -25,10 +26,11 @@ from NOBITA_MUSIC.utils.inline import help_pannel, private_panel, start_panel
 from config import BANNED_USERS
 from strings import get_string
 
-# 🔥 MONGODB DATABASE FOR DYNAMIC START MEDIA 🔥
+# 🔥 MONGODB DATABASES FOR DYNAMIC MEDIA 🔥
 from NOBITA_MUSIC.core.mongo import mongodb
 start_db = mongodb.start_media
-ply_db = mongodb.custom_play_thumb  # ☠️ Database for /setply
+ply_db = mongodb.custom_play_thumb  
+log_db = mongodb.custom_log_thumb  # ☠️ NEW: Database for /setlogpic
 
 async def get_start_media():
     """Fetches the custom start media from MongoDB."""
@@ -54,35 +56,35 @@ async def get_custom_thumb():
     return None
 
 # ==========================================
-# ☠️ THE NEW /setstart COMMAND (OWNER ONLY)
+# ☠️ THE /setstart COMMAND (OWNER ONLY)
 # ==========================================
 @app.on_message(filters.command(["setstart"]) & filters.user(config.OWNER_ID))
 async def set_start_cmd(client, message: Message):
     if not message.reply_to_message:
-        return await message.reply_text("🌸 ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏ ᴘʜᴏᴛᴏ ᴏʀ ᴠɪᴅᴇᴏ ᴛᴏ sᴇᴛ ɪᴛ ᴀs sᴛᴀʀᴛ ᴍᴇᴅɪᴀ ᴍʏ ʟᴏʀᴅ! 😈")
+        return await message.reply_text("<emoji id=5352542184493031170>😈</emoji> ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏ ᴘʜᴏᴛᴏ ᴏʀ ᴠɪᴅᴇᴏ ᴛᴏ sᴇᴛ ɪᴛ ᴀs sᴛᴀʀᴛ ᴍᴇᴅɪᴀ ᴍʏ ʟᴏʀᴅ!")
 
     mystic = await message.reply_text("⚡ ᴜᴘᴅᴀᴛɪɴɢ ᴀɴᴜ ᴍᴀᴛʀɪx ᴅᴀᴛᴀʙᴀsᴇ...")
 
     if message.reply_to_message.photo:
         file_id = message.reply_to_message.photo.file_id
         await set_start_media("photo", file_id)
-        return await mystic.edit_text("✅ **sᴛᴀʀᴛ ᴘʜᴏᴛᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ!** 😈")
+        return await mystic.edit_text("✅ **sᴛᴀʀᴛ ᴘʜᴏᴛᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ!** <emoji id=5352542184493031170>😈</emoji>")
 
     elif message.reply_to_message.video:
         file_id = message.reply_to_message.video.file_id
         await set_start_media("video", file_id)
-        return await mystic.edit_text("✅ **sᴛᴀʀᴛ ᴠɪᴅᴇᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ!** 😈")
+        return await mystic.edit_text("✅ **sᴛᴀʀᴛ ᴠɪᴅᴇᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ!** <emoji id=5352542184493031170>😈</emoji>")
 
     else:
         return await mystic.edit_text("❌ ʙᴀʙʏ, ᴘʟᴇᴀsᴇ ʀᴇᴘʟʏ ᴏɴʟʏ ᴛᴏ ᴀ ᴘʜᴏᴛᴏ ᴏʀ ᴠɪᴅᴇᴏ!")
 
 # ==========================================
-# ☠️ THE NEW /setply COMMAND (OWNER ONLY)
+# ☠️ THE /setply COMMAND (OWNER ONLY)
 # ==========================================
 @app.on_message(filters.command(["setply", "setplay"]) & filters.user(config.OWNER_ID))
 async def set_ply_cmd(client, message: Message):
     if not message.reply_to_message or not message.reply_to_message.photo:
-        return await message.reply_text("🌸 ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴘʜᴏᴛᴏ ᴛᴏ sᴇᴛ ɪᴛ ᴀs ᴘʟᴀʏ ᴛʜᴜᴍʙɴᴀɪʟ ᴍʏ ʟᴏʀᴅ! 😈")
+        return await message.reply_text("<emoji id=5352542184493031170>😈</emoji> ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴘʜᴏᴛᴏ ᴛᴏ sᴇᴛ ɪᴛ ᴀs ᴘʟᴀʏ ᴛʜᴜᴍʙɴᴀɪʟ ᴍʏ ʟᴏʀᴅ!")
         
     mystic = await message.reply_text("⚡ ᴜᴘᴅᴀᴛɪɴɢ ᴀɴᴜ ᴍᴀᴛʀɪx ᴅᴀᴛᴀʙᴀsᴇ...")
     file_id = message.reply_to_message.photo.file_id
@@ -92,7 +94,27 @@ async def set_ply_cmd(client, message: Message):
         {"$set": {"file_id": file_id}},
         upsert=True
     )
-    return await mystic.edit_text("✅ **ᴘʟᴀʏ ᴘʜᴏᴛᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ! ᴀʟʟ sᴏɴɢs ᴡɪʟʟ ᴜsᴇ ᴛʜɪs ɴᴏᴡ.** 😈")
+    return await mystic.edit_text("✅ **ᴘʟᴀʏ ᴘʜᴏᴛᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ! ᴀʟʟ sᴏɴɢs ᴡɪʟʟ ᴜsᴇ ᴛʜɪs ɴᴏᴡ.** <emoji id=5352542184493031170>😈</emoji>")
+
+# ==========================================
+# ☠️ THE /setlogpic COMMAND (OWNER ONLY)
+# ==========================================
+@app.on_message(filters.command(["setlogpic", "setleftpic"]) & filters.user(config.OWNER_ID))
+async def set_log_pic(client, message: Message):
+    if not message.reply_to_message:
+        return await message.reply_text("<emoji id=5352542184493031170>😈</emoji> **हैकर वार्निंग:** किसी फोटो या वीडियो का रिप्लाई करके `/setlogpic` लिखो बॉस!")
+        
+    mystic = await message.reply_text("⚡ ᴜᴘᴅᴀᴛɪɴɢ ᴀɴᴜ ᴍᴀᴛʀɪx ᴅᴀᴛᴀʙᴀsᴇ...")
+
+    if message.reply_to_message.photo:
+        file_id = message.reply_to_message.photo.file_id
+    elif message.reply_to_message.video:
+        file_id = message.reply_to_message.video.file_id
+    else:
+        return await mystic.edit_text("<emoji id=5352542184493031170>😈</emoji> **एरर:** सिर्फ फोटो या वीडियो ही सपोर्टेड है!")
+
+    await log_db.update_one({"_id": "custom_log"}, {"$set": {"file_id": file_id}}, upsert=True)
+    await mystic.edit_text("<emoji id=6309709550878463216>🌟</emoji> **ᴀɴᴜ ᴍᴀᴛʀɪx ʟᴏɢ-ᴍᴇᴅɪᴀ ᴜᴘᴅᴀᴛᴇᴅ!**\n\nअब जब भी बॉट किसी ग्रुप में जायेगा या लेफ्ट होगा, तो तेरी सेट की हुई यही मीडिया लॉग ग्रुप में गिरेगी! 🔥")
 
 # ==========================================
 # 🚀 MAIN START COMMANDS
@@ -218,3 +240,4 @@ async def welcome(client, message: Message):
                 await message.stop_propagation()
         except Exception as ex:
             print(ex)
+
