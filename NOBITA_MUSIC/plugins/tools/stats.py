@@ -23,11 +23,11 @@ FALLBACK_STATS_IMG = "https://telegra.ph/file/2973150dd62fd27a3a6ba.jpg"
 STATS_IMG = config.STATS_IMG_URL if config.STATS_IMG_URL else FALLBACK_STATS_IMG
 
 
-# ☠️ BUG FIXED: Removed 'filters.group' so it works in PM too!
+# ☠️ BUG FIXED: 'fromuser' corrected to 'from_user', works in PM too!
 @app.on_message(filters.command(["stats", "gstats"]) & ~BANNED_USERS)
 @language
 async def stats_global(client, message: Message, _):
-    upl = stats_buttons(_, True if message.fromuser.id in SUDOERS else False)
+    upl = stats_buttons(_, True if message.from_user.id in SUDOERS else False)
     
     # 💎 NEW PREMIUM UI INJECTED
     caption = f"""<emoji id=4929369656797431200>🪐</emoji> **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ ꜱᴛᴀᴛꜱ** <emoji id=4929369656797431200>🪐</emoji>\n\n➻ <emoji id=6123040393769521180>☄️</emoji> **ꜱᴛᴀᴛᴜꜱ :** ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ!\n➻ <emoji id=6154635934135490309>💗</emoji> **ᴘɪɴɢ :** ᴜʟᴛʀᴀ ꜰᴀꜱᴛ\n\n<emoji id=6310022800023229454>✡️</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/MONSTER_FUCK_BITCHES'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
@@ -111,3 +111,4 @@ async def bot_stats(client, CallbackQuery, _):
         await CallbackQuery.edit_message_media(media=med, reply_markup=upl)
     except MessageIdInvalid:
         await CallbackQuery.message.reply_photo(photo=STATS_IMG, caption=text, reply_markup=upl)
+
