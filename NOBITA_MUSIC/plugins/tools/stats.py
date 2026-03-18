@@ -32,7 +32,7 @@ async def set_stats_image(url):
     await statsdb.update_one({"_id": "stats_pic"}, {"$set": {"url": url}}, upsert=True)
 
 
-# ☠️ COMMAND: /setstatspic (SUDOERS ONLY) ☠️
+# ☠️ CRITICAL BUG FIXED: Removed filters.user() completely! ☠️
 @app.on_message(filters.command(["setstatspic"]) & SUDOERS)
 async def set_stats_pic_cmd(client, message: Message):
     if not message.reply_to_message or not message.reply_to_message.photo:
