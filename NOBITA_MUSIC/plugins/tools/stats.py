@@ -32,25 +32,26 @@ async def set_stats_image(url):
     await statsdb.update_one({"_id": "stats_pic"}, {"$set": {"url": url}}, upsert=True)
 
 
-# ☠️ COMMAND: /setstatspic ☠️
-@app.on_message(filters.command(["setstatspic"]) & filters.user(SUDOERS))
+# ☠️ COMMAND: /setstatspic (SUDOERS ONLY) ☠️
+@app.on_message(filters.command(["setstatspic"]) & SUDOERS)
 async def set_stats_pic_cmd(client, message: Message):
     if not message.reply_to_message or not message.reply_to_message.photo:
-        return await message.reply_text("☠️ **ब्रो! किसी फोटो (Image) पर रिप्लाई करके `/setstatspic` लिख!**")
+        return await message.reply_text("☠️ **Boss! Please reply to an image with `/setstatspic` to update it.**")
 
-    # फोटो का ID निकालना और डेटाबेस में डालना
+    # Extracting photo ID and saving to database
     photo = message.reply_to_message.photo.file_id
     await set_stats_image(photo)
-    await message.reply_text("ꜱᴛᴀᴛꜱ ᴩɪᴄ ꜱᴀᴠᴇᴅ ꜱᴜᴄᴄᴇꜱꜰᴜʟʟʏ ⚡❤️‍🔥")
+    await message.reply_text("✅ **Boom! 💥 Stats Menu picture successfully updated! Check it with `/stats`.**")
 
 
-# ☠️ BUG FIXED: 'from_user', works in PM too! ☠️
+# ☠️ MAIN STATS COMMAND ☠️
 @app.on_message(filters.command(["stats", "gstats"]) & ~BANNED_USERS)
 @language
 async def stats_global(client, message: Message, _):
-    upl = stats_buttons(_, True if message.from_user.id in SUDOERS else False)
+    # Safe List check instead of Filter check
+    sudoers_list = await get_sudoers()
+    upl = stats_buttons(_, True if message.from_user.id in sudoers_list else False)
 
-    # 💎 NEW PREMIUM UI INJECTED (Main Menu)
     caption = f"""┌ **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ** ™
 **ꜱᴛᴀᴛꜱ ᴀɴᴅ ɪɴꜰᴏʀᴍᴀᴛɪᴏɴ :**
 
@@ -69,8 +70,9 @@ async def stats_global(client, message: Message, _):
 @app.on_callback_query(filters.regex("stats_back") & ~BANNED_USERS)
 @languageCB
 async def home_stats(client, CallbackQuery, _):
-    upl = stats_buttons(_, True if CallbackQuery.from_user.id in SUDOERS else False)
-    # Main menu caption when clicking "Back"
+    sudoers_list = await get_sudoers()
+    upl = stats_buttons(_, True if CallbackQuery.from_user.id in sudoers_list else False)
+    
     caption = f"""┌ **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ** ™
 **ꜱᴛᴀᴛꜱ ᴀɴᴅ ɪɴꜰᴏʀᴍᴀᴛɪᴏɴ :**
 
@@ -82,7 +84,6 @@ async def home_stats(client, CallbackQuery, _):
     STATS_IMG = await get_stats_image()
     med = InputMediaPhoto(media=STATS_IMG, caption=caption)
     
-    # Anti-crash logic
     try:
         await CallbackQuery.edit_message_media(media=med, reply_markup=upl)
     except Exception:
@@ -100,17 +101,20 @@ async def overall_stats(client, CallbackQuery, _):
 
     served_chats = len(await get_served_chats())
     served_users = len(await get_served_users())
+    
+    # SAFE DB CALL FOR LENGTH
+    sudoers_list = await get_sudoers()
+    banned_list = config.BANNED_USERS
 
-    # 💎 YORSA STYLE ADVANCED UI 💎
     text = f"""┌ **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ** ™
 **ꜱᴛᴀᴛꜱ ᴀɴᴅ ɪɴꜰᴏʀᴍᴀᴛɪᴏɴ :**
 
 **ᴀꜱꜱɪꜱᴛᴀɴᴛꜱ :** {len(assistants)}
-**ʙʟᴏᴄᴋᴇᴅ :** {len(BANNED_USERS)}
+**ʙʟᴏᴄᴋᴇᴅ :** {len(banned_list)}
 **ᴄʜᴀᴛꜱ :** {served_chats}
 **ᴜꜱᴇʀꜱ :** {served_users}
 **ᴍᴏᴅᴜʟᴇꜱ :** {len(ALL_MODULES)}
-**ꜱᴜᴅᴏᴇʀꜱ :** {len(SUDOERS)}
+**ꜱᴜᴅᴏᴇʀꜱ :** {len(sudoers_list)}
 
 **ᴀᴜᴛᴏ ʟᴇᴀᴠɪɴɢ ᴀꜱꜱɪꜱᴛᴀɴᴛ :** {config.AUTO_LEAVING_ASSISTANT}
 **ᴘʟᴀʏ ᴅᴜʀᴀᴛɪᴏɴ ʟɪᴍɪᴛ :** {config.DURATION_LIMIT_MIN} ᴍɪɴᴜᴛᴇꜱ"""
@@ -118,7 +122,6 @@ async def overall_stats(client, CallbackQuery, _):
     STATS_IMG = await get_stats_image()
     med = InputMediaPhoto(media=STATS_IMG, caption=text)
     
-    # Anti-crash logic
     try:
         await CallbackQuery.edit_message_media(media=med, reply_markup=upl)
     except Exception:
@@ -126,6 +129,3 @@ async def overall_stats(client, CallbackQuery, _):
             await CallbackQuery.edit_message_text(text=text, reply_markup=upl)
         except Exception as e:
             await CallbackQuery.message.reply_photo(photo=STATS_IMG, caption=text, reply_markup=upl)
-
-
-# ☠️ REMOVED bot_stats_sudo FUNCTION BECAUSE SERVER STATS IS DEAD ☠️
