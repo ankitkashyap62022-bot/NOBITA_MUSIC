@@ -41,7 +41,7 @@ async def set_stats_pic_cmd(client, message: Message):
     # फोटो का ID निकालना और डेटाबेस में डालना
     photo = message.reply_to_message.photo.file_id
     await set_stats_image(photo)
-    await message.reply_text("✅ **बूम! 💥 Stats Menu की नई पिक्चर सेट हो गई बॉस! अब `/stats` चेक कर!**")
+    await message.reply_text("ꜱᴛᴀᴛꜱ ᴩɪᴄ ꜱᴀᴠᴇᴅ ꜱᴜᴄᴄᴇꜱꜰᴜʟʟʏ ⚡❤️‍🔥")
 
 
 # ☠️ BUG FIXED: 'from_user', works in PM too! ☠️
