@@ -49,10 +49,16 @@ async def set_stats_pic_cmd(client, message: Message):
 @language
 async def stats_global(client, message: Message, _):
     upl = stats_buttons(_, True if message.from_user.id in SUDOERS else False)
-    
-    # 💎 NEW PREMIUM UI INJECTED
-    caption = f"""<emoji id=4929369656797431200>🪐</emoji> **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ ꜱᴛᴀᴛꜱ** <emoji id=4929369656797431200>🪐</emoji>\n\n➻ <emoji id=6123040393769521180>☄️</emoji> **ꜱᴛᴀᴛᴜꜱ :** ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ!\n➻ <emoji id=6154635934135490309>💗</emoji> **ᴘɪɴɢ :** ᴜʟᴛʀᴀ ꜰᴀꜱᴛ\n\n<emoji id=6310022800023229454>✡️</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/Reflex_x_zara'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
-    
+
+    # 💎 NEW PREMIUM UI INJECTED (Main Menu)
+    caption = f"""┌ **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ** ™
+**ꜱᴛᴀᴛꜱ ᴀɴᴅ ɪɴꜰᴏʀᴍᴀᴛɪᴏɴ :**
+
+**ꜱᴛᴀᴛᴜꜱ :** ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ!
+**ᴘɪɴɢ :** ᴜʟᴛʀᴀ ꜰᴀꜱᴛ
+
+**ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/Reflex_x_zara'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
+
     STATS_IMG = await get_stats_image()
     try:
         await message.reply_photo(photo=STATS_IMG, caption=caption, reply_markup=upl)
@@ -64,76 +70,62 @@ async def stats_global(client, message: Message, _):
 @languageCB
 async def home_stats(client, CallbackQuery, _):
     upl = stats_buttons(_, True if CallbackQuery.from_user.id in SUDOERS else False)
-    caption = f"""<emoji id=4929369656797431200>🪐</emoji> **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ ꜱᴛᴀᴛꜱ** <emoji id=4929369656797431200>🪐</emoji>\n\n➻ <emoji id=6123040393769521180>☄️</emoji> **ꜱᴛᴀᴛᴜꜱ :** ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ!\n➻ <emoji id=6154635934135490309>💗</emoji> **ᴘɪɴɢ :** ᴜʟᴛʀᴀ ꜰᴀꜱᴛ\n\n<emoji id=6310022800023229454>✡️</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/Reflex_x_zara'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
-    
+    # Main menu caption when clicking "Back"
+    caption = f"""┌ **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ** ™
+**ꜱᴛᴀᴛꜱ ᴀɴᴅ ɪɴꜰᴏʀᴍᴀᴛɪᴏɴ :**
+
+**ꜱᴛᴀᴛᴜꜱ :** ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ!
+**ᴘɪɴɢ :** ᴜʟᴛʀᴀ ꜰᴀꜱᴛ
+
+**ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/Reflex_x_zara'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
+
     STATS_IMG = await get_stats_image()
     med = InputMediaPhoto(media=STATS_IMG, caption=caption)
+    
+    # Anti-crash logic
     try:
         await CallbackQuery.edit_message_media(media=med, reply_markup=upl)
-    except:
-        await CallbackQuery.edit_message_text(text=caption, reply_markup=upl)
+    except Exception:
+        try:
+            await CallbackQuery.edit_message_text(text=caption, reply_markup=upl)
+        except Exception:
+            pass
 
 
 @app.on_callback_query(filters.regex("TopOverall") & ~BANNED_USERS)
 @languageCB
 async def overall_stats(client, CallbackQuery, _):
-    await CallbackQuery.answer("⚡ Fetching Overall Stats...")
+    await CallbackQuery.answer("⚡ Fetching Network Stats...")
     upl = back_stats_buttons(_)
-    
+
     served_chats = len(await get_served_chats())
     served_users = len(await get_served_users())
-    
-    # 💎 NEW OVERALL STATS UI
-    text = f"""<emoji id=6310022800023229454>✡️</emoji> **ᴀɴᴜ ᴍᴀᴛʀɪx ɴᴇᴛᴡᴏʀᴋ** <emoji id=6310022800023229454>✡️</emoji>\n
-➻ <emoji id=6307605493644793241>📒</emoji> **ᴛᴏᴛᴀʟ ᴄʜᴀᴛꜱ :** {served_chats}
-➻ <emoji id=6152142357727811958>🦋</emoji> **ᴛᴏᴛᴀʟ ᴜꜱᴇʀꜱ :** {served_users}
-➻ <emoji id=6123040393769521180>☄️</emoji> **ᴀꜱꜱɪꜱᴛᴀɴᴛꜱ :** {len(assistants)}
-➻ <emoji id=5998881015320287132>💊</emoji> **ᴍᴏᴅᴜʟᴇꜱ ʟᴏᴀᴅᴇᴅ :** {len(ALL_MODULES)}
-➻ <emoji id=6310044717241340733>🔄</emoji> **ꜱᴜᴅᴏᴇʀꜱ ᴀᴄᴛɪᴠᴇ :** {len(SUDOERS)}
-➻ <emoji id=4926993814033269936>🖕</emoji> **ʙʟᴏᴄᴋᴇᴅ ᴛʀᴀꜱʜ :** {len(BANNED_USERS)}"""
+
+    # 💎 YORSA STYLE ADVANCED UI 💎
+    text = f"""┌ **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ** ™
+**ꜱᴛᴀᴛꜱ ᴀɴᴅ ɪɴꜰᴏʀᴍᴀᴛɪᴏɴ :**
+
+**ᴀꜱꜱɪꜱᴛᴀɴᴛꜱ :** {len(assistants)}
+**ʙʟᴏᴄᴋᴇᴅ :** {len(BANNED_USERS)}
+**ᴄʜᴀᴛꜱ :** {served_chats}
+**ᴜꜱᴇʀꜱ :** {served_users}
+**ᴍᴏᴅᴜʟᴇꜱ :** {len(ALL_MODULES)}
+**ꜱᴜᴅᴏᴇʀꜱ :** {len(SUDOERS)}
+
+**ᴀᴜᴛᴏ ʟᴇᴀᴠɪɴɢ ᴀꜱꜱɪꜱᴛᴀɴᴛ :** {config.AUTO_LEAVING_ASSISTANT}
+**ᴘʟᴀʏ ᴅᴜʀᴀᴛɪᴏɴ ʟɪᴍɪᴛ :** {config.DURATION_LIMIT_MIN} ᴍɪɴᴜᴛᴇꜱ"""
 
     STATS_IMG = await get_stats_image()
     med = InputMediaPhoto(media=STATS_IMG, caption=text)
+    
+    # Anti-crash logic
     try:
         await CallbackQuery.edit_message_media(media=med, reply_markup=upl)
-    except MessageIdInvalid:
-        await CallbackQuery.message.reply_photo(photo=STATS_IMG, caption=text, reply_markup=upl)
+    except Exception:
+        try:
+            await CallbackQuery.edit_message_text(text=text, reply_markup=upl)
+        except Exception as e:
+            await CallbackQuery.message.reply_photo(photo=STATS_IMG, caption=text, reply_markup=upl)
 
 
-@app.on_callback_query(filters.regex("bot_stats_sudo"))
-@languageCB
-async def bot_stats(client, CallbackQuery, _):
-    if CallbackQuery.from_user.id not in SUDOERS:
-        return await CallbackQuery.answer("❌ You are not the Supreme Commander!", show_alert=True)
-    
-    await CallbackQuery.answer("⚡ Hacking Server Status...")
-    upl = back_stats_buttons(_)
-    
-    p_core = psutil.cpu_count(logical=False)
-    ram = str(round(psutil.virtual_memory().total / (1024.0**3))) + " ɢʙ"
-    
-    try:
-        cpu_freq = psutil.cpu_freq().current
-        cpu_freq = f"{round(cpu_freq / 1000, 2)}ɢʜᴢ" if cpu_freq >= 1000 else f"{round(cpu_freq, 2)}ᴍʜᴢ"
-    except:
-        cpu_freq = "ʟᴏᴄᴋᴇᴅ 🔒"
-        
-    hdd = psutil.disk_usage("/")
-    total = hdd.total / (1024.0**3)
-    used = hdd.used / (1024.0**3)
-    
-    # 💎 NEW SERVER/BOT STATS UI
-    text = f"""<emoji id=4929369656797431200>🪐</emoji> **ᴍᴏɴꜱᴛᴇʀ ᴋᴇʀɴᴇʟ ꜱᴇʀᴠᴇʀ** <emoji id=4929369656797431200>🪐</emoji>\n
-➻ <emoji id=6123040393769521180>☄️</emoji> **ᴏꜱ :** {platform.system()}
-➻ <emoji id=6154635934135490309>💗</emoji> **ʀᴀᴍ :** {ram}
-➻ <emoji id=6307605493644793241>📒</emoji> **ᴄᴘᴜ :** {cpu_freq} ({p_core} ᴄᴏʀᴇꜱ)
-➻ <emoji id=6310022800023229454>✡️</emoji> **ꜱᴛᴏʀᴀɢᴇ :** {str(used)[:4]}ɢʙ / {str(total)[:4]}ɢʙ
-➻ <emoji id=5998881015320287132>💊</emoji> **ᴘʏʀᴏɢʀᴀᴍ :** ᴠ{pyrover}
-➻ <emoji id=6152142357727811958>🦋</emoji> **ᴘʏᴛɢᴄᴀʟʟꜱ :** ᴠ{pytgver}"""
-
-    STATS_IMG = await get_stats_image()
-    med = InputMediaPhoto(media=STATS_IMG, caption=text)
-    try:
-        await CallbackQuery.edit_message_media(media=med, reply_markup=upl)
-    except MessageIdInvalid:
-        await CallbackQuery.message.reply_photo(photo=STATS_IMG, caption=text, reply_markup=upl)
+# ☠️ REMOVED bot_stats_sudo FUNCTION BECAUSE SERVER STATS IS DEAD ☠️
