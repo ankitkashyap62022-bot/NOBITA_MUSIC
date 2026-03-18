@@ -3,7 +3,7 @@
 
 # This source code is under MIT License 📜 Unauthorized forking, importing, or using this code without giving proper credit will result in legal action ⚠️
  
-# 📩 DM for permission : @ll_NOBITA_DEFAULTERS_ll
+# 📩 DM for permission : @Reflex_x_zara
 # =======================================================
 
 
@@ -141,7 +141,7 @@ async def get_thumb(videoid):
 # ======================================================
 # ©️ 2025-26 All Rights Reserved by Nobita Bots 😎
 
-# 🧑‍💻 Developer : @ll_NOBITA_DEFAULTERS_ll
+# 🧑‍💻 Developer : @Reflex_x_zara
 # 🔗 Source link : https://github.com/iamnobita09/NOBITA_MUSIC.git
 # 📢 Telegram channel : https://t.me/NOB1TA_SUPPORT
 # =======================================================
