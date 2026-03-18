@@ -18,12 +18,33 @@ from NOBITA_MUSIC.utils.decorators.language import language, languageCB
 from NOBITA_MUSIC.utils.inline.stats import back_stats_buttons, stats_buttons
 from config import BANNED_USERS
 
-# ☠️ FALLBACK IMAGE IF CONFIG FAILS
-FALLBACK_STATS_IMG = "https://telegra.ph/file/2973150dd62fd27a3a6ba.jpg"
-STATS_IMG = config.STATS_IMG_URL if config.STATS_IMG_URL else FALLBACK_STATS_IMG
+# ☠️ MONSTER DATABASE SETUP FOR STATS PIC ☠️
+statsdb = mongodb.stats_pic
+
+async def get_stats_image():
+    data = await statsdb.find_one({"_id": "stats_pic"})
+    if not data:
+        fallback = "https://telegra.ph/file/2973150dd62fd27a3a6ba.jpg"
+        return config.STATS_IMG_URL if config.STATS_IMG_URL else fallback
+    return data["url"]
+
+async def set_stats_image(url):
+    await statsdb.update_one({"_id": "stats_pic"}, {"$set": {"url": url}}, upsert=True)
 
 
-# ☠️ BUG FIXED: 'fromuser' corrected to 'from_user', works in PM too!
+# ☠️ COMMAND: /setstatspic ☠️
+@app.on_message(filters.command(["setstatspic"]) & filters.user(SUDOERS))
+async def set_stats_pic_cmd(client, message: Message):
+    if not message.reply_to_message or not message.reply_to_message.photo:
+        return await message.reply_text("☠️ **ब्रो! किसी फोटो (Image) पर रिप्लाई करके `/setstatspic` लिख!**")
+
+    # फोटो का ID निकालना और डेटाबेस में डालना
+    photo = message.reply_to_message.photo.file_id
+    await set_stats_image(photo)
+    await message.reply_text("✅ **बूम! 💥 Stats Menu की नई पिक्चर सेट हो गई बॉस! अब `/stats` चेक कर!**")
+
+
+# ☠️ BUG FIXED: 'from_user', works in PM too! ☠️
 @app.on_message(filters.command(["stats", "gstats"]) & ~BANNED_USERS)
 @language
 async def stats_global(client, message: Message, _):
@@ -32,6 +53,7 @@ async def stats_global(client, message: Message, _):
     # 💎 NEW PREMIUM UI INJECTED
     caption = f"""<emoji id=4929369656797431200>🪐</emoji> **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ ꜱᴛᴀᴛꜱ** <emoji id=4929369656797431200>🪐</emoji>\n\n➻ <emoji id=6123040393769521180>☄️</emoji> **ꜱᴛᴀᴛᴜꜱ :** ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ!\n➻ <emoji id=6154635934135490309>💗</emoji> **ᴘɪɴɢ :** ᴜʟᴛʀᴀ ꜰᴀꜱᴛ\n\n<emoji id=6310022800023229454>✡️</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/Reflex_x_zara'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
     
+    STATS_IMG = await get_stats_image()
     try:
         await message.reply_photo(photo=STATS_IMG, caption=caption, reply_markup=upl)
     except Exception as e:
@@ -44,8 +66,10 @@ async def home_stats(client, CallbackQuery, _):
     upl = stats_buttons(_, True if CallbackQuery.from_user.id in SUDOERS else False)
     caption = f"""<emoji id=4929369656797431200>🪐</emoji> **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ ꜱᴛᴀᴛꜱ** <emoji id=4929369656797431200>🪐</emoji>\n\n➻ <emoji id=6123040393769521180>☄️</emoji> **ꜱᴛᴀᴛᴜꜱ :** ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ!\n➻ <emoji id=6154635934135490309>💗</emoji> **ᴘɪɴɢ :** ᴜʟᴛʀᴀ ꜰᴀꜱᴛ\n\n<emoji id=6310022800023229454>✡️</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/Reflex_x_zara'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
     
+    STATS_IMG = await get_stats_image()
+    med = InputMediaPhoto(media=STATS_IMG, caption=caption)
     try:
-        await CallbackQuery.edit_message_caption(caption=caption, reply_markup=upl)
+        await CallbackQuery.edit_message_media(media=med, reply_markup=upl)
     except:
         await CallbackQuery.edit_message_text(text=caption, reply_markup=upl)
 
@@ -68,6 +92,7 @@ async def overall_stats(client, CallbackQuery, _):
 ➻ <emoji id=6310044717241340733>🔄</emoji> **ꜱᴜᴅᴏᴇʀꜱ ᴀᴄᴛɪᴠᴇ :** {len(SUDOERS)}
 ➻ <emoji id=4926993814033269936>🖕</emoji> **ʙʟᴏᴄᴋᴇᴅ ᴛʀᴀꜱʜ :** {len(BANNED_USERS)}"""
 
+    STATS_IMG = await get_stats_image()
     med = InputMediaPhoto(media=STATS_IMG, caption=text)
     try:
         await CallbackQuery.edit_message_media(media=med, reply_markup=upl)
@@ -106,9 +131,9 @@ async def bot_stats(client, CallbackQuery, _):
 ➻ <emoji id=5998881015320287132>💊</emoji> **ᴘʏʀᴏɢʀᴀᴍ :** ᴠ{pyrover}
 ➻ <emoji id=6152142357727811958>🦋</emoji> **ᴘʏᴛɢᴄᴀʟʟꜱ :** ᴠ{pytgver}"""
 
+    STATS_IMG = await get_stats_image()
     med = InputMediaPhoto(media=STATS_IMG, caption=text)
     try:
         await CallbackQuery.edit_message_media(media=med, reply_markup=upl)
     except MessageIdInvalid:
         await CallbackQuery.message.reply_photo(photo=STATS_IMG, caption=text, reply_markup=upl)
-
