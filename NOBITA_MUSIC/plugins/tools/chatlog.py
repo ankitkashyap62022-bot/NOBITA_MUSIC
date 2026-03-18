@@ -39,7 +39,7 @@ async def join_watcher(_, message):
                 f"➻ <emoji id=6307750079423845494>👑</emoji> <b>ᴄʜᴀᴛ ᴜsᴇʀɴᴀᴍᴇ :</b> @{chat.username}\n"
                 f"➻ <emoji id=6307569802466563145>🎶</emoji> <b>ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs :</b> {count}\n"
                 f"➻ <emoji id=5999210495146465994>💖</emoji> <b>ᴀᴅᴅᴇᴅ ʙʏ :</b> {message.from_user.mention}\n\n"
-                f"➻ <emoji id=5352542184493031170>😈</emoji> <b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/MONSTER_FUCK_BITCHES'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a></b>"
+                f"➻ <emoji id=5352542184493031170>😈</emoji> <b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/Reflex_x_zara'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a></b>"
             )
             
             button = InlineKeyboardMarkup([[InlineKeyboardButton("☠️ ᴠɪᴇᴡ ᴛᴀʀɢᴇᴛ ɢʀᴏᴜᴘ ☠️", url=f"{link}")]]) if link != "No Link Available" else None

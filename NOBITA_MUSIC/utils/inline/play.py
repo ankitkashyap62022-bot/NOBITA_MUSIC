@@ -19,7 +19,7 @@ def track_markup(_, videoid, user_id, channel, fplay):
         ],
         [
             InlineKeyboardButton(
-                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/Reflex_x_zara",
             ),
             InlineKeyboardButton(
                 text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
@@ -80,7 +80,7 @@ def stream_markup_timer(_, videoid, chat_id, played, dur):
         ],
         [
             InlineKeyboardButton(
-                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/Reflex_x_zara",
             ),
             InlineKeyboardButton(
                 text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
@@ -103,7 +103,7 @@ def stream_markup(_, videoid, chat_id):
          ],
         [
             InlineKeyboardButton(
-                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/Reflex_x_zara",
             ),
             InlineKeyboardButton(
                 text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
@@ -129,7 +129,7 @@ def playlist_markup(_, videoid, user_id, ptype, channel, fplay):
         ],
         [
             InlineKeyboardButton(
-                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/Reflex_x_zara",
             ),
             InlineKeyboardButton(
                 text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
@@ -155,7 +155,7 @@ def livestream_markup(_, videoid, user_id, mode, channel, fplay):
         ],
         [
             InlineKeyboardButton(
-                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/Reflex_x_zara",
             ),
             InlineKeyboardButton(
                 text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
@@ -200,7 +200,7 @@ def slider_markup(_, videoid, user_id, query, query_type, channel, fplay):
         ],
         [
             InlineKeyboardButton(
-                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/Reflex_x_zara",
             ),
             InlineKeyboardButton(
                 text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
@@ -225,7 +225,7 @@ def queue_markup(_, videoid, chat_id):
         ],
         [
             InlineKeyboardButton(
-                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/Reflex_x_zara",
             ),
             InlineKeyboardButton(
                 text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
@@ -248,7 +248,7 @@ def telegram_markup(_, chat_id):
         ],
         [
             InlineKeyboardButton(
-                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/Reflex_x_zara",
             ),
             InlineKeyboardButton(
                 text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",
@@ -475,7 +475,7 @@ def telegram_markup_timer(_, chat_id, played, dur):
         ],
         [
             InlineKeyboardButton(
-                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/MONSTER_FUCK_BITCHES",
+                text="𝖮ᴡɴᴇʀ ❤️‍🔥", url="https://t.me/Reflex_x_zara",
             ),
             InlineKeyboardButton(
                 text="𝖲ᴜᴘᴘᴏʀᴛ 📩", url="https://t.me/FUCK_BY_REFLEX",

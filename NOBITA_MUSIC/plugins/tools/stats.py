@@ -30,7 +30,7 @@ async def stats_global(client, message: Message, _):
     upl = stats_buttons(_, True if message.from_user.id in SUDOERS else False)
     
     # 💎 NEW PREMIUM UI INJECTED
-    caption = f"""<emoji id=4929369656797431200>🪐</emoji> **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ ꜱᴛᴀᴛꜱ** <emoji id=4929369656797431200>🪐</emoji>\n\n➻ <emoji id=6123040393769521180>☄️</emoji> **ꜱᴛᴀᴛᴜꜱ :** ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ!\n➻ <emoji id=6154635934135490309>💗</emoji> **ᴘɪɴɢ :** ᴜʟᴛʀᴀ ꜰᴀꜱᴛ\n\n<emoji id=6310022800023229454>✡️</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/MONSTER_FUCK_BITCHES'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
+    caption = f"""<emoji id=4929369656797431200>🪐</emoji> **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ ꜱᴛᴀᴛꜱ** <emoji id=4929369656797431200>🪐</emoji>\n\n➻ <emoji id=6123040393769521180>☄️</emoji> **ꜱᴛᴀᴛᴜꜱ :** ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ!\n➻ <emoji id=6154635934135490309>💗</emoji> **ᴘɪɴɢ :** ᴜʟᴛʀᴀ ꜰᴀꜱᴛ\n\n<emoji id=6310022800023229454>✡️</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/Reflex_x_zara'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
     
     try:
         await message.reply_photo(photo=STATS_IMG, caption=caption, reply_markup=upl)
@@ -42,7 +42,7 @@ async def stats_global(client, message: Message, _):
 @languageCB
 async def home_stats(client, CallbackQuery, _):
     upl = stats_buttons(_, True if CallbackQuery.from_user.id in SUDOERS else False)
-    caption = f"""<emoji id=4929369656797431200>🪐</emoji> **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ ꜱᴛᴀᴛꜱ** <emoji id=4929369656797431200>🪐</emoji>\n\n➻ <emoji id=6123040393769521180>☄️</emoji> **ꜱᴛᴀᴛᴜꜱ :** ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ!\n➻ <emoji id=6154635934135490309>💗</emoji> **ᴘɪɴɢ :** ᴜʟᴛʀᴀ ꜰᴀꜱᴛ\n\n<emoji id=6310022800023229454>✡️</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/MONSTER_FUCK_BITCHES'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
+    caption = f"""<emoji id=4929369656797431200>🪐</emoji> **ᴀɴᴜ ᴍᴀᴛʀɪx ꜱʏꜱᴛᴇᴍ ꜱᴛᴀᴛꜱ** <emoji id=4929369656797431200>🪐</emoji>\n\n➻ <emoji id=6123040393769521180>☄️</emoji> **ꜱᴛᴀᴛᴜꜱ :** ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ!\n➻ <emoji id=6154635934135490309>💗</emoji> **ᴘɪɴɢ :** ᴜʟᴛʀᴀ ꜰᴀꜱᴛ\n\n<emoji id=6310022800023229454>✡️</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/Reflex_x_zara'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
     
     try:
         await CallbackQuery.edit_message_caption(caption=caption, reply_markup=upl)
