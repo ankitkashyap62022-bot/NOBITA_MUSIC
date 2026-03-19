@@ -4,97 +4,52 @@ from NOBITA_MUSIC import app
 
 def help_pannel(_, START: Union[bool, int] = None):
     # 🛑 Close Button Cleaned
-    first = [InlineKeyboardButton(text="⛌ ᴀʙᴏʀᴛ ᴀᴄᴄᴇss ⛌", callback_data=f"close")]
+    first = [InlineKeyboardButton(text="⛌ ᴀʙᴏʀᴛ ᴀᴄᴄᴇss ⛌", callback_data="close")]
 
-    # 🔙 Navigation Buttons Route Fixed (Bug Removed)
+    # 🔙 100% BUG FIXED: Underscore added back so it matches the plugin!
     second = [
         InlineKeyboardButton(
             text="⇦ ᴩʀᴇᴠ",
-            callback_data=f"mbot_cb",
+            callback_data="mbot_cb",
         ),
         InlineKeyboardButton(
             text="⌂ ʜᴏᴍᴇ",
-            callback_data=f"settingsback_helper", # ☠️ THE REAL FIX: Removed the underscore!
+            callback_data="settings_back_helper", # ☠️ FIX: underscore restored
         ),
         InlineKeyboardButton(
             text="ɴᴇxᴛ ⇨",
-            callback_data=f"mbot_cb",
+            callback_data="mbot_cb",
         ),
     ]
     mark = second if START else first
 
-    # 💎 Clean Premium Stylish Buttons (No Emojis)
+    # 💎 Clean Premium Stylish Buttons (Safe for Inline)
     upl = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton(
-                    text="✦ ᴀᴅᴍɪɴ ✦",
-                    callback_data="help_callback hb1",
-                ),
-                InlineKeyboardButton(
-                    text="✦ ᴀᴜᴛʜ ✦",
-                    callback_data="help_callback hb2",
-                ),
-                InlineKeyboardButton(
-                    text="✦ ʙ-ʟɪsᴛ ✦",
-                    callback_data="help_callback hb3",
-                ),
+                InlineKeyboardButton(text="✦ ᴀᴅᴍɪɴ ✦", callback_data="help_callback hb1"),
+                InlineKeyboardButton(text="✦ ᴀᴜᴛʜ ✦", callback_data="help_callback hb2"),
+                InlineKeyboardButton(text="✦ ʙ-ʟɪsᴛ ✦", callback_data="help_callback hb3"),
             ],
             [
-                InlineKeyboardButton(
-                    text="✦ ʙʀᴏᴀᴅ ✦",
-                    callback_data="help_callback hb4",
-                ),
-                InlineKeyboardButton(
-                    text="✦ ɢ-ʙᴀɴ ✦",
-                    callback_data="help_callback hb5",
-                ),
-                InlineKeyboardButton(
-                    text="✦ ʟ-ᴜsᴇʀ ✦",
-                    callback_data="help_callback hb6",
-                ),
+                InlineKeyboardButton(text="✦ ʙʀᴏᴀᴅ ✦", callback_data="help_callback hb4"),
+                InlineKeyboardButton(text="✦ ɢ-ʙᴀɴ ✦", callback_data="help_callback hb5"),
+                InlineKeyboardButton(text="✦ ʟ-ᴜsᴇʀ ✦", callback_data="help_callback hb6"),
             ],
             [
-                InlineKeyboardButton(
-                    text="✦ ɴʏx ✦",
-                    callback_data="help_callback hb7",
-                ),
-                InlineKeyboardButton(
-                    text="✦ ᴩʟᴀʏ ✦",
-                    callback_data="help_callback hb8",
-                ),
-                InlineKeyboardButton(
-                    text="✦ ᴩ-ʟɪsᴛ ✦",
-                    callback_data="help_callback hb9",
-                ),
+                InlineKeyboardButton(text="✦ ɴʏx ✦", callback_data="help_callback hb7"),
+                InlineKeyboardButton(text="✦ ᴩʟᴀʏ ✦", callback_data="help_callback hb8"),
+                InlineKeyboardButton(text="✦ ᴩ-ʟɪsᴛ ✦", callback_data="help_callback hb9"),
             ],
             [
-                InlineKeyboardButton(
-                    text="✦ ᴠ-ᴄʜᴀᴛ ✦",
-                    callback_data="help_callback hb10",
-                ),
-                InlineKeyboardButton(
-                    text="✦ sᴛᴀᴛs ✦",
-                    callback_data="help_callback hb11",
-                ),
-                InlineKeyboardButton(
-                    text="✦ ᴇxᴛʀᴀ ✦",
-                    callback_data="help_callback hb12",
-                ),
+                InlineKeyboardButton(text="✦ ᴠ-ᴄʜᴀᴛ ✦", callback_data="help_callback hb10"),
+                InlineKeyboardButton(text="✦ sᴛᴀᴛs ✦", callback_data="help_callback hb11"),
+                InlineKeyboardButton(text="✦ ᴇxᴛʀᴀ ✦", callback_data="help_callback hb12"),
             ],
             [
-                InlineKeyboardButton(
-                    text="✦ sᴏɴɢ ✦",
-                    callback_data="help_callback hb13",
-                ),
-                InlineKeyboardButton(
-                    text="✦ sᴏᴜɴᴅ ✦",
-                    callback_data="help_callback hb14",
-                ),
-                InlineKeyboardButton(
-                    text="✦ ʟʏʀɪᴄ ✦",
-                    callback_data="help_callback hb15",
-                ),
+                InlineKeyboardButton(text="✦ sᴏɴɢ ✦", callback_data="help_callback hb13"),
+                InlineKeyboardButton(text="✦ sᴏᴜɴᴅ ✦", callback_data="help_callback hb14"),
+                InlineKeyboardButton(text="✦ ʟʏʀɪᴄ ✦", callback_data="help_callback hb15"),
             ],
             mark,
         ]
@@ -108,7 +63,7 @@ def help_back_markup(_):
             [
                 InlineKeyboardButton(
                     text="⇦ ʙᴀᴄᴋ ᴛᴏ ᴍᴀɪɴ",
-                    callback_data=f"settingsback_helper", # ☠️ Route fixed here too
+                    callback_data="settings_back_helper", # ☠️ FIX: underscore restored
                 ),
             ]
         ]
