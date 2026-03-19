@@ -23,7 +23,7 @@ async def play_logs(message, streamtype):
 ➻ <emoji id=6307569802466563145>🎶</emoji> <b>ǫᴜᴇʀʏ :</b> <code>{query}</code>
 ➻ <emoji id=6307821174017496029>🔥</emoji> <b>sᴛʀᴇᴀᴍ ᴛʏᴘᴇ :</b> {streamtype}
 
-<emoji id=5999210495146465994>💖</emoji> <b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/Reflex_x_zara'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a></b>"""
+<emoji id=5999210495146465994>💖</emoji> <b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/MONSTER_FUCK_BITCHES'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a></b>"""
         
         if message.chat.id != LOGGER_ID:
             try:

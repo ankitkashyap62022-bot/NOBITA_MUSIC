@@ -61,7 +61,7 @@ sᴏ ᴜsᴇ ʏᴏᴜʀ ᴀɴʏ ᴏᴛʜᴇʀ ɪ'ᴅ sᴇssɪᴏɴ 👈🏻
 
 ### 📞 Contact  
 <p align="center">
-<a href="https://t.me/Reflex_x_zara">
+<a href="https://t.me/MONSTER_FUCK_BITCHES">
 <img title="Telegram" src="https://img.shields.io/badge/Telegram-%23000000.svg?&style=for-the-badge&logo=telegram&logoColor=61DAFB">
 </a>
 </p>

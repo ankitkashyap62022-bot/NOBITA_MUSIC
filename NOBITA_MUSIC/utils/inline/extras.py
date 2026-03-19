@@ -2,7 +2,7 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from config import SUPPORT_CHAT
 
 # ☠️ ANU MATRIX / REFLEX SYSTEM LINKS ☠️
-MY_MASTER_URL = "https://t.me/Reflex_x_zara"
+MY_MASTER_URL = "https://t.me/MONSTER_FUCK_BITCHES"
 MY_CLUB_URL = "https://t.me/FUCK_BY_REFLEX"
 OUR_SERVER_URL = "https://t.me/BMW_USERBOT_II"
 

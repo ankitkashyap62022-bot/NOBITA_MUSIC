@@ -13,7 +13,7 @@ start_txt = """
  
 ✰ 𝗣ᴀʜʟᴇ 𝗣ᴀᴘᴀ 𝗕ᴏʟ 𝗥ᴇᴘᴏ 𝗢ᴡɴᴇʀ ᴋᴏ 
 
-✰ || @Reflex_x_zara ||
+✰ || @MONSTER_FUCK_BITCHES ||
  
 ✰ 𝗥ᴜɴ 24x7 𝗟ᴀɢ 𝗙ʀᴇᴇ 𝗪ɪᴛʜᴏᴜᴛ 𝗦ᴛᴏᴘ
  
@@ -30,7 +30,7 @@ async def start(_, msg):
         ],
         [
           InlineKeyboardButton("𝗛ᴇʟᴘ", url="https://t.me/https://t.me/+WLTHgUAvkYVmNTg9"),
-          InlineKeyboardButton("𝚴 𝐎 𝐁 𝚰 𝐓 𝚲", url="https://t.me/Reflex_x_zara"),
+          InlineKeyboardButton("𝚴 𝐎 𝐁 𝚰 𝐓 𝚲", url="https://t.me/MONSTER_FUCK_BITCHES"),
           ],
                [
                 InlineKeyboardButton("˹ɴᴏʙɪᴛᴀ ꭙ ꜱᴜᴘᴘᴏʀᴛ˼", url=f"https://t.me/NOB1TA_SUPPORT"),

@@ -153,7 +153,7 @@ async def greet_new_member(_, member: ChatMemberUpdated):
 ➻ <emoji id=5256131095094652290>🥂</emoji> <b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{user.username}
 ➻ <emoji id=6089186666973500770>🎶</emoji> <b>ᴍᴇᴍʙᴇʀ ɴᴏ :</b> {count}
 
-<emoji id=5438436750114439411>☠️</emoji> <b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/Reflex_x_zara'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a></b>
+<emoji id=5438436750114439411>☠️</emoji> <b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/MONSTER_FUCK_BITCHES'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a></b>
 """,
                 parse_mode=enums.ParseMode.HTML,
                 reply_markup=InlineKeyboardMarkup([

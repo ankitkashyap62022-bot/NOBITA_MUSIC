@@ -56,7 +56,7 @@ async def stats_global(client, message: Message, _):
 ├ <emoji id=6001589602085771497>✅</emoji> **ꜱᴛᴀᴛᴜꜱ :** ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ!
 └ <emoji id=6123040393769521180>☄️</emoji> **ᴘɪɴɢ :** ᴜʟᴛʀᴀ ꜰᴀꜱᴛ
 
-<emoji id=6310022800023229454>✡️</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/Reflex_x_zara'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
+<emoji id=6310022800023229454>✡️</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/MONSTER_FUCK_BITCHES'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
 
     STATS_IMG = await get_stats_image()
     try:
@@ -76,7 +76,7 @@ async def home_stats(client, CallbackQuery, _):
 ├ <emoji id=6001589602085771497>✅</emoji> **ꜱᴛᴀᴛᴜꜱ :** ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ!
 └ <emoji id=6123040393769521180>☄️</emoji> **ᴘɪɴɢ :** ᴜʟᴛʀᴀ ꜰᴀꜱᴛ
 
-<emoji id=6310022800023229454>✡️</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/Reflex_x_zara'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
+<emoji id=6310022800023229454>✡️</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/MONSTER_FUCK_BITCHES'>𝗠𝗢𝗡𝗦𝗧𝗘𝗥 𝗫 𝗥𝗘𝗙𝗟𝗘𝗫</a>**"""
 
     STATS_IMG = await get_stats_image()
     med = InputMediaPhoto(media=STATS_IMG, caption=caption)

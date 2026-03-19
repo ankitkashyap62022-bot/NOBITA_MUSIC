@@ -13,7 +13,7 @@ API_HASH = getenv("API_HASH", "0c3bee507e2ea7621b903b12ef11fba9")
 # Get your token from @BotFather on Telegram.
 BOT_TOKEN = getenv("BOT_TOKEN", "8430966075:AAH8fOGA2CCZYiq8v4YuvYVmsg8XL-2KTPM")
 # -------------------------------------------------------
-OWNER_USERNAME = getenv("OWNER_USERNAME","Reflex_x_zara")
+OWNER_USERNAME = getenv("OWNER_USERNAME","MONSTER_FUCK_BITCHES")
 # --------------------------------------------------------
 BOT_USERNAME = getenv("BOT_USERNAME","ANU_X4_MUSICBOT")
 # --------------------------------------------------------
@@ -29,7 +29,7 @@ DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 17000))
 LOGGER_ID = int(getenv("LOGGER_ID", -1003201139840))
 
 # Get this value from @PURVI_HELP_BOT on Telegram by /id
-OWNER_ID = int(getenv("OWNER_ID", 8036881129))
+OWNER_ID = int(getenv("OWNER_ID", 7580691483))
 
 # make your bots privacy from telegra.ph and put your url here 
 PRIVACY_LINK = getenv("PRIVACY_LINK", "https://graph.org/PRIVACY-FOR-TEAM-PURVI-BOTS-09-18")
@@ -45,7 +45,7 @@ UPSTREAM_REPO = getenv("UPSTREAM_REPO", "")
 UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "main")
 GIT_TOKEN = getenv("GIT_TOKEN", None)  
 
-SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/Reflex_x_zara")
+SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/MONSTER_FUCK_BITCHES")
 SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/FUCK_BY_REFLEX")
 
 # Set this to True if you want the assistant to automatically leave chats after an interval
