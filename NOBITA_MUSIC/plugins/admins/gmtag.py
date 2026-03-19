@@ -13,8 +13,7 @@ tag_db = mongodb.gmgn_tags  # Single DB collection for GM/GN and Emojis
 spam_chats = []
 TAG_DATA = {} # RAM storage for initial menu
 
-# 🔥 DEFAULT PREMIUM EMOJIS (HTML FORMAT) 🔥
-DEFAULT_PREMIUM_EMOJIS = [
+PREMIUM_EMOJIS = [
     "<emoji id=4929369656797431200>🪐</emoji>", "<emoji id=6123040393769521180>☄️</emoji>", 
     "<emoji id=6307821174017496029>🔥</emoji>", "<emoji id=6111742817304841054>✅</emoji>", 
     "<emoji id=4929195195225867512>💎</emoji>", "<emoji id=6152142357727811958>🦋</emoji>", 
@@ -36,7 +35,6 @@ async def is_admin(chat_id, user_id, client):
 
 # 🧹 EMOJI STRIPPER (Removes Normal Emojis)
 def strip_normal_emojis(text):
-    # Removes standard emojis (Unicode planes)
     return re.sub(r'[\U00002600-\U000027BF\U00010000-\U0010FFFF]', '', text).strip()
 
 
@@ -48,27 +46,22 @@ async def add_premium_emojis(client, message):
     if not await is_admin(message.chat.id, message.from_user.id, client):
         return await message.reply("<emoji id=4926993814033269936>🖕</emoji> **ᴏᴜᴋᴀᴀᴛ ᴍᴇ ʀᴇʜ ʟᴏᴅᴇ!**")
 
-    # Get raw HTML to preserve Premium Emoji IDs
     raw_html = message.text.html if message.text else ""
-    
-    # Extract all premium emoji HTML tags
     extracted_emojis = re.findall(r'<emoji id="\d+">.*?</emoji>', raw_html)
     
     if not extracted_emojis:
-        return await message.reply("<emoji id=6307605493644793241>📒</emoji> **ɴᴏ ᴘʀᴇᴍɪᴜᴍ ᴇᴍᴏᴊɪꜱ ꜰᴏᴜɴᴅ ɪɴ ʏᴏᴜʀ ᴍᴇꜱꜱᴀɢᴇ! ꜱᴇɴᴅ ʀᴇᴀʟ ᴘʀᴇᴍɪᴜᴍ ᴇᴍᴏᴊɪꜱ.**")
+        return await message.reply("<emoji id=6307605493644793241>📒</emoji> **ɴᴏ ᴘʀᴇᴍɪᴜᴍ ᴇᴍᴏᴊɪꜱ ꜰᴏᴜɴᴅ ɪɴ ʏᴏᴜʀ ᴍᴇꜱꜱᴀɢᴇ!**")
 
-    # Save to Database
     await tag_db.update_one(
         {"_id": "premium_emojis"}, 
         {"$addToSet": {"emojis": {"$each": extracted_emojis}}}, 
         upsert=True
     )
-    
-    await message.reply(f"<emoji id=6111742817304841054>✅</emoji> **ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴇxᴛʀᴀᴄᴛᴇᴅ & ꜱᴀᴠᴇᴅ {len(extracted_emojis)} ᴘʀᴇᴍɪᴜᴍ ᴇᴍᴏᴊɪꜱ ᴛᴏ ᴅᴀᴛᴀʙᴀꜱᴇ!**")
+    await message.reply(f"<emoji id=6111742817304841054>✅</emoji> **ꜱᴀᴠᴇᴅ {len(extracted_emojis)} ᴘʀᴇᴍɪᴜᴍ ᴇᴍᴏᴊɪꜱ!**")
 
 
 # ==========================================
-# ☠️ STEP 2: ADD GM/GN MESSAGES ☠️
+# ☠️ STEP 2: ADD GM/GN MESSAGES (SILENT SAVE) ☠️
 # ==========================================
 @app.on_message(filters.command(["addgmtag", "addgntag"]) & filters.group)
 async def add_dynamic_tag(client, message):
@@ -78,20 +71,28 @@ async def add_dynamic_tag(client, message):
     cmd = message.command[0].lower()
     tag_type = "gm" if "gm" in cmd else "gn"
     
-    if len(message.command) < 2:
-        return await message.reply(f"<emoji id=6307821174017496029>🔥</emoji> **ᴜꜱᴀɢᴇ:** `/{cmd} [Your Message]`")
+    raw_text = ""
+    if message.reply_to_message and message.reply_to_message.text:
+        raw_text = message.reply_to_message.text
+    elif len(message.command) > 1:
+        raw_text = message.text.split(None, 1)[1]
+    else:
+        return await message.reply(f"<emoji id=6307821174017496029>🔥</emoji> **ᴜꜱᴀɢᴇ:** `/{cmd} [Text]` ᴏʀ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴍᴇꜱꜱᴀɢᴇ!")
     
-    raw_text = message.text.split(None, 1)[1]
+    lines = raw_text.split('\n')
+    clean_lines = []
     
-    # 🔥 STRIP NORMAL EMOJIS 🔥
-    clean_text = strip_normal_emojis(raw_text)
-    
-    if not clean_text:
-        return await message.reply("<emoji id=4926993814033269936>🖕</emoji> **ʙᴀʙᴜ, ᴛᴜɴᴇ ꜱɪʀꜰ ᴇᴍᴏᴊɪ ʙʜᴇᴊᴇ ᴛʜᴇ, ᴊᴏ ᴍᴀɪɴᴇ ᴅᴇʟᴇᴛᴇ ᴋᴀʀ ᴅɪʏᴇ! ᴋᴜᴄʜ ᴛᴇxᴛ ʙʜɪ ʟɪᴋʜ.**")
+    for line in lines:
+        clean_str = strip_normal_emojis(line)
+        if clean_str:  
+            clean_lines.append(clean_str)
+            
+    if not clean_lines:
+        return await message.reply("<emoji id=4926993814033269936>🖕</emoji> **No valid text found after removing emojis!**")
 
-    # Save Clean Text to Database
-    await tag_db.update_one({"_id": tag_type}, {"$addToSet": {"msgs": clean_text}}, upsert=True)
-    await message.reply(f"<emoji id=6111742817304841054>✅</emoji> **{tag_type.upper()} ᴍᴇꜱꜱᴀɢᴇ ᴀᴅᴅᴇᴅ (Nᴏʀᴍᴀʟ Eᴍᴏᴊɪs Rᴇᴍᴏᴠᴇᴅ)!**\n\n📝 `{clean_text}`")
+    await tag_db.update_one({"_id": tag_type}, {"$addToSet": {"msgs": {"$each": clean_lines}}}, upsert=True)
+    # 🔥 FIXED: Now it only shows the number of lines added, not the whole script! 🔥
+    await message.reply(f"<emoji id=6111742817304841054>✅</emoji> **{len(clean_lines)} {tag_type.upper()} ʟɪɴᴇꜱ ᴀᴅᴅᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ!**")
 
 
 # ==========================================
@@ -111,14 +112,12 @@ async def monster_gmgn_menu(client, message):
     cmd = message.command[0].lower()
     tag_type = "gm" if "gm" in cmd else "gn"
 
-    # Fetch Messages
     data = await tag_db.find_one({"_id": tag_type})
     if not data or not data.get("msgs"):
-        return await message.reply(f"<emoji id=6307605493644793241>📒</emoji> **ɴᴏ {tag_type.upper()} ᴍᴇꜱꜱᴀɢᴇꜱ ꜰᴏᴜɴᴅ! ᴀᴅᴅ ꜰɪʀꜱᴛ ᴜꜱɪɴɢ `/{'addgmtag' if tag_type == 'gm' else 'addgntag'}`**")
+        return await message.reply(f"<emoji id=6307605493644793241>📒</emoji> **ɴᴏ {tag_type.upper()} ᴍᴇꜱꜱᴀɢᴇꜱ ꜰᴏᴜɴᴅ! ᴀᴅᴅ ꜰɪʀꜱᴛ.**")
 
-    # Fetch Premium Emojis
     emoji_data = await tag_db.find_one({"_id": "premium_emojis"})
-    current_emojis = emoji_data["emojis"] if emoji_data and emoji_data.get("emojis") else DEFAULT_PREMIUM_EMOJIS
+    current_emojis = emoji_data["emojis"] if emoji_data and emoji_data.get("emojis") else PREMIUM_EMOJIS
 
     TAG_DATA[chat_id] = {
         "type": tag_type,
@@ -127,7 +126,6 @@ async def monster_gmgn_menu(client, message):
         "initiator": message.from_user.mention
     }
 
-    # 🔥 ONLY 1/1 AND 3/3 BUTTONS 🔥
     menu_btns = InlineKeyboardMarkup([
         [
             InlineKeyboardButton("✦ 1 / 1 ✦", callback_data="xtag_1"),
@@ -145,7 +143,7 @@ async def monster_gmgn_menu(client, message):
 
 
 # ==========================================
-# ☠️ STEP 4: TAGGING ENGINE ☠️
+# ☠️ STEP 4: TAGGING ENGINE (FAST + DOUBLE EMOJI) ☠️
 # ==========================================
 @app.on_callback_query(filters.regex(r"^xtag_"))
 async def gmgn_callback_handler(client, CallbackQuery):
@@ -172,8 +170,8 @@ async def gmgn_callback_handler(client, CallbackQuery):
         return await CallbackQuery.message.delete()
         
     stop_btn = InlineKeyboardMarkup([[InlineKeyboardButton("⛌ ꜱᴛᴏᴘ ᴛᴀɢ ⛌", callback_data=f"stopx_{chat_id}")]])
-    
     tag_name = "ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ" if data["type"] == "gm" else "ɢᴏᴏᴅ ɴɪɢʜᴛ"
+    
     await CallbackQuery.edit_message_text(
         f"<emoji id=6123040393769521180>☄️</emoji> **ᴀɴᴜ {tag_name} ɪɴɪᴛɪᴀᴛᴇᴅ!**\n"
         f"<emoji id=6307821174017496029>🔥</emoji> **ᴍᴏᴅᴇ:** `{limit} ᴜꜱᴇʀꜱ / ᴍᴇꜱꜱᴀɢᴇ`\n"
@@ -195,26 +193,28 @@ async def gmgn_callback_handler(client, CallbackQuery):
             count += 1
             
             if count >= limit:
-                # 🔥 DYNAMIC PREMIUM EMOJI & TEXT MIXER 🔥
                 random_msg = random.choice(data["msgs"])
-                random_emoji = random.choice(data["emojis"])
-                final_text = f"{tags} {random_emoji} {random_msg}"
+                emoji_1 = random.choice(data["emojis"])
+                emoji_2 = random.choice(data["emojis"])
+                
+                final_text = f"{tags} {emoji_1} {random_msg} {emoji_2}"
                 
                 try:
                     await client.send_message(chat_id, final_text)
                 except FloodWait as e:
-                    await asyncio.sleep(e.value + 1)
+                    await asyncio.sleep(e.value + 0.5)
                 except Exception:
                     pass
                 
-                await asyncio.sleep(2.5) # Anti-Flood Wait
+                await asyncio.sleep(1.5) 
                 tags = ""
                 count = 0
                 
         if tags and chat_id in spam_chats:
             random_msg = random.choice(data["msgs"])
-            random_emoji = random.choice(data["emojis"])
-            final_text = f"{tags} {random_emoji} {random_msg}"
+            emoji_1 = random.choice(data["emojis"])
+            emoji_2 = random.choice(data["emojis"])
+            final_text = f"{tags} {emoji_1} {random_msg} {emoji_2}"
             try:
                 await client.send_message(chat_id, final_text)
             except Exception:
