@@ -1,234 +1,258 @@
-from NOBITA_MUSIC import app 
 import asyncio
 import random
+import re
 from pyrogram import Client, filters
 from pyrogram.enums import ChatType, ChatMemberStatus
-from pyrogram.errors import UserNotParticipant
-from pyrogram.types import ChatPermissions
+from pyrogram.errors import UserNotParticipant, FloodWait
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from NOBITA_MUSIC import app
+from NOBITA_MUSIC.misc import mongodb
 
+# ☠️ MONSTER KERNEL DATABASE & TRACKER ☠️
+tag_db = mongodb.gmgn_tags  # Single DB collection for GM/GN and Emojis
 spam_chats = []
+TAG_DATA = {} # RAM storage for initial menu
 
-EMOJI = [ "🦋🦋🦋🦋🦋",
-          "🧚🌸🧋🍬🫖",
-          "🥀🌷🌹🌺💐",
-          "🌸🌿💮🌱🌵",
-          "❤️💚💙💜🖤",
-          "💓💕💞💗💖",
-          "🌸💐🌺🌹🦋",
-          "🍔🦪🍛🍲🥗",
-          "🍎🍓🍒🍑🌶️",
-          "🧋🥤🧋🥛🍷",
-          "🍬🍭🧁🎂🍡",
-          "🍨🧉🍺☕🍻",
-          "🥪🥧🍦🍥🍚",
-          "🫖☕🍹🍷🥛",
-          "☕🧃🍩🍦🍙",
-          "🍁🌾💮🍂🌿",
-          "🌨️🌥️⛈️🌩️🌧️",
-          "🌷🏵️🌸🌺💐",
-          "💮🌼🌻🍀🍁",
-          "🧟🦸🦹🧙👸",
-          "🧅🍠🥕🌽🥦",
-          "🐷🐹🐭🐨🐻‍❄️",
-          "🦋🐇🐀🐈🐈‍⬛",
-          "🌼🌳🌲🌴🌵",
-          "🥩🍋🍐🍈🍇",
-          "🍴🍽️🔪🍶🥃",
-          "🕌🏰🏩⛩️🏩",
-          "🎉🎊🎈🎂🎀",
-          "🪴🌵🌴🌳🌲",
-          "🎄🎋🎍🎑🎎",
-          "🦅🦜🕊️🦤🦢",
-          "🦤🦩🦚🦃🦆",
-          "🐬🦭🦈🐋🐳",
-          "🐔🐟🐠🐡🦐",
-          "🦩🦀🦑🐙🦪",
-          "🐦🦂🕷️🕸️🐚",
-          "🥪🍰🥧🍨🍨",
-          " 🥬🍉🧁🧇",
-        ]
+# 🔥 DEFAULT PREMIUM EMOJIS (HTML FORMAT) 🔥
+DEFAULT_PREMIUM_EMOJIS = [
+    "<emoji id=4929369656797431200>🪐</emoji>", "<emoji id=6123040393769521180>☄️</emoji>", 
+    "<emoji id=6307821174017496029>🔥</emoji>", "<emoji id=6111742817304841054>✅</emoji>", 
+    "<emoji id=4929195195225867512>💎</emoji>", "<emoji id=6152142357727811958>🦋</emoji>", 
+    "<emoji id=6307750079423845494>👑</emoji>", "<emoji id=5998881015320287132>💊</emoji>", 
+    "<emoji id=6307346833534359338>🍷</emoji>", "<emoji id=5354924568492383911>😈</emoji>", 
+    "<emoji id=5352870513267973607>✨</emoji>", "<emoji id=6224236403153179330>🎀</emoji>", 
+    "<emoji id=5999210495146465994>💖</emoji>"
+]
 
-TAGMES = [ " **➠ ɢᴏᴏᴅ ɴɪɢʜᴛ 🌚** ",
-           " **➠ ᴄʜᴜᴘ ᴄʜᴀᴘ sᴏ ᴊᴀ 🙊** ",
-           " **➠ ᴘʜᴏɴᴇ ʀᴀᴋʜ ᴋᴀʀ sᴏ ᴊᴀ, ɴᴀʜɪ ᴛᴏ ʙʜᴏᴏᴛ ᴀᴀ ᴊᴀʏᴇɢᴀ..👻** ",
-           " **➠ ᴀᴡᴇᴇ ʙᴀʙᴜ sᴏɴᴀ ᴅɪɴ ᴍᴇɪɴ ᴋᴀʀ ʟᴇɴᴀ ᴀʙʜɪ sᴏ ᴊᴀᴏ..?? 🥲** ",
-           " **➠ ᴍᴜᴍᴍʏ ᴅᴇᴋʜᴏ ʏᴇ ᴀᴘɴᴇ ɢғ sᴇ ʙᴀᴀᴛ ᴋʀ ʀʜᴀ ʜ ʀᴀᴊᴀɪ ᴍᴇ ɢʜᴜs ᴋᴀʀ, sᴏ ɴᴀʜɪ ʀᴀʜᴀ 😜** ",
-           " **➠ ᴘᴀᴘᴀ ʏᴇ ᴅᴇᴋʜᴏ ᴀᴘɴᴇ ʙᴇᴛᴇ ᴋᴏ ʀᴀᴀᴛ ʙʜᴀʀ ᴘʜᴏɴᴇ ᴄʜᴀʟᴀ ʀʜᴀ ʜᴀɪ 🤭** ",
-           " **➠ ᴊᴀɴᴜ ᴀᴀᴊ ʀᴀᴀᴛ ᴋᴀ sᴄᴇɴᴇ ʙɴᴀ ʟᴇ..?? 🌠** ",
-           " **➠ ɢɴ sᴅ ᴛᴄ.. 🙂** ",
-           " **➠ ɢᴏᴏᴅ ɴɪɢʜᴛ sᴡᴇᴇᴛ ᴅʀᴇᴀᴍ ᴛᴀᴋᴇ ᴄᴀʀᴇ..?? ✨** ",
-           " **➠ ʀᴀᴀᴛ ʙʜᴜᴛ ʜᴏ ɢʏɪ ʜᴀɪ sᴏ ᴊᴀᴏ, ɢɴ..?? 🌌** ",
-           " **➠ ᴍᴜᴍᴍʏ ᴅᴇᴋʜᴏ 11 ʙᴀᴊɴᴇ ᴡᴀʟᴇ ʜᴀɪ ʏᴇ ᴀʙʜɪ ᴛᴀᴋ ᴘʜᴏɴᴇ ᴄʜᴀʟᴀ ʀʜᴀ ɴᴀʜɪ sᴏ ɴᴀʜɪ ʀʜᴀ 🕦** ",
-           " **➠ ᴋᴀʟ sᴜʙʜᴀ sᴄʜᴏᴏʟ ɴᴀʜɪ ᴊᴀɴᴀ ᴋʏᴀ, ᴊᴏ ᴀʙʜɪ ᴛᴀᴋ ᴊᴀɢ ʀʜᴇ ʜᴏ 🏫** ",
-           " **➠ ʙᴀʙᴜ, ɢᴏᴏᴅ ɴɪɢʜᴛ sᴅ ᴛᴄ..?? 😊** ",
-           " **➠ ᴀᴀᴊ ʙʜᴜᴛ ᴛʜᴀɴᴅ ʜᴀɪ, ᴀᴀʀᴀᴍ sᴇ ᴊᴀʟᴅɪ sᴏ ᴊᴀᴛɪ ʜᴏᴏɴ 🌼** ",
-           " **➠ ᴊᴀɴᴇᴍᴀɴ, ɢᴏᴏᴅ ɴɪɢʜᴛ 🌷** ",
-           " **➠ ᴍᴇ ᴊᴀ ʀᴀʜɪ sᴏɴᴇ, ɢɴ sᴅ ᴛᴄ 🏵️** ",
-           " **➠ ʜᴇʟʟᴏ ᴊɪ ɴᴀᴍᴀsᴛᴇ, ɢᴏᴏᴅ ɴɪɢʜᴛ 🍃** ",
-           " **➠ ʜᴇʏ, ʙᴀʙʏ ᴋᴋʀʜ..? sᴏɴᴀ ɴᴀʜɪ ʜᴀɪ ᴋʏᴀ ☃️** ",
-           " **➠ ɢᴏᴏᴅ ɴɪɢʜᴛ ᴊɪ, ʙʜᴜᴛ ʀᴀᴀᴛ ʜᴏ ɢʏɪ..? ⛄** ",
-           " **➠ ᴍᴇ ᴊᴀ ʀᴀʜɪ ʀᴏɴᴇ, ɪ ᴍᴇᴀɴ sᴏɴᴇ ɢᴏᴏᴅ ɴɪɢʜᴛ ᴊɪ 😁** ",
-           " **➠ ᴍᴀᴄʜʜᴀʟɪ ᴋᴏ ᴋᴇʜᴛᴇ ʜᴀɪ ғɪsʜ, ɢᴏᴏᴅ ɴɪɢʜᴛ ᴅᴇᴀʀ ᴍᴀᴛ ᴋʀɴᴀ ᴍɪss, ᴊᴀ ʀʜɪ sᴏɴᴇ 🌄** ",
-           " **➠ ɢᴏᴏᴅ ɴɪɢʜᴛ ʙʀɪɢʜᴛғᴜʟʟ ɴɪɢʜᴛ 🤭** ",
-           " **➠ ᴛʜᴇ ɴɪɢʜᴛ ʜᴀs ғᴀʟʟᴇɴ, ᴛʜᴇ ᴅᴀʏ ɪs ᴅᴏɴᴇ,, ᴛʜᴇ ᴍᴏᴏɴ ʜᴀs ᴛᴀᴋᴇɴ ᴛʜᴇ ᴘʟᴀᴄᴇ ᴏғ ᴛʜᴇ sᴜɴ... 😊** ",
-           " **➠ ᴍᴀʏ ᴀʟʟ ʏᴏᴜʀ ᴅʀᴇᴀᴍs ᴄᴏᴍᴇ ᴛʀᴜᴇ ❤️** ",
-           " **➠ ɢᴏᴏᴅ ɴɪɢʜᴛ sᴘʀɪɴᴋʟᴇs sᴡᴇᴇᴛ ᴅʀᴇᴀᴍ 💚** ",
-           " **➠ ɢᴏᴏᴅ ɴɪɢʜᴛ, ɴɪɴᴅ ᴀᴀ ʀʜɪ ʜᴀɪ 🥱** ",
-           " **➠ ᴅᴇᴀʀ ғʀɪᴇɴᴅ ɢᴏᴏᴅ ɴɪɢʜᴛ 💤** ",
-           " **➠ ʙᴀʙʏ ᴀᴀᴊ ʀᴀᴀᴛ ᴋᴀ sᴄᴇɴᴇ ʙɴᴀ ʟᴇ 🥰** ",
-           " **➠ ɪᴛɴɪ ʀᴀᴀᴛ ᴍᴇ ᴊᴀɢ ᴋᴀʀ ᴋʏᴀ ᴋᴀʀ ʀʜᴇ ʜᴏ sᴏɴᴀ ɴᴀʜɪ ʜᴀɪ ᴋʏᴀ 😜** ",
-           " **➠ ᴄʟᴏsᴇ ʏᴏᴜʀ ᴇʏᴇs sɴᴜɢɢʟᴇ ᴜᴘ ᴛɪɢʜᴛ,, ᴀɴᴅ ʀᴇᴍᴇᴍʙᴇʀ ᴛʜᴀᴛ ᴀɴɢᴇʟs, ᴡɪʟʟ ᴡᴀᴛᴄʜ ᴏᴠᴇʀ ʏᴏᴜ ᴛᴏɴɪɢʜᴛ... 💫** ",
-           ]
-
-VC_TAG = [ "**➠ ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ, ᴋᴇsᴇ ʜᴏ 🐱**",
-         "**➠ ɢᴍ, sᴜʙʜᴀ ʜᴏ ɢʏɪ ᴜᴛʜɴᴀ ɴᴀʜɪ ʜᴀɪ ᴋʏᴀ 🌤️**",
-         "**➠ ɢᴍ ʙᴀʙʏ, ᴄʜᴀɪ ᴘɪ ʟᴏ ☕**",
-         "**➠ ᴊᴀʟᴅɪ ᴜᴛʜᴏ, sᴄʜᴏᴏʟ ɴᴀʜɪ ᴊᴀɴᴀ ᴋʏᴀ 🏫**",
-         "**➠ ɢᴍ, ᴄʜᴜᴘ ᴄʜᴀᴘ ʙɪsᴛᴇʀ sᴇ ᴜᴛʜᴏ ᴠʀɴᴀ ᴘᴀɴɪ ᴅᴀʟ ᴅᴜɴɢɪ 🧊**",
-         "**➠ ʙᴀʙʏ ᴜᴛʜᴏ ᴀᴜʀ ᴊᴀʟᴅɪ ғʀᴇsʜ ʜᴏ ᴊᴀᴏ, ɴᴀsᴛᴀ ʀᴇᴀᴅʏ ʜᴀɪ 🫕**",
-         "**➠ ᴏғғɪᴄᴇ ɴᴀʜɪ ᴊᴀɴᴀ ᴋʏᴀ ᴊɪ ᴀᴀᴊ, ᴀʙʜɪ ᴛᴀᴋ ᴜᴛʜᴇ ɴᴀʜɪ 🏣**",
-         "**➠ ɢᴍ ᴅᴏsᴛ, ᴄᴏғғᴇᴇ/ᴛᴇᴀ ᴋʏᴀ ʟᴏɢᴇ ☕🍵**",
-         "**➠ ʙᴀʙʏ 8 ʙᴀᴊɴᴇ ᴡᴀʟᴇ ʜᴀɪ, ᴀᴜʀ ᴛᴜᴍ ᴀʙʜɪ ᴛᴋ ᴜᴛʜᴇ ɴᴀʜɪ 🕖**",
-         "**➠ ᴋʜᴜᴍʙʜᴋᴀʀᴀɴ ᴋɪ ᴀᴜʟᴀᴅ ᴜᴛʜ ᴊᴀᴀ... ☃️**",
-         "**➠ ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ʜᴀᴠᴇ ᴀ ɴɪᴄᴇ ᴅᴀʏ... 🌄**",
-         "**➠ ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ, ʜᴀᴠᴇ ᴀ ɢᴏᴏᴅ ᴅᴀʏ... 🪴**",
-         "**➠ ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ, ʜᴏᴡ ᴀʀᴇ ʏᴏᴜ ʙᴀʙʏ 😇**",
-         "**➠ ᴍᴜᴍᴍʏ ᴅᴇᴋʜᴏ ʏᴇ ɴᴀʟᴀʏᴋ ᴀʙʜɪ ᴛᴀᴋ sᴏ ʀʜᴀ ʜᴀɪ... 😵‍💫**",
-         "**➠ ʀᴀᴀᴛ ʙʜᴀʀ ʙᴀʙᴜ sᴏɴᴀ ᴋʀ ʀʜᴇ ᴛʜᴇ ᴋʏᴀ, ᴊᴏ ᴀʙʜɪ ᴛᴋ sᴏ ʀʜᴇ ʜᴏ ᴜᴛʜɴᴀ ɴᴀʜɪ ʜᴀɪ ᴋʏᴀ... 😏**",
-         "**➠ ʙᴀʙᴜ ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ᴜᴛʜ ᴊᴀᴏ ᴀᴜʀ ɢʀᴏᴜᴘ ᴍᴇ sᴀʙ ғʀɪᴇɴᴅs ᴋᴏ ɢᴍ ᴡɪsʜ ᴋʀᴏ... 🌟**",
-         "**➠ ᴘᴀᴘᴀ ʏᴇ ᴀʙʜɪ ᴛᴀᴋ ᴜᴛʜ ɴᴀʜɪ, sᴄʜᴏᴏʟ ᴋᴀ ᴛɪᴍᴇ ɴɪᴋᴀʟᴛᴀ ᴊᴀ ʀʜᴀ ʜᴀɪ... 🥲**",
-         "**➠ ᴊᴀɴᴇᴍᴀɴ ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ, ᴋʏᴀ ᴋʀ ʀʜᴇ ʜᴏ ... 😅**",
-         "**➠ ɢᴍ ʙᴇᴀsᴛɪᴇ, ʙʀᴇᴀᴋғᴀsᴛ ʜᴜᴀ ᴋʏᴀ... 🍳**",
-        ]
-
-
-@app.on_message(filters.command(["gntag", "tagmember" ], prefixes=["/", "@", "#"]))
-async def mentionall(client, message):
-    chat_id = message.chat.id
-    if message.chat.type == ChatType.PRIVATE:
-        return await message.reply("๏ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴏɴʟʏ ғᴏʀ ɢʀᴏᴜᴘs.")
-
-    is_admin = False
+# 🔥 ADMIN CHECK FUNCTION 🔥
+async def is_admin(chat_id, user_id, client):
     try:
-        participant = await client.get_chat_member(chat_id, message.from_user.id)
+        participant = await client.get_chat_member(chat_id, user_id)
+        if participant.status in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER]:
+            return True
     except UserNotParticipant:
-        is_admin = False
-    else:
-        if participant.status in (
-            ChatMemberStatus.ADMINISTRATOR,
-            ChatMemberStatus.OWNER
-        ):
-            is_admin = True
-    if not is_admin:
-        return await message.reply("๏ ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʙᴀʙʏ, ᴏɴʟʏ ᴀᴅᴍɪɴs ᴄᴀɴ ᴛᴀɢ ᴍᴇᴍʙᴇʀs. ")
-
-    if message.reply_to_message and message.text:
-        return await message.reply("/tagall ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ᴛʏᴘᴇ ʟɪᴋᴇ ᴛʜɪs / ʀᴇᴘʟʏ ᴀɴʏ ᴍᴇssᴀɢᴇ ɴᴇxᴛ ᴛɪᴍᴇ ʙᴏᴛ ᴛᴀɢɢɪɴɢ...")
-    elif message.text:
-        mode = "text_on_cmd"
-        msg = message.text
-    elif message.reply_to_message:
-        mode = "text_on_reply"
-        msg = message.reply_to_message
-        if not msg:
-            return await message.reply("/tagall ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ᴛʏᴘᴇ ʟɪᴋᴇ ᴛʜɪs / ʀᴇᴘʟʏ ᴀɴʏ ᴍᴇssᴀɢᴇ ɴᴇxᴛ ᴛɪᴍᴇ ғᴏᴛ ᴛᴀɢɢɪɴɢ...")
-    else:
-        return await message.reply("/tagall ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ᴛʏᴘᴇ ʟɪᴋᴇ ᴛʜɪs / ʀᴇᴘʟʏ ᴀɴʏ ᴍᴇssᴀɢᴇ ɴᴇxᴛ ᴛɪᴍᴇ ʙᴏᴛ ᴛᴀɢɢɪɴɢ...")
-    if chat_id in spam_chats:
-        return await message.reply("๏ ᴘʟᴇᴀsᴇ ᴀᴛ ғɪʀsᴛ sᴛᴏᴘ ʀᴜɴɴɪɴɢ ᴍᴇɴᴛɪᴏɴ ᴘʀᴏᴄᴇss...")
-    spam_chats.append(chat_id)
-    usrnum = 0
-    usrtxt = ""
-    async for usr in client.get_chat_members(chat_id):
-        if not chat_id in spam_chats:
-            break
-        if usr.user.is_bot:
-            continue
-        usrnum += 1
-        usrtxt += f"[{usr.user.first_name}](tg://user?id={usr.user.id}) "
-
-        if usrnum == 1:
-            if mode == "text_on_cmd":
-                txt = f"{usrtxt} {random.choice(TAGMES)}"
-                await client.send_message(chat_id, txt)
-            elif mode == "text_on_reply":
-                await msg.reply(f"[{random.choice(EMOJI)}](tg://user?id={usr.user.id})")
-            await asyncio.sleep(4)
-            usrnum = 0
-            usrtxt = ""
-    try:
-        spam_chats.remove(chat_id)
-    except:
         pass
+    return False
+
+# 🧹 EMOJI STRIPPER (Removes Normal Emojis)
+def strip_normal_emojis(text):
+    # Removes standard emojis (Unicode planes)
+    return re.sub(r'[\U00002600-\U000027BF\U00010000-\U0010FFFF]', '', text).strip()
 
 
-@app.on_message(filters.command(["gmtag"], prefixes=["/", "@", "#"]))
-async def mention_allvc(client, message):
+# ==========================================
+# ☠️ STEP 1: PREMIUM EMOJI EXTRACTOR ☠️
+# ==========================================
+@app.on_message(filters.command(["addpreme", "addemoji"]) & filters.group)
+async def add_premium_emojis(client, message):
+    if not await is_admin(message.chat.id, message.from_user.id, client):
+        return await message.reply("<emoji id=4926993814033269936>🖕</emoji> **ᴏᴜᴋᴀᴀᴛ ᴍᴇ ʀᴇʜ ʟᴏᴅᴇ!**")
+
+    # Get raw HTML to preserve Premium Emoji IDs
+    raw_html = message.text.html if message.text else ""
+    
+    # Extract all premium emoji HTML tags
+    extracted_emojis = re.findall(r'<emoji id="\d+">.*?</emoji>', raw_html)
+    
+    if not extracted_emojis:
+        return await message.reply("<emoji id=6307605493644793241>📒</emoji> **ɴᴏ ᴘʀᴇᴍɪᴜᴍ ᴇᴍᴏᴊɪꜱ ꜰᴏᴜɴᴅ ɪɴ ʏᴏᴜʀ ᴍᴇꜱꜱᴀɢᴇ! ꜱᴇɴᴅ ʀᴇᴀʟ ᴘʀᴇᴍɪᴜᴍ ᴇᴍᴏᴊɪꜱ.**")
+
+    # Save to Database
+    await tag_db.update_one(
+        {"_id": "premium_emojis"}, 
+        {"$addToSet": {"emojis": {"$each": extracted_emojis}}}, 
+        upsert=True
+    )
+    
+    await message.reply(f"<emoji id=6111742817304841054>✅</emoji> **ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴇxᴛʀᴀᴄᴛᴇᴅ & ꜱᴀᴠᴇᴅ {len(extracted_emojis)} ᴘʀᴇᴍɪᴜᴍ ᴇᴍᴏᴊɪꜱ ᴛᴏ ᴅᴀᴛᴀʙᴀꜱᴇ!**")
+
+
+# ==========================================
+# ☠️ STEP 2: ADD GM/GN MESSAGES ☠️
+# ==========================================
+@app.on_message(filters.command(["addgmtag", "addgntag"]) & filters.group)
+async def add_dynamic_tag(client, message):
+    if not await is_admin(message.chat.id, message.from_user.id, client):
+        return await message.reply("<emoji id=4926993814033269936>🖕</emoji> **ᴏᴜᴋᴀᴀᴛ ᴍᴇ ʀᴇʜ ʟᴏᴅᴇ!**")
+
+    cmd = message.command[0].lower()
+    tag_type = "gm" if "gm" in cmd else "gn"
+    
+    if len(message.command) < 2:
+        return await message.reply(f"<emoji id=6307821174017496029>🔥</emoji> **ᴜꜱᴀɢᴇ:** `/{cmd} [Your Message]`")
+    
+    raw_text = message.text.split(None, 1)[1]
+    
+    # 🔥 STRIP NORMAL EMOJIS 🔥
+    clean_text = strip_normal_emojis(raw_text)
+    
+    if not clean_text:
+        return await message.reply("<emoji id=4926993814033269936>🖕</emoji> **ʙᴀʙᴜ, ᴛᴜɴᴇ ꜱɪʀꜰ ᴇᴍᴏᴊɪ ʙʜᴇᴊᴇ ᴛʜᴇ, ᴊᴏ ᴍᴀɪɴᴇ ᴅᴇʟᴇᴛᴇ ᴋᴀʀ ᴅɪʏᴇ! ᴋᴜᴄʜ ᴛᴇxᴛ ʙʜɪ ʟɪᴋʜ.**")
+
+    # Save Clean Text to Database
+    await tag_db.update_one({"_id": tag_type}, {"$addToSet": {"msgs": clean_text}}, upsert=True)
+    await message.reply(f"<emoji id=6111742817304841054>✅</emoji> **{tag_type.upper()} ᴍᴇꜱꜱᴀɢᴇ ᴀᴅᴅᴇᴅ (Nᴏʀᴍᴀʟ Eᴍᴏᴊɪs Rᴇᴍᴏᴠᴇᴅ)!**\n\n📝 `{clean_text}`")
+
+
+# ==========================================
+# ☠️ STEP 3: INITIATE TAG MENU ☠️
+# ==========================================
+@app.on_message(filters.command(["gmtag", "gntag"]) & filters.group)
+async def monster_gmgn_menu(client, message):
     chat_id = message.chat.id
-    if message.chat.type == ChatType.PRIVATE:
-        return await message.reply("๏ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴏɴʟʏ ғᴏʀ ɢʀᴏᴜᴘs.")
+    user_id = message.from_user.id
 
-    is_admin = False
-    try:
-        participant = await client.get_chat_member(chat_id, message.from_user.id)
-    except UserNotParticipant:
-        is_admin = False
-    else:
-        if participant.status in (
-            ChatMemberStatus.ADMINISTRATOR,
-            ChatMemberStatus.OWNER
-        ):
-            is_admin = True
-    if not is_admin:
-        return await message.reply("๏ ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʙᴀʙʏ, ᴏɴʟʏ ᴀᴅᴍɪɴs ᴄᴀɴ ᴛᴀɢ ᴍᴇᴍʙᴇʀs. ")
+    if not await is_admin(chat_id, user_id, client):
+        return await message.reply("<emoji id=4926993814033269936>🖕</emoji> **ᴏᴜᴋᴀᴀᴛ ᴍᴇ ʀᴇʜ ʟᴏᴅᴇ!**")
+
     if chat_id in spam_chats:
-        return await message.reply("๏ ᴘʟᴇᴀsᴇ ᴀᴛ ғɪʀsᴛ sᴛᴏᴘ ʀᴜɴɴɪɴɢ ᴍᴇɴᴛɪᴏɴ ᴘʀᴏᴄᴇss...")
+        return await message.reply("<emoji id=6310044717241340733>🔄</emoji> **ᴛᴀɢ-ᴀʟʟ ɪꜱ ᴀʟʀᴇᴀᴅʏ ʀᴜɴɴɪɴɢ! ꜱᴛᴏᴘ ɪᴛ ꜰɪʀꜱᴛ.**")
+
+    cmd = message.command[0].lower()
+    tag_type = "gm" if "gm" in cmd else "gn"
+
+    # Fetch Messages
+    data = await tag_db.find_one({"_id": tag_type})
+    if not data or not data.get("msgs"):
+        return await message.reply(f"<emoji id=6307605493644793241>📒</emoji> **ɴᴏ {tag_type.upper()} ᴍᴇꜱꜱᴀɢᴇꜱ ꜰᴏᴜɴᴅ! ᴀᴅᴅ ꜰɪʀꜱᴛ ᴜꜱɪɴɢ `/{'addgmtag' if tag_type == 'gm' else 'addgntag'}`**")
+
+    # Fetch Premium Emojis
+    emoji_data = await tag_db.find_one({"_id": "premium_emojis"})
+    current_emojis = emoji_data["emojis"] if emoji_data and emoji_data.get("emojis") else DEFAULT_PREMIUM_EMOJIS
+
+    TAG_DATA[chat_id] = {
+        "type": tag_type,
+        "msgs": data["msgs"],
+        "emojis": current_emojis,
+        "initiator": message.from_user.mention
+    }
+
+    # 🔥 ONLY 1/1 AND 3/3 BUTTONS 🔥
+    menu_btns = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("✦ 1 / 1 ✦", callback_data="xtag_1"),
+            InlineKeyboardButton("✦ 3 / 3 ✦", callback_data="xtag_3")
+        ],
+        [InlineKeyboardButton("⛌ ᴄᴀɴᴄᴇʟ ⛌", callback_data="xtag_cancel")]
+    ])
+
+    title = "ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ" if tag_type == "gm" else "ɢᴏᴏᴅ ɴɪɢʜᴛ"
+    await message.reply_text(
+        f"<emoji id=4929369656797431200>🪐</emoji> **ᴀɴᴜ ᴍᴀɪɴꜰʀᴀᴍᴇ {title} ᴛᴀɢɢᴇʀ**\n\n"
+        f"<emoji id=6307750079423845494>👑</emoji> ꜱᴇʟᴇᴄᴛ ʜᴏᴡ ᴍᴀɴʏ ᴜꜱᴇʀꜱ ᴛᴏ ᴛᴀɢ ᴘᴇʀ ᴍᴇꜱꜱᴀɢᴇ:",
+        reply_markup=menu_btns
+    )
+
+
+# ==========================================
+# ☠️ STEP 4: TAGGING ENGINE ☠️
+# ==========================================
+@app.on_callback_query(filters.regex(r"^xtag_"))
+async def gmgn_callback_handler(client, CallbackQuery):
+    chat_id = CallbackQuery.message.chat.id
+    user_id = CallbackQuery.from_user.id
+    action = CallbackQuery.data.split("_")[1]
+
+    if not await is_admin(chat_id, user_id, client):
+        return await CallbackQuery.answer("🖕 Oukaat Me Raho! Only Admins!", show_alert=True)
+
+    if action == "cancel":
+        if chat_id in TAG_DATA: del TAG_DATA[chat_id]
+        return await CallbackQuery.message.delete()
+
+    limit = int(action)
+
+    if chat_id in spam_chats:
+        return await CallbackQuery.answer("⚠️ System is already tagging!", show_alert=True)
+
     spam_chats.append(chat_id)
-    usrnum = 0
-    usrtxt = ""
-    async for usr in client.get_chat_members(chat_id):
-        if not chat_id in spam_chats:
-            break
-        if usr.user.is_bot:
-            continue
-        usrnum += 1
-        usrtxt += f"[{usr.user.first_name}](tg://user?id={usr.user.id}) "
-
-        if usrnum == 1:
-            txt = f"{usrtxt} {random.choice(VC_TAG)}"
-            await client.send_message(chat_id, txt)
-            await asyncio.sleep(4)
-            usrnum = 0
-            usrtxt = ""
-    try:
+    data = TAG_DATA.get(chat_id)
+    if not data:
         spam_chats.remove(chat_id)
-    except:
-        pass
+        return await CallbackQuery.message.delete()
+        
+    stop_btn = InlineKeyboardMarkup([[InlineKeyboardButton("⛌ ꜱᴛᴏᴘ ᴛᴀɢ ⛌", callback_data=f"stopx_{chat_id}")]])
+    
+    tag_name = "ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ" if data["type"] == "gm" else "ɢᴏᴏᴅ ɴɪɢʜᴛ"
+    await CallbackQuery.edit_message_text(
+        f"<emoji id=6123040393769521180>☄️</emoji> **ᴀɴᴜ {tag_name} ɪɴɪᴛɪᴀᴛᴇᴅ!**\n"
+        f"<emoji id=6307821174017496029>🔥</emoji> **ᴍᴏᴅᴇ:** `{limit} ᴜꜱᴇʀꜱ / ᴍᴇꜱꜱᴀɢᴇ`\n"
+        f"<emoji id=5998881015320287132>💊</emoji> **ʀᴇQᴜᴇꜱᴛᴇᴅ ʙʏ:** {data['initiator']}",
+        reply_markup=stop_btn
+    )
 
+    tags = ""
+    count = 0
 
-
-@app.on_message(filters.command(["gmstop", "gnstop", "cancle"]))
-async def cancel_spam(client, message):
-    if not message.chat.id in spam_chats:
-        return await message.reply("๏ ᴄᴜʀʀᴇɴᴛʟʏ ɪ'ᴍ ɴᴏᴛ ᴛᴀɢɢɪɴɢ ʙᴀʙʏ.")
-    is_admin = False
     try:
-        participant = await client.get_chat_member(message.chat.id, message.from_user.id)
-    except UserNotParticipant:
-        is_admin = False
-    else:
-        if participant.status in (
-            ChatMemberStatus.ADMINISTRATOR,
-            ChatMemberStatus.OWNER
-        ):
-            is_admin = True
-    if not is_admin:
-        return await message.reply("๏ ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʙᴀʙʏ, ᴏɴʟʏ ᴀᴅᴍɪɴs ᴄᴀɴ ᴛᴀɢ ᴍᴇᴍʙᴇʀs.")
-    else:
-        try:
-            spam_chats.remove(message.chat.id)
-        except:
-            pass
-        return await message.reply("๏ ᴘʀᴏᴄᴇss sᴛᴏᴘᴘᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ ๏")
+        async for member in client.get_chat_members(chat_id):
+            if chat_id not in spam_chats:
+                break
+            if member.user.is_bot or member.user.is_deleted:
+                continue
+            
+            tags += f"[{member.user.first_name}](tg://user?id={member.user.id}) "
+            count += 1
+            
+            if count >= limit:
+                # 🔥 DYNAMIC PREMIUM EMOJI & TEXT MIXER 🔥
+                random_msg = random.choice(data["msgs"])
+                random_emoji = random.choice(data["emojis"])
+                final_text = f"{tags} {random_emoji} {random_msg}"
+                
+                try:
+                    await client.send_message(chat_id, final_text)
+                except FloodWait as e:
+                    await asyncio.sleep(e.value + 1)
+                except Exception:
+                    pass
+                
+                await asyncio.sleep(2.5) # Anti-Flood Wait
+                tags = ""
+                count = 0
+                
+        if tags and chat_id in spam_chats:
+            random_msg = random.choice(data["msgs"])
+            random_emoji = random.choice(data["emojis"])
+            final_text = f"{tags} {random_emoji} {random_msg}"
+            try:
+                await client.send_message(chat_id, final_text)
+            except Exception:
+                pass
+
+    finally:
+        if chat_id in spam_chats:
+            spam_chats.remove(chat_id)
+            await client.send_message(chat_id, f"<emoji id=6111742817304841054>✅</emoji> **{tag_name} ᴛᴀɢɢɪɴɢ ᴄᴏᴍᴘʟᴇᴛᴇᴅ!**")
+        if chat_id in TAG_DATA: del TAG_DATA[chat_id]
 
 
+# ==========================================
+# ☠️ STEP 5: STOP COMMAND & BUTTON ☠️
+# ==========================================
+@app.on_message(filters.command(["gmstop", "gnstop"]) & filters.group)
+async def stop_x_cmd(client, message):
+    chat_id = message.chat.id
+    if not await is_admin(chat_id, message.from_user.id, client):
+        return await message.reply("<emoji id=4926993814033269936>🖕</emoji> **ᴏɴʟʏ ᴀᴅᴍɪɴꜱ ᴄᴀɴ ꜱᴛᴏᴘ ᴛʜɪꜱ!**")
+    
+    if chat_id in spam_chats:
+        spam_chats.remove(chat_id)
+        await message.reply("<emoji id=4929369656797431200>🪐</emoji> **ᴛᴀɢɢɪɴɢ ᴀʙᴏʀᴛᴇᴅ ʙʏ ᴀᴅᴍɪɴ!**")
+    else:
+        await message.reply("<emoji id=6310022800023229454>✡️</emoji> **ɴᴏ ᴛᴀɢɢɪɴɢ ɪꜱ ʀᴜɴɴɪɴɢ ᴄᴜʀʀᴇɴᴛʟʏ.**")
+
+@app.on_callback_query(filters.regex(r"^stopx_"))
+async def stop_x_button(client, CallbackQuery):
+    chat_id = int(CallbackQuery.data.split("_")[1])
+    user_id = CallbackQuery.from_user.id
+    
+    if not await is_admin(chat_id, user_id, client):
+        return await CallbackQuery.answer("🖕 Only Admins can stop this!", show_alert=True)
+        
+    if chat_id in spam_chats:
+        spam_chats.remove(chat_id)
+        await CallbackQuery.answer("🛑 Stopped Successfully!", show_alert=True)
+        await CallbackQuery.edit_message_text("<emoji id=4929369656797431200>🪐</emoji> **ᴛᴀɢɢɪɴɢ ᴀʙᴏʀᴛᴇᴅ ʙʏ ᴀᴅᴍɪɴ!**")
+    else:
+        await CallbackQuery.answer("It's not running!", show_alert=True)
