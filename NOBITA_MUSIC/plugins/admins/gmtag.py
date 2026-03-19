@@ -39,6 +39,22 @@ def strip_normal_emojis(text):
 
 
 # ==========================================
+# ☠️ STEP 0: CLEAR JUNK FROM DATABASE ☠️ (NEW)
+# ==========================================
+@app.on_message(filters.command(["cleargmtag", "cleargntag"]) & filters.group)
+async def clear_dynamic_tags(client, message):
+    if not await is_admin(message.chat.id, message.from_user.id, client):
+        return await message.reply("<emoji id=4926993814033269936>🖕</emoji> **ᴏᴜᴋᴀᴀᴛ ᴍᴇ ʀᴇʜ ʟᴏᴅᴇ!**")
+
+    cmd = message.command[0].lower()
+    tag_type = "gm" if "gm" in cmd else "gn"
+
+    # Wipe the array for that specific tag
+    await tag_db.update_one({"_id": tag_type}, {"$set": {"msgs": []}}, upsert=True)
+    await message.reply(f"<emoji id=6111742817304841054>✅</emoji> **All OLD {tag_type.upper()} Mᴇssᴀɢᴇs ʜᴀᴠᴇ ʙᴇᴇɴ Wɪᴘᴇᴅ Cʟᴇᴀɴ Fʀᴏᴍ Tʜᴇ Dᴀᴛᴀʙᴀsᴇ! Yᴏᴜ ᴄᴀɴ ᴀᴅᴅ ғʀᴇsʜ ᴏɴᴇs ɴᴏᴡ.**")
+
+
+# ==========================================
 # ☠️ STEP 1: PREMIUM EMOJI EXTRACTOR ☠️
 # ==========================================
 @app.on_message(filters.command(["addpreme", "addemoji"]) & filters.group)
@@ -91,7 +107,6 @@ async def add_dynamic_tag(client, message):
         return await message.reply("<emoji id=4926993814033269936>🖕</emoji> **No valid text found after removing emojis!**")
 
     await tag_db.update_one({"_id": tag_type}, {"$addToSet": {"msgs": {"$each": clean_lines}}}, upsert=True)
-    # 🔥 FIXED: Now it only shows the number of lines added, not the whole script! 🔥
     await message.reply(f"<emoji id=6111742817304841054>✅</emoji> **{len(clean_lines)} {tag_type.upper()} ʟɪɴᴇꜱ ᴀᴅᴅᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ!**")
 
 
