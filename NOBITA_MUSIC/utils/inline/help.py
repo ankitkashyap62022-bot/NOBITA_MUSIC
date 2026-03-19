@@ -6,7 +6,7 @@ def help_pannel(_, START: Union[bool, int] = None):
     # 🛑 Close Button Cleaned
     first = [InlineKeyboardButton(text="⛌ ᴀʙᴏʀᴛ ᴀᴄᴄᴇss ⛌", callback_data="close")]
 
-    # 🔙 100% BUG FIXED: Underscore added back so it matches the plugin!
+    # 🔥 THE REAL FIX: "settingsback_helper" (NO UNDERSCORE) goes to START MENU 🔥
     second = [
         InlineKeyboardButton(
             text="⇦ ᴩʀᴇᴠ",
@@ -14,7 +14,7 @@ def help_pannel(_, START: Union[bool, int] = None):
         ),
         InlineKeyboardButton(
             text="⌂ ʜᴏᴍᴇ",
-            callback_data="settings_back_helper", # ☠️ FIX: underscore restored
+            callback_data="settingsback_helper", # ☠️ NO UNDERSCORE HERE! 
         ),
         InlineKeyboardButton(
             text="ɴᴇxᴛ ⇨",
@@ -58,12 +58,13 @@ def help_pannel(_, START: Union[bool, int] = None):
 
 
 def help_back_markup(_):
+    # 🔥 "settings_back_helper" (WITH UNDERSCORE) goes to HELP MENU 🔥
     upl = InlineKeyboardMarkup(
         [
             [
                 InlineKeyboardButton(
                     text="⇦ ʙᴀᴄᴋ ᴛᴏ ᴍᴀɪɴ",
-                    callback_data="settings_back_helper", # ☠️ FIX: underscore restored
+                    callback_data="settings_back_helper", # ☠️ UNDERSCORE STAYS HERE!
                 ),
             ]
         ]
