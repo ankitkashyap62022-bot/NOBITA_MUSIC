@@ -40,15 +40,10 @@ HEROKU_APP_NAME = getenv("HEROKU_APP_NAME")
 # Get it from http://dashboard.heroku.com/account
 HEROKU_API_KEY = getenv("HEROKU_API_KEY")
 
-# ☠️ ANU MATRIX REPO (REPLACED NOBITA) ☠️
-UPSTREAM_REPO = getenv(
-    "UPSTREAM_REPO",
-    "https://github.com/YOUR_GITHUB_USERNAME/ANU_MATRIX",
-)
+# ☠️ ANU MATRIX REPO (FIXED: AUTO-UPDATER DISABLED) ☠️
+UPSTREAM_REPO = getenv("UPSTREAM_REPO", "")
 UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "main")
-GIT_TOKEN = getenv(
-    "GIT_TOKEN", None
-)  # Fill this variable if your upstream repository is private
+GIT_TOKEN = getenv("GIT_TOKEN", None)  
 
 SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/Reflex_x_zara")
 SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/FUCK_BY_REFLEX")
