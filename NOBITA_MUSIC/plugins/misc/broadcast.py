@@ -30,14 +30,19 @@ E_TICK = "<emoji id='6001589602085771497'>✅</emoji>"
 IS_BROADCASTING = False
 
 # ==========================================
-# 🚀 ANU SUPREME BROADCAST SYSTEM (ALL MEDIA) ☠️
+# 🚀 ANU SUPREME BROADCAST SYSTEM (PRO FIX) ☠️
 # ==========================================
-@app.on_message(filters.command(["broadcast", "gcast"]) & SUDOERS)
+@app.on_message(filters.command(["groupcast", "pmcast"]) & SUDOERS)
 @language
 async def braodcast_message(client, message, _):
     global IS_BROADCASTING
     if IS_BROADCASTING:
         return await message.reply_text(f"{E_DEVIL} <b>Abe ruk ja! Ek broadcast pehle se chal raha hai. System ko saans lene de!</b>", parse_mode=ParseMode.HTML)
+
+    # 🛠️ Command Identifier Check
+    command = message.command[0].lower()
+    is_groupcast = command == "groupcast"
+    is_pmcast = command == "pmcast"
 
     # Variables for Message Copying or Sending
     x = message.reply_to_message.id if message.reply_to_message else None
@@ -45,41 +50,42 @@ async def braodcast_message(client, message, _):
     query = ""
 
     if message.reply_to_message:
+        # Agar reply me custom emojis hain, to copy_message use hota hai, wo automatically sab preserve kar leta hai!
         query = message.text.split(None, 1)[1] if len(message.command) > 1 else ""
     else:
         if len(message.command) < 2:
-            return await message.reply_text(f"{E_DEVIL} <b>Abe andhe! Command ke sath text ya kisi MEDIA/MESSAGE pe reply toh kar!</b>\n\n<i>Example:</i> <code>/gcast Hello -pin</code>", parse_mode=ParseMode.HTML)
-        query = message.text.split(None, 1)[1]
+            return await message.reply_text(f"{E_DEVIL} <b>Abe andhe! Command ke sath text ya kisi MEDIA/MESSAGE pe reply toh kar!</b>\n\n<i>Example:</i> <code>/{command} Hello -pin</code>", parse_mode=ParseMode.HTML)
+        
+        # 🔥 THE MAGIC FIX FOR PREMIUM EMOJIS! (message.text.html)
+        query = message.text.html.split(None, 1)[1]
 
-    # Flags Setup (Smart parsing)
+    # Flags Setup
     is_pin = "-pin" in query
     is_pinloud = "-pinloud" in query
-    is_user = "-user" in query
     is_assistant = "-assistant" in query
-    is_nobot = "-nobot" in query
 
-    # Clean the actual text to be sent (if not replying)
-    clean_query = query.replace("-pinloud", "").replace("-pin", "").replace("-nobot", "").replace("-assistant", "").replace("-user", "").strip()
+    # Clean text
+    clean_query = query.replace("-pinloud", "").replace("-pin", "").replace("-assistant", "").strip()
 
     if clean_query == "" and not message.reply_to_message:
         return await message.reply_text(f"{E_DEVIL} <b>Abe lode, khali message kya bheju? Kuch likh toh sahi ya kisi photo/video pe reply kar!</b>", parse_mode=ParseMode.HTML)
 
     IS_BROADCASTING = True
-    anim = await message.reply_text(f"{E_MAGIC} <i>[ 𝗔𝗡𝗨 𝗠𝗔𝗜𝗡𝗙𝗥𝗔𝗠𝗘 ] ⇛ 𝗕𝗿𝗼𝗮𝗱𝗰𝗮𝘀𝘁 𝗜𝗻𝗶𝘁𝗶𝗮𝘁𝗲𝗱 (𝗠𝗲𝗱𝗶𝗮 𝗦𝘂𝗽𝗽𝗼𝗿𝘁𝗲𝗱)...</i>", parse_mode=ParseMode.HTML)
+    anim = await message.reply_text(f"{E_MAGIC} <i>[ 𝗔𝗡𝗨 𝗠𝗔𝗜𝗡𝗙𝗥𝗔𝗠𝗘 ] ⇛ {command.upper()} Initiated...</i>", parse_mode=ParseMode.HTML)
 
     sent_gc = 0
     pin_gc = 0
     sent_users = 0
     assistant_report = ""
 
-    # 📡 1. G-CAST (GROUP BROADCAST - ALL MEDIA & TEXT)
-    if not is_nobot:
+    # 📡 1. GROUP CAST (/groupcast)
+    if is_groupcast:
         schats = await get_served_chats()
         for chat in schats:
             chat_id = int(chat["chat_id"])
             try:
-                # 🔥 COPY_MESSAGE USE KIYA HAI = NO "FORWARDED FROM" TAG!
-                m = await app.copy_message(chat_id, y, x) if message.reply_to_message else await app.send_message(chat_id, text=clean_query)
+                # 🔥 ParseMode.HTML lagaya gaya hai premium emojis render karne ke liye!
+                m = await app.copy_message(chat_id, y, x) if message.reply_to_message else await app.send_message(chat_id, text=clean_query, parse_mode=ParseMode.HTML)
                 
                 # Auto Pin Logic (Bypass if no permission)
                 if is_pin or is_pinloud:
@@ -87,7 +93,7 @@ async def braodcast_message(client, message, _):
                         await m.pin(disable_notification=not is_pinloud)
                         pin_gc += 1
                     except:
-                        pass # Agar power nahi hai, to silently skip kar dega
+                        pass
                 
                 sent_gc += 1
                 await asyncio.sleep(0.1) # Fast but safe
@@ -98,13 +104,32 @@ async def braodcast_message(client, message, _):
             except:
                 continue
 
-    # 👤 2. DM CAST (USER BROADCAST)
-    if is_user:
+        # 🎧 ASSISTANT BROADCAST (Only works with /groupcast)
+        if is_assistant:
+            from NOBITA_MUSIC.core.userbot import assistants 
+            for num in assistants:
+                sent_ass = 0
+                client = await get_client(num)
+                async for dialog in client.get_dialogs():
+                    try:
+                        await client.copy_message(dialog.chat.id, y, x) if message.reply_to_message else await client.send_message(dialog.chat.id, text=clean_query, parse_mode=ParseMode.HTML)
+                        sent_ass += 1
+                        await asyncio.sleep(0.2)
+                    except FloodWait as fw:
+                        if int(fw.value) > 200:
+                            continue
+                        await asyncio.sleep(int(fw.value))
+                    except:
+                        continue
+                assistant_report += f"\n   {E_BUTTERFLY} <b>Asst {num}:</b> {sent_ass} Chats"
+
+    # 👤 2. PM CAST (/pmcast)
+    if is_pmcast:
         susers = await get_served_users()
         for user in susers:
             user_id = int(user["user_id"])
             try:
-                m = await app.copy_message(user_id, y, x) if message.reply_to_message else await app.send_message(user_id, text=clean_query)
+                m = await app.copy_message(user_id, y, x) if message.reply_to_message else await app.send_message(user_id, text=clean_query, parse_mode=ParseMode.HTML)
                 sent_users += 1
                 await asyncio.sleep(0.1)
             except FloodWait as fw:
@@ -114,39 +139,25 @@ async def braodcast_message(client, message, _):
             except:
                 continue
 
-    # 🎧 3. ASSISTANT BROADCAST
-    if is_assistant:
-        from NOBITA_MUSIC.core.userbot import assistants 
-        for num in assistants:
-            sent_ass = 0
-            client = await get_client(num)
-            async for dialog in client.get_dialogs():
-                try:
-                    await client.copy_message(dialog.chat.id, y, x) if message.reply_to_message else await client.send_message(dialog.chat.id, text=clean_query)
-                    sent_ass += 1
-                    await asyncio.sleep(0.2)
-                except FloodWait as fw:
-                    if int(fw.value) > 200:
-                        continue
-                    await asyncio.sleep(int(fw.value))
-                except:
-                    continue
-            assistant_report += f"\n   {E_BUTTERFLY} <b>Asst {num}:</b> {sent_ass} Chats"
-
     # ==========================================
     # 💎 FINAL PREMIUM REPORT
     # ==========================================
     final_report = f"""
 {E_DIAMOND} <b>『 𝗔 𝗡 𝗨  𝗕 𝗥 𝗢 𝗔 𝗗 𝗖 𝗔 𝗦 𝗧  ☠️ 』</b> {E_DIAMOND}
 ━━━━━━━━━━━━━━━━━━━━
-{E_CROWN} <b>𝗕𝗿𝗼𝗮𝗱𝗰𝗮𝘀𝘁 𝗦𝘁𝗮𝘁𝘂𝘀 : 𝗖𝗼𝗺𝗽𝗹𝗲𝘁𝗲𝗱!</b>
+{E_CROWN} <b>𝗠𝗼𝗱𝗲 :</b> {command.upper()}
+{E_TICK} <b>𝗦𝘁𝗮𝘁𝘂𝘀 : 𝗖𝗼𝗺𝗽𝗹𝗲𝘁𝗲𝗱!</b>
+"""
+    
+    if is_groupcast:
+        final_report += f"\n{E_MAGIC} <b>𝗚𝗿𝗼𝘂𝗽𝘀 (𝗚𝗖) :</b> {sent_gc}"
+        final_report += f"\n📌 <b>𝗣𝗶𝗻𝗻𝗲𝗱 𝗜𝗻 :</b> {pin_gc}"
+    
+    if is_pmcast:
+        final_report += f"\n👤 <b>𝗨𝘀𝗲𝗿𝘀 (𝗗𝗠) :</b> {sent_users}"
 
-{E_TICK} <b>𝗚𝗿𝗼𝘂𝗽𝘀 (𝗚𝗖) :</b> {sent_gc}
-📌 <b>𝗣𝗶𝗻𝗻𝗲𝗱 𝗜𝗻 :</b> {pin_gc}
-👤 <b>𝗨𝘀𝗲𝗿𝘀 (𝗗𝗠) :</b> {sent_users}"""
-
-    if is_assistant:
-        final_report += f"\n\n{E_MAGIC} <b>𝗔𝘀𝘀𝗶𝘀𝘁𝗮𝗻𝘁 𝗥𝗲𝗽𝗼𝗿𝘁:</b>{assistant_report}"
+    if is_assistant and is_groupcast:
+        final_report += f"\n\n{E_BUTTERFLY} <b>𝗔𝘀𝘀𝗶𝘀𝘁𝗮𝗻𝘁 𝗥𝗲𝗽𝗼𝗿𝘁:</b>{assistant_report}"
 
     final_report += f"\n━━━━━━━━━━━━━━━━━━━━\n{E_DEVIL} <i>𝗔𝗻𝘂 𝗠𝗮𝗶𝗻𝗳𝗿𝗮𝗺𝗲 𝗦𝘂𝗰𝗰𝗲𝘀𝘀𝗳𝘂𝗹𝗹𝘆 𝗘𝘅𝗲𝗰𝘂𝘁𝗲𝗱.</i> 🍷"
 
