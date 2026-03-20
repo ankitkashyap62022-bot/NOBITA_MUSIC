@@ -1,167 +1,141 @@
-import os 
+import os
 import random
-from datetime import datetime 
-from telegraph import upload_file
-from PIL import Image , ImageDraw
-from pyrogram import *
+from datetime import datetime
+from PIL import Image, ImageDraw
+from pyrogram import filters
+from pyrogram.enums import ChatType, ParseMode
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram.enums import *
 
-#BOT FILE NAME
-from NOBITA_MUSIC import app as app
-from NOBITA_MUSIC.mongo.couples_db import _get_image, get_couple
+from NOBITA_MUSIC import app
+
+# ==========================================
+# 💎 PREMIUM EMOJIS LOADED FROM ANU DB 💎
+# ==========================================
+E_DEVIL = "<emoji id='5352542184493031170'>😈</emoji>"
+E_CROWN = "<emoji id='6307750079423845494'>👑</emoji>"
+E_DIAMOND = "<emoji id='4929195195225867512'>💎</emoji>"
+E_MAGIC = "<emoji id='5352870513267973607'>✨</emoji>"
+E_HEART = "<emoji id='6123125485661591081'>🩷</emoji>"
 
 POLICE = [
     [
         InlineKeyboardButton(
-            text="𝚴 𝐎 𝐁 𝚰 𝐓 𝚲",
-            url=f"https://t.me/MONSTER_FUCK_BITCHES",
+            text="👑 𝗕𝗼𝘀𝘀 (𝗢𝘄𝗻𝗲𝗿)",
+            url="https://t.me/MONSTER_FUCK_BITCHES",
         ),
     ],
 ]
 
-
 def dt():
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M")
-    dt_list = dt_string.split(" ")
-    return dt_list
-    
+    return dt_string.split(" ")
 
 def dt_tom():
-    a = (
-        str(int(dt()[0].split("/")[0]) + 1)
-        + "/"
-        + dt()[0].split("/")[1]
-        + "/"
-        + dt()[0].split("/")[2]
-    )
-    return a
-
-tomorrow = str(dt_tom())
-today = str(dt()[0])
+    now = dt()[0].split("/")
+    return f"{int(now[0]) + 1}/{now[1]}/{now[2]}"
 
 @app.on_message(filters.command("couples"))
 async def ctest(_, message):
     cid = message.chat.id
     if message.chat.type == ChatType.PRIVATE:
-        return await message.reply_text("ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴏɴʟʏ ᴡᴏʀᴋs ɪɴ ɢʀᴏᴜᴘs.")
+        return await message.reply_text(f"{E_DEVIL} <b>Abe Lode! Ye command sirf groups me kaam karti hai!</b>", parse_mode=ParseMode.HTML)
+        
     try:
-     #  is_selected = await get_couple(cid, today)
-     #  if not is_selected:
-         msg = await message.reply_text("ɢᴇɴᴇʀᴀᴛɪɴɢ ᴄᴏᴜᴘʟᴇs ɪᴍᴀɢᴇ...")
-         #GET LIST OF USERS
-         list_of_users = []
+        msg = await message.reply_text(f"{E_MAGIC} <i>Anu Mainframe: Scanning Group for couples...</i>", parse_mode=ParseMode.HTML)
+        
+        # GET LIST OF USERS
+        list_of_users = []
+        async for i in app.get_chat_members(message.chat.id, limit=50):
+            if not i.user.is_bot:
+                list_of_users.append(i.user.id)
 
-         async for i in app.get_chat_members(message.chat.id, limit=50):
-             if not i.user.is_bot:
-               list_of_users.append(i.user.id)
+        if len(list_of_users) < 2:
+            return await msg.edit_text(f"{E_DEVIL} <b>Group me log hi nahi hain, kiska joda banau?</b>", parse_mode=ParseMode.HTML)
 
-         c1_id = random.choice(list_of_users)
-         c2_id = random.choice(list_of_users)
-         while c1_id == c2_id:
-              c1_id = random.choice(list_of_users)
+        c1_id = random.choice(list_of_users)
+        c2_id = random.choice(list_of_users)
+        while c1_id == c2_id:
+            c1_id = random.choice(list_of_users)
 
-
-         photo1 = (await app.get_chat(c1_id)).photo
-         photo2 = (await app.get_chat(c2_id)).photo
+        photo1 = (await app.get_chat(c1_id)).photo
+        photo2 = (await app.get_chat(c2_id)).photo
  
-         N1 = (await app.get_users(c1_id)).mention 
-         N2 = (await app.get_users(c2_id)).mention
+        N1 = (await app.get_users(c1_id)).mention 
+        N2 = (await app.get_users(c2_id)).mention
          
-         try:
-            p1 = await app.download_media(photo1.big_file_id, file_name="pfp.png")
-         except Exception:
-            p1 = "NOBITA_MUSIC/assets/upic.png"
-         try:
-            p2 = await app.download_media(photo2.big_file_id, file_name="pfp1.png")
-         except Exception:
-            p2 = "NOBITA_MUSIC/assets/upic.png"
+        # Define paths
+        p1_path = f"downloads/pfp1_{cid}.png"
+        p2_path = f"downloads/pfp2_{cid}.png"
+        out_path = f"downloads/test_{cid}.png"
+        fallback_pic = "NOBITA_MUSIC/assets/upic.png"
+        bg_pic = "NOBITA_MUSIC/assets/cppic.png"
+        
+        # Downloading DPs safely
+        try:
+            p1 = await app.download_media(photo1.big_file_id, file_name=p1_path)
+        except Exception:
+            p1 = fallback_pic
             
-         img1 = Image.open(f"{p1}")
-         img2 = Image.open(f"{p2}")
+        try:
+            p2 = await app.download_media(photo2.big_file_id, file_name=p2_path)
+        except Exception:
+            p2 = fallback_pic
+            
+        # Image Processing (Core PIL Logic kept intact)
+        img1 = Image.open(p1).resize((437, 437))
+        img2 = Image.open(p2).resize((437, 437))
+        img = Image.open(bg_pic)
 
-         img = Image.open("NOBITA_MUSIC/assets/cppic.png")
+        mask = Image.new('L', img1.size, 0)
+        draw = ImageDraw.Draw(mask) 
+        draw.ellipse((0, 0) + img1.size, fill=255)
 
-         img1 = img1.resize((437,437))
-         img2 = img2.resize((437,437))
+        mask1 = Image.new('L', img2.size, 0)
+        draw = ImageDraw.Draw(mask1) 
+        draw.ellipse((0, 0) + img2.size, fill=255)
 
-         mask = Image.new('L', img1.size, 0)
-         draw = ImageDraw.Draw(mask) 
-         draw.ellipse((0, 0) + img1.size, fill=255)
+        img1.putalpha(mask)
+        img2.putalpha(mask1)
 
-         mask1 = Image.new('L', img2.size, 0)
-         draw = ImageDraw.Draw(mask1) 
-         draw.ellipse((0, 0) + img2.size, fill=255)
+        img.paste(img1, (116, 160), img1)
+        img.paste(img2, (789, 160), img2)
 
-
-         img1.putalpha(mask)
-         img2.putalpha(mask1)
-
-         draw = ImageDraw.Draw(img)
-
-         img.paste(img1, (116, 160), img1)
-         img.paste(img2, (789, 160), img2)
-
-         img.save(f'test_{cid}.png')
+        img.save(out_path)
     
-         TXT = f"""
-**ᴛᴏᴅᴀʏ's ᴄᴏᴜᴘʟᴇ ᴏғ ᴛʜᴇ ᴅᴀʏ :
+        # 💎 PREMIUM SIGMA TEXT
+        TXT = f"""
+{E_DIAMOND} <b>『 𝗔 𝗡 𝗨  𝗠 𝗔 𝗧 𝗖 𝗛 𝗠 𝗔 𝗞 𝗜 𝗡 𝗚 』</b> {E_DIAMOND}
+━━━━━━━━━━━━━━━━━━━━
 
-{N1} + {N2} = 💚
+{E_CROWN} <b>𝗔𝗮𝗷 𝗞𝗲 𝗡𝗶𝘁𝗵𝗮𝗹𝗹𝗲 𝗔𝗮𝘀𝗵𝗶𝗾 :</b>
+⇛ {N1} + {N2} = {E_HEART}
 
-ɴᴇxᴛ ᴄᴏᴜᴘʟᴇs ᴡɪʟʟ ʙᴇ sᴇʟᴇᴄᴛᴇᴅ ᴏɴ {tomorrow} !!**
+{E_MAGIC} <i>Next shikaar kal select hoga: {dt_tom()}</i>
+━━━━━━━━━━━━━━━━━━━━
 """
     
-         await message.reply_photo(f"test_{cid}.png", caption=TXT, reply_markup=InlineKeyboardMarkup(POLICE),
-    )
-         await msg.delete()
-         a = upload_file(f"test_{cid}.png")
-         for x in a:
-           img = "https://graph.org/" + x
-           couple = {"c1_id": c1_id, "c2_id": c2_id}
-          # await save_couple(cid, today, couple, img)
-    
-         
-      # elif is_selected:
-      #   msg = await message.reply_text("𝐆ᴇᴛᴛɪɴɢ 𝐓ᴏᴅᴀʏs 𝐂ᴏᴜᴘʟᴇs 𝐈ᴍᴀɢᴇ...")
-      #   b = await _get_image(cid)
-       #  c1_id = int(is_selected["c1_id"])
-       #  c2_id = int(is_selected["c2_id"])
-       #  c1_name = (await app.get_users(c1_id)).first_name
-        # c2_name = (await app.get_users(c2_id)).first_name
-         
-      #   TXT = f"""
-#**𝐓ᴏᴅᴀʏ's 𝐒ᴇʟᴇᴄᴛᴇᴅ 𝐂ᴏᴜᴘʟᴇs 🎉 :
-#➖➖➖➖➖➖➖➖➖➖➖➖
-#[{c1_name}](tg://openmessage?user_id={c1_id}) + [{c2_name}](tg://openmessage?user_id={c2_id}) = ❣️
-#➖➖➖➖➖➖➖➖➖➖➖➖
-#𝐍ᴇxᴛ 𝐂ᴏᴜᴘʟᴇs 𝐖ɪʟʟ 𝐁ᴇ 𝐒ᴇʟᴇᴄᴛᴇᴅ 𝐎ɴ {tomorrow} !!**
-#"""
- #        await message.reply_photo(b, caption=TXT)
-        # await msg.delete()
+        await message.reply_photo(
+            out_path, 
+            caption=TXT, 
+            reply_markup=InlineKeyboardMarkup(POLICE),
+            parse_mode=ParseMode.HTML
+        )
+        await msg.delete()
+        
     except Exception as e:
-        print(str(e))
-    try:
-      os.remove(f"./downloads/pfp1.png")
-      os.remove(f"./downloads/pfp2.png")
-      os.remove(f"test_{cid}.png")
-    except Exception:
-       pass
-         
+        await message.reply_text(f"{E_DEVIL} <b>System Error:</b> {e}", parse_mode=ParseMode.HTML)
+        
+    finally:
+        # 🔥 BUG FIX: Safely removing files so server doesn't fill up
+        for file in [p1_path, p2_path, out_path]:
+            try:
+                if os.path.exists(file):
+                    os.remove(file)
+            except Exception:
+                pass
 
 __mod__ = "COUPLES"
 __help__ = """
 **» /couples** - Get Todays Couples Of The Group In Interactive View
 """
-
-
-
-
-
-    
-
-
-
-
-    
