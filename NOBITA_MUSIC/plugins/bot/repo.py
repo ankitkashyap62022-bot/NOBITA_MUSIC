@@ -15,8 +15,9 @@ E_BUTTERFLY = "<emoji id='6307643744623531146'>🦋</emoji>"
 E_MAGIC = "<emoji id='5352870513267973607'>✨</emoji>"
 E_HEART = "<emoji id='6123125485661591081'>🩷</emoji>"
 
-# Default Pic (Agar tu set karna bhool jaye)
-ANU_REPO_PIC = "https://files.catbox.moe/tcz7s6.jpg"
+# 🔥 FIX: Nobita ki link hata di. Agar tere paas koi permanent Telegraph/Catbox link hai Anu ki, to yahan daal de.
+# Warna ye None rahega jab tak tu /setrepopic nahi karta.
+ANU_REPO_PIC = "https://telegra.ph/file/11e0dc15a818c4600e02c.jpg" # Yahan maine ek dummy image laga di hai, tu isko change kar lena!
 
 # ==========================================
 # 💀 EXTREME TOXIC SIGMA UI TEXT ☠️
@@ -34,7 +35,7 @@ start_txt = f"""
 {E_MAGIC} <b>𝗠𝗮𝗶𝗻 𝗕𝗼𝘁 :</b> @ANU_X_USERBOT
 {E_BUTTERFLY} <b>𝗡𝗲𝘁𝘄𝗼𝗿𝗸 :</b> <a href='https://t.me/FUCK_BY_REFLEX'>𝗔𝗻𝘂 𝗠𝗮𝗶𝗻𝗳𝗿𝗮𝗺𝗲</a>
 
-{E_HEART} <i>"𝗕𝗮𝗮𝗽 𝗕𝗮𝗮𝗽 𝗛𝗼𝘁𝗮 𝗛𝗮𝗶, 𝗢𝗿 𝗔𝗻𝘂 𝗦𝗮𝗯𝗸𝗮 𝗕𝗮𝗮𝗽 𝗛𝗮𝗶." 🍷</i>
+{E_HEART} <i>"𝗠𝗮𝗹𝗸𝗶𝗻 𝗠𝗮𝗹𝗸𝗶𝗻 𝗛𝗼𝘁𝗶 𝗛𝗮𝗶, 𝗢𝗿 𝗔𝗻𝘂 𝗜𝘀 𝗦𝘆𝘀𝘁𝗲𝗺 𝗞𝗶 𝗤𝘂𝗲𝗲𝗻 𝗛𝗮𝗶." 🍷</i>
 ━━━━━━━━━━━━━━━━━━━━
 """
 
@@ -46,10 +47,10 @@ async def set_repo_pic(_, msg):
     global ANU_REPO_PIC
     if not msg.reply_to_message or not msg.reply_to_message.photo:
         return await msg.reply_text(f"{E_DEVIL} <b>Abe andhe lode! 🤬 Bina photo ke command pel raha hai? Kisi image pe reply kar warna system hack kar lunga tera!</b>", parse_mode=ParseMode.HTML)
-    
+
     # Save the new photo ID
     ANU_REPO_PIC = msg.reply_to_message.photo.file_id
-    await msg.reply_text(f"{E_CROWN} <b>Anu Mainframe: Repo Pic Successfully Updated! 🍷</b>\n\n<i>Ab in bhikhariyo ko yahi pic dikhegi!</i> {E_HEART}", parse_mode=ParseMode.HTML)
+    await msg.reply_text(f"{E_CROWN} <b>Anu Mainframe: Repo Pic Successfully Updated! 🍷</b>\n\n<i>Ab in bhikhariyo ko Anu ki yahi pic dikhegi!</i> {E_HEART}", parse_mode=ParseMode.HTML)
 
 
 # ==========================================
@@ -59,26 +60,34 @@ async def set_repo_pic(_, msg):
 async def repo_cmd(_, msg):
     buttons = [
         [ 
-          InlineKeyboardButton("🦋 𝗔𝗱ᴅ 𝗠ᴇ 𝗜ɴ 𝗬ᴏᴜʀ 𝗚ʀᴏᴜᴘ 🦋", url=f"https://t.me/{BOT_USERNAME}?startgroup=true")
+          InlineKeyboardButton("🦋 𝗔ᴅᴅ 𝗠ᴇ 𝗜ɴ 𝗬ᴏᴜʀ 𝗚ʀᴏᴜᴘ 🦋", url=f"https://t.me/{BOT_USERNAME}?startgroup=true")
         ],
         [
           InlineKeyboardButton("💎 𝗔𝘂𝗸𝗮𝗮𝘁 𝗖𝗵𝗲𝗰𝗸 (𝗛𝗲𝗹𝗽)", url="https://t.me/BMW_USERBOT_II"),
-          InlineKeyboardButton("👑 𝗕𝗮𝗮𝗽 (𝗢𝘄𝗻𝗲𝗿)", url="https://t.me/MONSTER_FUCK_BITCHES"),
+          InlineKeyboardButton("👑 𝗕𝗼𝘀𝘀 (𝗢𝘄𝗻𝗲𝗿)", url="https://t.me/MONSTER_FUCK_BITCHES"),
         ],
         [
-          InlineKeyboardButton("😈 𝗔𝗻𝘂 𝗦𝘂𝗽𝗽𝗼𝗿𝘁", url="https://t.me/FUCK_BY_REFLEX"),
+          InlineKeyboardButton("😈 𝗔𝗻𝘂 𝗦𝘂𝗽𝗽𝗼ʀ𝘁", url="https://t.me/FUCK_BY_REFLEX"),
           InlineKeyboardButton("✨ 𝗦𝘆𝘀𝘁𝗲𝗺 𝗖𝗼𝗿𝗲", url="https://t.me/ANU_X_USERBOT"),
         ]
     ]
-    
+
     reply_markup = InlineKeyboardMarkup(buttons)
-    
+
     try:
-        await msg.reply_photo(
-            photo=ANU_REPO_PIC,
-            caption=start_txt,
-            reply_markup=reply_markup,
-            parse_mode=ParseMode.HTML # Important for premium emojis
-        )
+        if ANU_REPO_PIC:
+            await msg.reply_photo(
+                photo=ANU_REPO_PIC,
+                caption=start_txt,
+                reply_markup=reply_markup,
+                parse_mode=ParseMode.HTML # Important for premium emojis
+            )
+        else:
+            # Agar by chance photo set nahi hai, to sirf text bhejega bina error ke
+            await msg.reply_text(
+                text=start_txt,
+                reply_markup=reply_markup,
+                parse_mode=ParseMode.HTML
+            )
     except Exception as e:
         capture_err(e)
