@@ -1,7 +1,10 @@
+import asyncio
 from pyrogram.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     InlineQueryResultPhoto,
+    InlineQueryResultArticle,
+    InputTextMessageContent,
 )
 from youtubesearchpython.__future__ import VideosSearch
 
@@ -9,49 +12,67 @@ from NOBITA_MUSIC import app
 from NOBITA_MUSIC.utils.inlinequery import answer
 from config import BANNED_USERS
 
-
 @app.on_inline_query(~BANNED_USERS)
-async def inline_query_handler(client, query):
+async def premium_inline_query_handler(client, query):
     text = query.query.strip().lower()
-    answers = []
+    
+    # ☠️ STEP 1: EMPTY QUERY HANDLER (DEFAULT BUTTONS) ☠️
     if text.strip() == "":
         try:
             await client.answer_inline_query(query.id, results=answer, cache_time=10)
-        except:
+        except Exception:
+            pass
+        return
+
+    # ☠️ STEP 2: YOUTUBE ADVANCED SEARCH ENGINE ☠️
+    try:
+        answers = []
+        search = VideosSearch(text, limit=15)
+        results = (await search.next()).get("result")
+        
+        # If no results found from YouTube
+        if not results:
             return
-    else:
-        a = VideosSearch(text, limit=20)
-        result = (await a.next()).get("result")
-        for x in range(15):
-            title = (result[x]["title"]).title()
-            duration = result[x]["duration"]
-            views = result[x]["viewCount"]["short"]
-            thumbnail = result[x]["thumbnails"][0]["url"].split("?")[0]
-            channellink = result[x]["channel"]["link"]
-            channel = result[x]["channel"]["name"]
-            link = result[x]["link"]
-            published = result[x]["publishedTime"]
-            description = f"{views} | {duration} ᴍɪɴᴜᴛᴇs | {channel}  | {published}"
-            buttons = InlineKeyboardMarkup(
+
+        # ☠️ STEP 3: DYNAMIC DATA EXTRACTION (NO INDEX ERROR) ☠️
+        for result in results:
+            title = result.get("title", "Unknown Title").title()
+            duration = result.get("duration", "Unknown")
+            views = result.get("viewCount", {}).get("short", "Unknown Views")
+            
+            try:
+                thumbnail = result["thumbnails"][0]["url"].split("?")[0]
+            except Exception:
+                thumbnail = "https://telegra.ph/file/default_music_thumb.jpg" # Fallback Image
+                
+            channellink = result.get("channel", {}).get("link", "https://youtube.com")
+            channel = result.get("channel", {}).get("name", "Unknown Channel")
+            link = result.get("link", "https://youtube.com")
+            published = result.get("publishedTime", "Unknown")
+
+            # Inline Popup Description
+            description = f"👀 {views} | ⏳ {duration} ᴍɪɴ | 🎥 {channel}"
+
+            # 💎 ULTRA PREMIUM BUTTONS 💎
+            buttons = InlineKeyboardMarkup([
                 [
-                    [
-                        InlineKeyboardButton(
-                            text="ʏᴏᴜᴛᴜʙᴇ 🎄",
-                            url=link,
-                        )
-                    ],
+                    InlineKeyboardButton(text="🎥 ᴡᴀᴛᴄʜ ᴏɴ ʏᴏᴜᴛᴜʙᴇ", url=link),
+                    InlineKeyboardButton(text="🍷 ꜱʜᴀʀᴇ", switch_inline_query=text)
                 ]
-            )
+            ])
+
+            # 💎 PREMIUM UI WITH CUSTOM EMOJIS 💎
             searched_text = f"""
-❄ <b>ᴛɪᴛʟᴇ :</b> <a href={link}>{title}</a>
+<emoji id=6123040393769521180>☄️</emoji> **ʏᴏᴜᴛᴜʙᴇ ꜱᴇᴀʀᴄʜ ʀᴇꜱᴜʟᴛꜱ** <emoji id=6123040393769521180>☄️</emoji>
 
-⏳ <b>ᴅᴜʀᴀᴛɪᴏɴ :</b> {duration} ᴍɪɴᴜᴛᴇs
-👀 <b>ᴠɪᴇᴡs :</b> <code>{views}</code>
-🎥 <b>ᴄʜᴀɴɴᴇʟ :</b> <a href={channellink}>{channel}</a>
-⏰ <b>ᴘᴜʙʟɪsʜᴇᴅ ᴏɴ :</b> {published}
+<emoji id=4929369656797431200>🪐</emoji> **ᴛɪᴛʟᴇ :** [{title}]({link})
+<emoji id=5256131095094652290>⏱️</emoji> **ᴅᴜʀᴀᴛɪᴏɴ :** `{duration}`
+<emoji id=6307346833534359338>🍷</emoji> **ᴠɪᴇᴡꜱ :** `{views}`
+<emoji id=6307750079423845494>👑</emoji> **ᴄʜᴀɴɴᴇʟ :** [{channel}]({channellink})
+<emoji id=6152142357727811958>✨</emoji> **ᴘᴜʙʟɪꜱʜᴇᴅ :** `{published}`
 
+<emoji id=5354924568492383911>😈</emoji> **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » {app.name}**"""
 
-<u><b>➻ ɪɴʟɪɴᴇ sᴇᴀʀᴄʜ ᴍᴏᴅᴇ ʙʏ {app.name}</b></u>"""
             answers.append(
                 InlineQueryResultPhoto(
                     photo_url=thumbnail,
@@ -62,7 +83,14 @@ async def inline_query_handler(client, query):
                     reply_markup=buttons,
                 )
             )
-        try:
-            return await client.answer_inline_query(query.id, results=answers)
-        except:
-            return
+
+        # ☠️ STEP 4: DELIVERING RESULTS TO TELEGRAM ☠️
+        if answers:
+            try:
+                await client.answer_inline_query(query.id, results=answers, cache_time=10)
+            except Exception as e:
+                print(f"Inline Answer Error: {e}")
+                
+    except Exception as e:
+        print(f"YouTube Search Crash Prevented: {e}")
+        return
