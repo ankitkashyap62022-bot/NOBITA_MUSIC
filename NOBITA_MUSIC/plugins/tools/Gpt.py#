@@ -1,30 +1,61 @@
-from config import BANNED_USERS
 from pyrogram import filters
 from pyrogram.enums import ChatAction
+from pyrogram.types import Message
 from PurviAPI import api
-from NOBITA_MUSIC import app
 
+from NOBITA_MUSIC import app
+from config import BANNED_USERS
+
+# ==========================================
+# ☠️ ANU MATRIX AI PROTOCOL ☠️
+# ==========================================
 
 @app.on_message(filters.command(["chatgpt", "ai", "ask"]) & ~BANNED_USERS)
-async def chatgpt_chat(bot, message):
+async def premium_chatgpt(client, message: Message):
+    # ☠️ USAGE CHECK ☠️
     if len(message.command) < 2 and not message.reply_to_message:
-        await message.reply_text(
-            "Example:\n\n`/ai write simple website code using html css, js?`"
+        return await message.reply_text(
+            "<emoji id=4929369656797431200>🪐</emoji> **Usᴀɢᴇ:**\n\n`/ask [Tᴇʀᴀ Sᴀᴡᴀᴀʟ]` ʏᴀ ᴋɪsɪ ᴍᴇssᴀɢᴇ ᴋᴏ ʀᴇᴘʟʏ ᴍᴀᴀʀ ᴋᴇ `/ask` ʟɪᴋʜ!"
         )
-        return
 
     if message.reply_to_message and message.reply_to_message.text:
         user_input = message.reply_to_message.text
     else:
         user_input = " ".join(message.command[1:])
 
-    await bot.send_chat_action(message.chat.id, ChatAction.TYPING)
-    results = await api.chatgpt(user_input)
-    await message.reply_text(results)
+    # 💎 LIVE "THINKING" UI 💎
+    mystic = await message.reply_text("<emoji id=6310044717241340733>🔄</emoji> **Aɴᴜ Mᴀᴛʀɪx AI ɪs ᴛʜɪɴᴋɪɴɢ...**")
+    await client.send_chat_action(message.chat.id, ChatAction.TYPING)
+
+    # ☠️ THE CRASH PROTECTOR (Try-Except) ☠️
+    try:
+        results = await api.chatgpt(user_input)
+        
+        # 💎 PREMIUM AI OUTPUT UI 💎
+        text = f"""
+<emoji id=6123040393769521180>☄️</emoji> **A N U  M A T R I X  A I**
+━━━━━━━━━━━━━━━━━━━━
+{results}
+━━━━━━━━━━━━━━━━━━━━
+<emoji id=5354924568492383911>😈</emoji> **Asᴋᴇᴅ Bʏ :** {message.from_user.mention}
+"""
+        await mystic.edit_text(text)
+        
+    except Exception as e:
+        # Agar API dead hui, toh bot chup nahi rahega, error batayega!
+        await mystic.edit_text(
+            f"<emoji id=6307821174017496029>❌</emoji> **Bᴏss, API sᴇ ᴄᴏɴɴᴇᴄᴛɪᴏɴ ᴛᴏᴏᴛ ɢᴀʏᴀ! (PurviAPI ɪs Dᴇᴀᴅ ᴏʀ Dᴏᴡɴ)**\n\n`Eʀʀᴏʀ : {e}`"
+        )
 
 
-__MODULE__ = "CʜᴀᴛGᴘᴛ"
+# ==========================================
+# 💎 PREMIUM HELP MENU 💎
+# ==========================================
+__MODULE__ = "A.I"
 __HELP__ = """
-/advice - ɢᴇᴛ ʀᴀɴᴅᴏᴍ ᴀᴅᴠɪᴄᴇ ʙʏ ʙᴏᴛ
-/ai [ǫᴜᴇʀʏ] - ᴀsᴋ ʏᴏᴜʀ ǫᴜᴇsᴛɪᴏɴ ᴡɪᴛʜ ᴄʜᴀᴛɢᴘᴛ's ᴀɪ
-/gemini [ǫᴜᴇʀʏ] - ᴀsᴋ ʏᴏᴜʀ ǫᴜᴇsᴛɪᴏɴ ᴡɪᴛʜ ɢᴏᴏɢʟᴇ's ɢᴇᴍɪɴɪ ᴀɪ"""
+<emoji id=6307750079423845494>👑</emoji> **Aɴᴜ Mᴀᴛʀɪx AI Cᴏᴍᴍᴀɴᴅs:**
+
+<emoji id=6152142357727811958>✨</emoji> `/ai` ᴏʀ `/ask` [Qᴜᴇʀʏ] - Asᴋ ʏᴏᴜʀ ǫᴜᴇsᴛɪᴏɴ ᴛᴏ ᴏᴜʀ ᴀᴅᴠᴀɴᴄᴇᴅ Hᴀᴄᴋᴇʀ AI.
+<emoji id=6152142357727811958>✨</emoji> `/gemini` [Qᴜᴇʀʏ] - Asᴋ ʏᴏᴜʀ ǫᴜᴇsᴛɪᴏɴ ᴛᴏ Gᴏᴏɢʟᴇ's Gᴇᴍɪɴɪ AI.
+<emoji id=6152142357727811958>✨</emoji> `/advice` - Gᴇᴛ ʀᴀɴᴅᴏᴍ sɪɢᴍᴀ ᴀᴅᴠɪᴄᴇ.
+"""
