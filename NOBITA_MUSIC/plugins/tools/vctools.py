@@ -1,105 +1,127 @@
-from pyrogram import Client, filters
-from pyrogram.types import Message
+import re
+import aiohttp
+from pyrogram import filters
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+
 from NOBITA_MUSIC import app
-from pyrogram import *
-from pyrogram.types import *
-from config import OWNER_ID
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram.raw.functions.phone import CreateGroupCall, DiscardGroupCall
-from pyrogram.raw.types import InputGroupCall
-from NOBITA_MUSIC.utils.database import get_assistant
-from telethon.tl.functions.phone import (
-    CreateGroupCallRequest,
-    DiscardGroupCallRequest,
-    GetGroupCallRequest,
-    InviteToGroupCallRequest,
-)
+from config import BOT_USERNAME
 
+# ==========================================
+# ☠️ ANU MATRIX VC (VOICE CHAT) PROTOCOL ☠️
+# ==========================================
 
-# vc on
 @app.on_message(filters.video_chat_started)
-async def brah(_, msg):
-    await msg.reply("**😍ᴠɪᴅᴇᴏ ᴄʜᴀᴛ sᴛᴀʀᴛᴇᴅ🥳**")
+async def premium_vc_started(client, message: Message):
+    text = f"""
+<emoji id=5354924568492383911>😈</emoji> **A N U  M A T R I X  V C  S Y S T E M**
+━━━━━━━━━━━━━━━━━━━━
+<emoji id=6111742817304841054>✅</emoji> **Sᴛᴀᴛᴜs :** `Vɪᴅᴇᴏ/Vᴏɪᴄᴇ Cʜᴀᴛ Sᴛᴀʀᴛᴇᴅ!`
+<emoji id=4929369656797431200>🪐</emoji> **Cʜᴀᴛ :** {message.chat.title}
+━━━━━━━━━━━━━━━━━━━━
+"""
+    await message.reply_text(text)
 
 
-# vc off
 @app.on_message(filters.video_chat_ended)
-async def brah2(_, msg):
-    await msg.reply("**😕ᴠɪᴅᴇᴏ ᴄʜᴀᴛ ᴇɴᴅᴇᴅ💔**")
+async def premium_vc_ended(client, message: Message):
+    text = f"""
+<emoji id=6307821174017496029>❌</emoji> **A N U  M A T R I X  V C  S Y S T E M**
+━━━━━━━━━━━━━━━━━━━━
+<emoji id=5256131095094652290>⏱️</emoji> **Sᴛᴀᴛᴜs :** `Vɪᴅᴇᴏ/Vᴏɪᴄᴇ Cʜᴀᴛ Eɴᴅᴇᴅ!`
+<emoji id=4929369656797431200>🪐</emoji> **Cʜᴀᴛ :** {message.chat.title}
+━━━━━━━━━━━━━━━━━━━━
+"""
+    await message.reply_text(text)
 
 
-# invite members on vc
 @app.on_message(filters.video_chat_members_invited)
-async def brah3(app: app, message: Message):
-    text = f"➻ {message.from_user.mention}\n\n**๏ ɪɴᴠɪᴛɪɴɢ ɪɴ ᴠᴄ ᴛᴏ :**\n\n**➻ **"
-    x = 0
+async def premium_vc_invited(client, message: Message):
+    text = f"<emoji id=6123040393769521180>☄️</emoji> **{message.from_user.mention} ɪs ɪɴᴠɪᴛɪɴɢ ᴍᴇᴍʙᴇʀs ᴛᴏ VC!**\n\n<emoji id=6152142357727811958>✨</emoji> **Iɴᴠɪᴛᴇᴅ Usᴇʀs :**\n"
+    
     for user in message.video_chat_members_invited.users:
-        try:
-            text += f"[{user.first_name}](tg://user?id={user.id}) "
-            x += 1
-        except Exception:
-            pass
+        text += f"➻ [{user.first_name}](tg://user?id={user.id})\n"
+
+    add_link = f"https://t.me/{BOT_USERNAME}?startgroup=true"
+    
+    await message.reply_text(
+        text,
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("🎧 Jᴏɪɴ Vᴏɪᴄᴇ Cʜᴀᴛ 🎧", url=add_link)]
+        ]),
+    )
+
+
+# ==========================================
+# ☠️ ANU MATRIX SAFE MATH CALCULATOR ☠️
+# ==========================================
+
+@app.on_message(filters.command(["math", "calc"]))
+async def premium_math(client, message: Message):
+    if len(message.command) < 2:
+        return await message.reply_text("<emoji id=4929369656797431200>🪐</emoji> **Usᴀɢᴇ:** `/math [Eхᴘʀᴇssɪᴏɴ]`\n<emoji id=6152142357727811958>✨</emoji> **Eхᴀᴍᴘʟᴇ:** `/math 2+2*4`")
+        
+    expression = message.text.split(None, 1)[1]
+    
+    # ☠️ HACKER SHIELD: Only allow numbers and basic math symbols (No Alphabets allowed)
+    if not re.match(r'^[0-9+\-*/().\s]+$', expression):
+        return await message.reply_text("<emoji id=6307821174017496029>💀</emoji> **Nɪᴄᴇ Tʀʏ Hᴀᴄᴋᴇʀ! Oɴʟʏ Mᴀᴛʜ Nᴜᴍʙᴇʀs Aʟʟᴏᴡᴇᴅ.**")
+        
+    try:
+        # Safe evaluation with no built-ins
+        result = eval(expression, {"__builtins__": None}, {})
+        text = f"""
+<emoji id=5354924568492383911>😈</emoji> **A N U  M A T R I X  C A L C**
+━━━━━━━━━━━━━━━━━━━━
+<emoji id=6307605493644793241>📒</emoji> **Qᴜᴇʀʏ:** `{expression}`
+<emoji id=6111742817304841054>✅</emoji> **Rᴇsᴜʟᴛ:** `{result}`
+━━━━━━━━━━━━━━━━━━━━
+"""
+        await message.reply_text(text)
+    except Exception:
+        await message.reply_text("<emoji id=6307821174017496029>❌</emoji> **Iɴᴠᴀʟɪᴅ Mᴀᴛʜ Eхᴘʀᴇssɪᴏɴ!**")
+
+
+# ==========================================
+# 💎 PREMIUM GOOGLE SEARCH ENGINE 💎
+# ==========================================
+
+@app.on_message(filters.command(["spg", "search"]))
+async def premium_search(client, message: Message):
+    if len(message.command) < 2:
+        return await message.reply_text("<emoji id=4929369656797431200>🪐</emoji> **Usᴀɢᴇ:** `/search [Qᴜᴇʀʏ]`")
+
+    query = message.text.split(None, 1)[1]
+    mystic = await message.reply_text("<emoji id=6310044717241340733>🔄</emoji> **Sᴇᴀʀᴄʜɪɴɢ ᴏɴ Gᴏᴏɢʟᴇ...**")
+    
+    # ⚠️ Boss, Put your Google API Key below carefully! (Don't share it)
+    GOOGLE_API_KEY = "YOUR_GOOGLE_API_KEY_HERE" 
+    CX = "ec8db9e1f9e41e65e"
+    
+    url = f"https://content-customsearch.googleapis.com/customsearch/v1?cx={CX}&q={query}&key={GOOGLE_API_KEY}&start=1"
 
     try:
-        invite_link = await app.export_chat_invite_link(message.chat.id)
-        add_link = f"https://t.me/{app.username}?startgroup=true"
-        reply_text = f"{text} 🤭🤭"
-
-        await message.reply(
-            reply_text,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [InlineKeyboardButton(text="๏ ᴊᴏɪɴ ᴠᴄ ๏", url=add_link)],
-                ]
-            ),
-        )
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers={"x-referer": "https://explorer.apis.google.com"}) as r:
+                response = await r.json()
+                
+                if not response.get("items"):
+                    return await mystic.edit_text(f"<emoji id=5256131095094652290>⏱️</emoji> **Nᴏ ʀᴇsᴜʟᴛs ғᴏᴜɴᴅ ғᴏʀ:** `{query}`")
+                    
+                result_text = f"<emoji id=6123040393769521180>☄️</emoji> **Gᴏᴏɢʟᴇ Sᴇᴀʀᴄʜ Rᴇsᴜʟᴛs**\n\n"
+                
+                count = 1
+                for item in response["items"][:5]: # Top 5 results only to avoid clutter
+                    title = item["title"]
+                    link = item["link"]
+                    result_text += f"**{count}.** [{title}]({link})\n"
+                    count += 1
+                    
+                result_text += f"\n<emoji id=6307750079423845494>👑</emoji> **Rᴇǫᴜᴇsᴛᴇᴅ Bʏ:** {message.from_user.mention}"
+                
+                # ☠️ Pyrogram Keyboard (Not Telethon!)
+                markup = InlineKeyboardMarkup([[InlineKeyboardButton("🔍 Mᴏʀᴇ Rᴇsᴜʟᴛs", url=f"https://www.google.com/search?q={query.replace(' ', '+')}")]])
+                
+                await mystic.edit_text(result_text, reply_markup=markup, disable_web_page_preview=True)
+                
     except Exception as e:
-        print(f"Error: {e}")
-
-
-####
-
-
-@app.on_message(filters.command("math", prefixes="/"))
-def calculate_math(client, message):
-    expression = message.text.split("/math ", 1)[1]
-    try:
-        result = eval(expression)
-        response = f"ᴛʜᴇ ʀᴇsᴜʟᴛ ɪs : {result}"
-    except:
-        response = "ɪɴᴠᴀʟɪᴅ ᴇxᴘʀᴇssɪᴏɴ"
-    message.reply(response)
-
-
-@app.on_message(filters.command(["spg"], ["/", "!", "."]))
-async def search(event):
-    msg = await event.respond("Searching...")
-    async with aiohttp.ClientSession() as session:
-        start = 1
-        async with session.get(
-            f"https://content-customsearch.googleapis.com/customsearch/v1?cx=ec8db9e1f9e41e65e&q={event.text.split()[1]}&key=AIzaSyAa8yy0GdcGPHdtD083HiGGx_S0vMPScDM&start={start}",
-            headers={"x-referer": "https://explorer.apis.google.com"},
-        ) as r:
-            response = await r.json()
-            result = ""
-
-            if not response.get("items"):
-                return await msg.edit("No results found!")
-            for item in response["items"]:
-                title = item["title"]
-                link = item["link"]
-                if "/s" in item["link"]:
-                    link = item["link"].replace("/s", "")
-                elif re.search(r"\/\d", item["link"]):
-                    link = re.sub(r"\/\d", "", item["link"])
-                if "?" in link:
-                    link = link.split("?")[0]
-                if link in result:
-                    # remove duplicates
-                    continue
-                result += f"{title}\n{link}\n\n"
-            prev_and_next_btns = [
-                Button.inline("▶️Next▶️", data=f"next {start+10} {event.text.split()[1]}")
-            ]
-            await msg.edit(result, link_preview=False, buttons=prev_and_next_btns)
-            await session.close()
+        await mystic.edit_text(f"<emoji id=6307821174017496029>❌</emoji> **Sᴇᴀʀᴄʜ Fᴀɪʟᴇᴅ!**\n`{e}`")
