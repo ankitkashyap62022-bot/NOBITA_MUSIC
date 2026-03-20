@@ -9,7 +9,6 @@ from pyrogram.enums import ParseMode
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from config import BANNED_USERS, lyrical
-from strings import get_command
 from NOBITA_MUSIC import app
 from NOBITA_MUSIC.utils.decorators.language import language
 
@@ -22,9 +21,6 @@ E_MAGIC = "<emoji id='5352870513267973607'>✨</emoji>"
 E_CROSS = "<emoji id='4926993814033269936'>🖕</emoji>"
 E_MUSIC = "<emoji id='6307569802466563145'>🎶</emoji>"
 E_LOAD = "<emoji id='6310044717241340733'>🔄</emoji>"
-
-###Commands
-LYRICS_COMMAND = get_command("LYRICS_COMMAND")
 
 # Genius API Setup
 api_key = "Vd9FvPMOKWfsKJNG9RbZnItaTNIRFzVyyXFdrGHONVsGqHcHBoj3AI3sIlNuqzuf0ZNG8uLcF9wAd5DXBBnUzA"
@@ -44,7 +40,8 @@ def search_lyrics_sync(title):
 # ==========================================
 # 🚀 ANU SUPREME LYRICS EXTRACTOR ☠️
 # ==========================================
-@app.on_message(filters.command(LYRICS_COMMAND) & ~BANNED_USERS)
+# 🔥 FORCE TRIGGER: Now bot will 100% listen to /lyrics or /lyric
+@app.on_message(filters.command(["lyrics", "lyric"]) & ~BANNED_USERS)
 @language
 async def lrsearch(client, message: Message, _):
     if len(message.command) < 2:
@@ -57,7 +54,6 @@ async def lrsearch(client, message: Message, _):
     m = await message.reply_text(f"{E_LOAD} <i>Anu Mainframe: Extracting Lyrics for '{title}'...</i>", parse_mode=ParseMode.HTML)
     
     try:
-        # 🔥 FIX: Threading lagaya taaki bot hang na ho!
         S = await asyncio.to_thread(search_lyrics_sync, title)
         
         if S is None:
@@ -70,7 +66,6 @@ async def lrsearch(client, message: Message, _):
             
         lyrical[ran_hash] = lyric
         
-        # 💎 PREMIUM UI FORMATTING
         premium_text = f"""
 {E_DIAMOND} <b>『 𝗔 𝗡 𝗨  𝗟 𝗬 𝗥 𝗜 𝗖 𝗦 』</b> {E_DIAMOND}
 ━━━━━━━━━━━━━━━━━━━━
