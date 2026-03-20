@@ -1,31 +1,57 @@
+import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from pyrogram.enums import ParseMode
 from NOBITA_MUSIC import app
 import config
 
-TEXT = f"""
-🔒 **Privacy Policy for {app.username} !**
+# ==========================================
+# ☠️ PREMIUM PRIVACY COMMAND ☠️
+# ==========================================
+@app.on_message(filters.command(["privacy", "privacypolicy"]))
+async def premium_privacy(client, message: Message):
+    
+    # 💎 ULTRA PREMIUM UI TEXT WITH EMOJIS 💎
+    TEXT = f"""
+<emoji id=5354924568492383911>😈</emoji> **{app.name} Pʀɪᴠᴀᴄʏ & Sᴇᴄᴜʀɪᴛʏ Pʀᴏᴛᴏᴄᴏʟ!**
 
-Your privacy is important to us. To learn more about how we collect, use, and protect your data, please review our Privacy Policy here: [Privacy Policy]({config.PRIVACY_LINK}).
+<emoji id=6152142357727811958>🦋</emoji> **Hᴇʏ {message.from_user.mention},**
+Yᴏᴜʀ ᴘʀɪᴠᴀᴄʏ ɪs ᴏᴜʀ ᴛᴏᴘ ᴘʀɪᴏʀɪᴛʏ. Wᴇ ᴏᴘᴇʀᴀᴛᴇ ᴏɴ ᴀ sᴛʀɪᴄᴛ **Zᴇʀᴏ Lᴏɢs** ᴘᴏʟɪᴄʏ ғᴏʀ ᴘᴇʀsᴏɴᴀʟ ᴄʜᴀᴛs! 
 
-If you have any questions or concerns, feel free to reach out to our [support team](https://t.me/NOB1TA_SUPPORT).
+<emoji id=4929369656797431200>🪐</emoji> **Dᴀᴛᴀ Cᴏʟʟᴇᴄᴛɪᴏɴ:** Wᴇ ᴏɴʟʏ sᴛᴏʀᴇ ɢʀᴏᴜᴘ IDs ᴀɴᴅ ʙᴀsɪᴄ ᴘʟᴀʏʙᴀᴄᴋ sᴇᴛᴛɪɴɢs ᴛᴏ ᴋᴇᴇᴘ ᴛʜᴇ ᴍᴜsɪᴄ ᴘʟᴀʏɪɴɢ sᴍᴏᴏᴛʜʟʏ.
+<emoji id=6111742817304841054>✅</emoji> **Sᴇᴄᴜʀɪᴛʏ:** 100% Sᴀғᴇ, Sᴇᴄᴜʀᴇ & Eɴᴄʀʏᴘᴛᴇᴅ.
+<emoji id=6307346833534359338>🍷</emoji> **Aɢʀᴇᴇᴍᴇɴᴛ:** Bʏ ᴜsɪɴɢ ᴛʜɪs ʙᴏᴛ, ʏᴏᴜ ᴀɢʀᴇᴇ ᴛᴏ ᴏᴜʀ ᴏғғɪᴄɪᴀʟ Tᴇʀᴍs & Pʀɪᴠᴀᴄʏ Pᴏʟɪᴄʏ.
+
+<emoji id=6307821174017496029>🔥</emoji> **Cʟɪᴄᴋ ʙᴇʟᴏᴡ ᴛᴏ ʀᴇᴀᴅ ᴛʜᴇ ғᴜʟʟ ᴘᴏʟɪᴄʏ:**
 """
 
-@app.on_message(filters.command("privacy"))
-async def privacy(client, message: Message):
+    # 💎 ADVANCED BUTTON ROUTING 💎
     keyboard = InlineKeyboardMarkup(
         [
             [
+                # Fixed the bug: Now it actually goes to the Privacy Link
                 InlineKeyboardButton(
-                    "View Privacy Policy", url=config.SUPPORT_CHAT
+                    text="📄 Vɪᴇᴡ Pʀɪᴠᴀᴄʏ Pᴏʟɪᴄʏ", url=config.PRIVACY_LINK
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="🛠 Sᴜᴘᴘᴏʀᴛ Tᴇᴀᴍ", url=config.SUPPORT_CHAT
+                ),
+                # Support channel link (if you have one, or just keep it simple)
+                InlineKeyboardButton(
+                    text="🍷 Uᴘᴅᴀᴛᴇs", url=config.SUPPORT_CHAT 
                 )
             ]
         ]
     )
-    await message.reply_text(
-        TEXT, 
-        reply_markup=keyboard, 
-        parse_mode=ParseMode.MARKDOWN, 
-        disable_web_page_preview=True
-    )
+    
+    # ☠️ ERROR HANDLING (HARD CODE) ☠️
+    try:
+        await message.reply_text(
+            text=TEXT, 
+            reply_markup=keyboard, 
+            disable_web_page_preview=True
+        )
+    except Exception as e:
+        print(f"Privacy Command Error: {e}")
