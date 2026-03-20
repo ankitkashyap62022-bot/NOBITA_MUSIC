@@ -1,420 +1,249 @@
-from pyrogram import filters, enums
-from pyrogram.types import (
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    ChatPermissions
-)
-from pyrogram.errors.exceptions.bad_request_400 import (
-    ChatAdminRequired,
-    UserAdminInvalid,
-    BadRequest
-)
-
+import asyncio
 import datetime
+from pyrogram import filters, enums
+from pyrogram.types import ChatPermissions, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.errors import ChatAdminRequired, UserAdminInvalid, FloodWait
 from NOBITA_MUSIC import app
 
+# ☠️ MEMORY FOR WARNS ☠️
+WARNS = {}
 
-
-
-def mention(user, name, mention=True):
-    if mention == True:
-        link = f"[{name}](tg://openmessage?user_id={user})"
-    else:
-        link = f"[{name}](https://t.me/{user})"
-    return link
-
-
-
-async def get_userid_from_username(username):
+# ==========================================
+# ☠️ HELPER FUNCTIONS (ADVANCED TARGETING) ☠️
+# ==========================================
+async def is_admin(chat_id, user_id, client):
     try:
-        user = await app.get_users(username)
+        member = await client.get_chat_member(chat_id, user_id)
+        return member.status in [enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER]
     except:
-        return None
+        return False
+
+async def get_target_user(client, message):
+    user = None
+    reason = "No reason provided." # Default Reason
     
-    user_obj = [user.id, user.first_name]
-    return user_obj
-
-
-async def ban_user(user_id, first_name, admin_id, admin_name, chat_id, reason, time=None):
-    try:
-        await app.ban_chat_member(chat_id, user_id)
-    except ChatAdminRequired:
-        msg_text = "Ban rights? Nah, I'm just here for the digital high-fives 🙌\nGive me ban rights! 😡🥺"
-        return msg_text, False
-    except UserAdminInvalid:
-        msg_text = "I wont ban an admin bruh!!"
-        return msg_text, False
-    except Exception as e:
-        if user_id == 6711389550:
-            msg_text = "why should i ban myself? sorry but I'm not stupid like you"
-            return msg_text, False
+    # 🎯 TARGETING BY REPLY
+    if message.reply_to_message:
+        user = message.reply_to_message.from_user
+        if len(message.command) > 1:
+            reason = message.text.split(None, 1)[1]
+            
+    # 🎯 TARGETING BY USERNAME OR NUMERIC ID
+    elif len(message.command) > 1:
+        target = message.command[1]
+        try:
+            target = int(target) # Checking if it's a Numeric ID
+        except ValueError:
+            pass # It's a Username
         
-        msg_text = f"opps!!\n{e}"
-        return msg_text, False
+        try:
+            user = await client.get_users(target)
+        except Exception:
+            return None, None
+            
+        if len(message.command) > 2:
+            reason = message.text.split(None, 2)[2]
+            
+    return user, reason
 
-    user_mention = mention(user_id, first_name)
-    admin_mention = mention(admin_id, admin_name)
+# ==========================================
+# ☠️ 1. BAN COMMAND ☠️
+# ==========================================
+@app.on_message(filters.command(["ban", "sban"]) & filters.group)
+async def premium_ban(client, message):
+    if not await is_admin(message.chat.id, message.from_user.id, client):
+        return await message.reply("<emoji id=5354924568492383911>😈</emoji> **ᴏᴜᴋᴀᴀᴛ ᴍᴇ ʀᴇʜ! ᴏɴʟʏ ᴀᴅᴍɪɴꜱ ᴄᴀɴ ᴜꜱᴇ ᴛʜɪꜱ.**")
 
-    msg_text += f""
-    msg_text += f"{user_mention} was banned by {admin_mention}\n"
-    
-    if reason:
-        msg_text += f"Reason: `{reason}`\n"
-    if time:
-        msg_text += f"Time: `{time}`\n"
+    target_user, reason = await get_target_user(client, message)
+    if not target_user:
+        return await message.reply("<emoji id=6307821174017496029>🔥</emoji> **ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜꜱᴇʀ ᴏʀ ɢɪᴠᴇ ᴜꜱᴇʀɴᴀᴍᴇ/ɪᴅ ᴛᴏ ʙᴀɴ.**")
 
-    return msg_text, True
+    if target_user.id == client.me.id:
+        return await message.reply("<emoji id=4929369656797431200>🪐</emoji> **ᴍᴜᴊʜᴇ ʜɪ ʙᴀɴ ᴋᴀʀᴇɢᴀ? ɢᴀᴅʜᴀ ʜᴀɪ ᴋʏᴀ!**")
 
+    if await is_admin(message.chat.id, target_user.id, client):
+        return await message.reply("<emoji id=6123040393769521180>☄️</emoji> **ᴀᴅᴍɪɴ ᴋᴏ ʙᴀɴ ɴᴀʜɪ ᴋᴀʀ ꜱᴀᴋᴛᴀ ʙᴀʙᴜ!**")
 
-async def unban_user(user_id, first_name, admin_id, admin_name, chat_id):
     try:
-        await app.unban_chat_member(chat_id, user_id)
-    except ChatAdminRequired:
-        msg_text = "Ban rights? Nah, I'm just here for the digital high-fives 🙌\nGive me ban rights! 😡🥺"
-        return msg_text
-    except Exception as e:
-        msg_text = f"opps!!\n{e}"
-        return msg_text
-
-    user_mention = mention(user_id, first_name)
-    admin_mention = mention(admin_id, admin_name)
-    
-    msg_text = f"{user_mention} was unbanned by {admin_mention}"
-    return msg_text
-
-
-
-async def mute_user(user_id, first_name, admin_id, admin_name, chat_id, reason, time=None):
-    try:
-        if time:
-            mute_end_time = datetime.datetime.now() + time
-            await app.restrict_chat_member(chat_id, user_id, ChatPermissions(), mute_end_time)
-        else:
-            await app.restrict_chat_member(chat_id, user_id, ChatPermissions())
-    except ChatAdminRequired:
-        msg_text = "Mute rights? Nah, I'm just here for the digital high-fives 🙌\nGive me mute rights! 😡🥺"
-        return msg_text, False
-    except UserAdminInvalid:
-        msg_text = "I wont mute an admin bruh!!"
-        return msg_text, False
-    except Exception as e:
-        if user_id == 6664582540:
-            msg_text = "why should i mute myself? sorry but I'm not stupid like you"
-            return msg_text, False
-        
-        msg_text = f"opps!!\n{e}"
-        return msg_text, False
-
-    user_mention = mention(user_id, first_name)
-    admin_mention = mention(admin_id, admin_name)
-
-    msg_text += f"{user_mention} was muted by {admin_mention}\n"
-    
-    if reason:
-        msg_text += f"Reason: `{reason}`\n"
-    if time:
-        msg_text += f"Time: `{time}`\n"
-
-    return msg_text, True
-
-
-async def unmute_user(user_id, first_name, admin_id, admin_name, chat_id):
-    try:
-        await app.restrict_chat_member(
-            chat_id,
-            user_id,
-            ChatPermissions(
-                can_send_media_messages=True,
-                can_send_messages=True,
-                can_send_other_messages=True,
-                can_send_polls=True,
-                can_add_web_page_previews=True,
-                can_invite_users=True
-            )
+        await client.ban_chat_member(message.chat.id, target_user.id)
+        await message.reply(
+            f"<emoji id=6123040393769521180>☄️</emoji> **Bᴀɴɴᴇᴅ Sᴜᴄᴄᴇssғᴜʟʟʏ!**\n\n"
+            f"<emoji id=5354924568492383911>😈</emoji> **Usᴇʀ:** {target_user.mention}\n"
+            f"<emoji id=6307750079423845494>👑</emoji> **Aᴅᴍɪɴ:** {message.from_user.mention}\n"
+            f"<emoji id=6307821174017496029>🔥</emoji> **Rᴇᴀsᴏɴ:** `{reason}`"
         )
-    except ChatAdminRequired:
-        msg_text = "Mute rights? Nah, I'm just here for the digital high-fives 🙌\nGive me unmute rights! 😡🥺"
-        return msg_text
     except Exception as e:
-        msg_text = f"opps!!\n{e}"
-        return msg_text
+        await message.reply(f"❌ **Eʀʀᴏʀ:** `{e}`")
 
-    user_mention = mention(user_id, first_name)
-    admin_mention = mention(admin_id, admin_name)
-    
-    msg_text = f"{user_mention} was unmuted by {admin_mention}"
-    return msg_text
-    
+# ==========================================
+# ☠️ 2. UNBAN COMMAND ☠️
+# ==========================================
+@app.on_message(filters.command(["unban"]) & filters.group)
+async def premium_unban(client, message):
+    if not await is_admin(message.chat.id, message.from_user.id, client):
+        return await message.reply("<emoji id=5354924568492383911>😈</emoji> **ᴏᴜᴋᴀᴀᴛ ᴍᴇ ʀᴇʜ!**")
 
+    target_user, _ = await get_target_user(client, message)
+    if not target_user:
+        return await message.reply("<emoji id=6307821174017496029>🔥</emoji> **ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜꜱᴇʀ ᴏʀ ɢɪᴠᴇ ᴜꜱᴇʀɴᴀᴍᴇ/ɪᴅ.**")
 
-@app.on_message(filters.command(["ban"]))
-async def ban_command_handler(client, message):
-    chat = message.chat
-    chat_id = chat.id
-    admin_id = message.from_user.id
-    admin_name = message.from_user.first_name
-    member = await chat.get_member(admin_id)
-    if member.status == enums.ChatMemberStatus.ADMINISTRATOR or member.status == enums.ChatMemberStatus.OWNER:
-        if member.privileges.can_restrict_members:
-            pass
-        else:
-            msg_text = "You dont have permission to ban someone"
-            return await message.reply_text(msg_text)
-    else:
-        msg_text = "You dont have permission to ban someone"
-        return await message.reply_text(msg_text)
+    try:
+        await client.unban_chat_member(message.chat.id, target_user.id)
+        await message.reply(
+            f"<emoji id=6111742817304841054>✅</emoji> **Uɴʙᴀɴɴᴇᴅ Sᴜᴄᴄᴇssғᴜʟʟʏ!**\n\n"
+            f"<emoji id=6152142357727811958>🦋</emoji> **Usᴇʀ:** {target_user.mention}\n"
+            f"<emoji id=6307750079423845494>👑</emoji> **Aᴅᴍɪɴ:** {message.from_user.mention}"
+        )
+    except Exception as e:
+        await message.reply(f"❌ **Eʀʀᴏʀ:** `{e}`")
 
-    # Extract the user ID from the command or reply
-    if len(message.command) > 1:
-        if message.reply_to_message:
-            user_id = message.reply_to_message.from_user.id
-            first_name = message.reply_to_message.from_user.first_name
-            reason = message.text.split(None, 1)[1]
-        else:
-            try:
-                user_id = int(message.command[1])
-                first_name = "User"
-            except:
-                user_obj = await get_userid_from_username(message.command[1])
-                if user_obj == None:
-                    return await message.reply_text("I can't find that user")
-                user_id = user_obj[0]
-                first_name = user_obj[1]
+# ==========================================
+# ☠️ 3. KICK COMMAND ☠️
+# ==========================================
+@app.on_message(filters.command(["kick"]) & filters.group)
+async def premium_kick(client, message):
+    if not await is_admin(message.chat.id, message.from_user.id, client):
+        return await message.reply("<emoji id=5354924568492383911>😈</emoji> **ᴏᴜᴋᴀᴀᴛ ᴍᴇ ʀᴇʜ!**")
 
-            try:
-                reason = message.text.partition(message.command[1])[2]
-            except:
-                reason = None
+    target_user, reason = await get_target_user(client, message)
+    if not target_user:
+        return await message.reply("<emoji id=6307821174017496029>🔥</emoji> **ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜꜱᴇʀ ᴏʀ ɢɪᴠᴇ ᴜꜱᴇʀɴᴀᴍᴇ/ɪᴅ.**")
 
-    elif message.reply_to_message:
-        user_id = message.reply_to_message.from_user.id
-        first_name = message.reply_to_message.from_user.first_name
-        reason = None
-    else:
-        await message.reply_text("Please specify a valid user or reply to that user's message")
-        return
+    if await is_admin(message.chat.id, target_user.id, client):
+        return await message.reply("<emoji id=6123040393769521180>☄️</emoji> **ᴀᴅᴍɪɴ ᴋᴏ ᴋɪᴄᴋ ɴᴀʜɪ ᴋᴀʀ ꜱᴀᴋᴛᴀ!**")
+
+    try:
+        await client.ban_chat_member(message.chat.id, target_user.id)
+        await asyncio.sleep(0.5)
+        await client.unban_chat_member(message.chat.id, target_user.id)
         
-    msg_text, result = await ban_user(user_id, first_name, admin_id, admin_name, chat_id, reason)
-    if result == True:
-        await message.reply_text(msg_text)
-    if result == False:
-        await message.reply_text(msg_text)
+        await message.reply(
+            f"<emoji id=4929369656797431200>🪐</emoji> **Kɪᴄᴋᴇᴅ Sᴜᴄᴄᴇssғᴜʟʟʏ!** (Nɪᴋᴀʟ Lᴀᴜᴅᴇ)\n\n"
+            f"<emoji id=5354924568492383911>😈</emoji> **Usᴇʀ:** {target_user.mention}\n"
+            f"<emoji id=6307750079423845494>👑</emoji> **Aᴅᴍɪɴ:** {message.from_user.mention}\n"
+            f"<emoji id=6307821174017496029>🔥</emoji> **Rᴇᴀsᴏɴ:** `{reason}`"
+        )
+    except Exception as e:
+        await message.reply(f"❌ **Eʀʀᴏʀ:** `{e}`")
+
+# ==========================================
+# ☠️ 4. MUTE & UNMUTE COMMANDS ☠️
+# ==========================================
+@app.on_message(filters.command(["mute"]) & filters.group)
+async def premium_mute(client, message):
+    if not await is_admin(message.chat.id, message.from_user.id, client):
+        return await message.reply("<emoji id=5354924568492383911>😈</emoji> **ᴏᴜᴋᴀᴀᴛ ᴍᴇ ʀᴇʜ!**")
+
+    target_user, reason = await get_target_user(client, message)
+    if not target_user:
+        return await message.reply("<emoji id=6307821174017496029>🔥</emoji> **ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜꜱᴇʀ ᴏʀ ɢɪᴠᴇ ᴜꜱᴇʀɴᴀᴍᴇ/ɪᴅ.**")
+
+    if await is_admin(message.chat.id, target_user.id, client):
+        return await message.reply("<emoji id=6123040393769521180>☄️</emoji> **ᴀᴅᴍɪɴ ᴋᴏ ᴍᴜᴛᴇ ɴᴀʜɪ ᴋᴀʀ ꜱᴀᴋᴛᴀ!**")
+
+    try:
+        await client.restrict_chat_member(message.chat.id, target_user.id, ChatPermissions(can_send_messages=False))
+        await message.reply(
+            f"<emoji id=5998881015320287132>💊</emoji> **Mᴜᴛᴇᴅ Sᴜᴄᴄᴇssғᴜʟʟʏ!**\n\n"
+            f"<emoji id=5354924568492383911>😈</emoji> **Usᴇʀ:** {target_user.mention}\n"
+            f"<emoji id=6307750079423845494>👑</emoji> **Aᴅᴍɪɴ:** {message.from_user.mention}\n"
+            f"<emoji id=6307821174017496029>🔥</emoji> **Rᴇᴀsᴏɴ:** `{reason}`"
+        )
+    except Exception as e:
+        await message.reply(f"❌ **Eʀʀᴏʀ:** `{e}`")
+
+@app.on_message(filters.command(["unmute"]) & filters.group)
+async def premium_unmute(client, message):
+    if not await is_admin(message.chat.id, message.from_user.id, client):
+        return await message.reply("<emoji id=5354924568492383911>😈</emoji> **ᴏᴜᴋᴀᴀᴛ ᴍᴇ ʀᴇʜ!**")
+
+    target_user, _ = await get_target_user(client, message)
+    if not target_user:
+        return await message.reply("<emoji id=6307821174017496029>🔥</emoji> **ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜꜱᴇʀ ᴏʀ ɢɪᴠᴇ ᴜꜱᴇʀɴᴀᴍᴇ/ɪᴅ.**")
+
+    try:
+        await client.restrict_chat_member(
+            message.chat.id, target_user.id, 
+            ChatPermissions(can_send_messages=True, can_send_media_messages=True, can_send_other_messages=True, can_add_web_page_previews=True)
+        )
+        await message.reply(
+            f"<emoji id=6111742817304841054>✅</emoji> **Uɴᴍᴜᴛᴇᴅ Sᴜᴄᴄᴇssғᴜʟʟʏ!** ʙᴏʟɴᴇ ᴋɪ ᴀᴀᴢᴀᴀᴅɪ!\n\n"
+            f"<emoji id=6152142357727811958>🦋</emoji> **Usᴇʀ:** {target_user.mention}\n"
+            f"<emoji id=6307750079423845494>👑</emoji> **Aᴅᴍɪɴ:** {message.from_user.mention}"
+        )
+    except Exception as e:
+        await message.reply(f"❌ **Eʀʀᴏʀ:** `{e}`")
 
 
-@app.on_message(filters.command(["unban"]))
-async def unban_command_handler(client, message):
-    chat = message.chat
-    chat_id = chat.id
-    admin_id = message.from_user.id
-    admin_name = message.from_user.first_name
-    member = await chat.get_member(admin_id)
-    if member.status == enums.ChatMemberStatus.ADMINISTRATOR or member.status == enums.ChatMemberStatus.OWNER:
-        if member.privileges.can_restrict_members:
-            pass
-        else:
-            msg_text = "You dont have permission to unban someone"
-            return await message.reply_text(msg_text)
-    else:
-        msg_text = "You dont have permission to unban someone"
-        return await message.reply_text(msg_text)
+# ==========================================
+# ☠️ 5. PURGE COMMAND (CLEAN CHAT) ☠️
+# ==========================================
+@app.on_message(filters.command(["purge"]) & filters.group)
+async def premium_purge(client, message):
+    if not await is_admin(message.chat.id, message.from_user.id, client):
+        return await message.reply("<emoji id=5354924568492383911>😈</emoji> **ᴏᴜᴋᴀᴀᴛ ᴍᴇ ʀᴇʜ ʟᴏᴅᴇ!**")
 
-    # Extract the user ID from the command or reply
-    if len(message.command) > 1:
+    if not message.reply_to_message:
+        return await message.reply("<emoji id=6307821174017496029>🔥</emoji> **Rᴇᴘʟʏ ᴛᴏ ᴀ ᴍᴇssᴀɢᴇ ᴛᴏ ᴘᴜʀɢᴇ ғʀᴏᴍ ᴛʜᴇʀᴇ!**")
+
+    message_ids = []
+    for message_id in range(message.reply_to_message.id, message.id):
+        message_ids.append(message_id)
+        if len(message_ids) == 100:
+            await client.delete_messages(chat_id=message.chat.id, message_ids=message_ids, revoke=True)
+            message_ids = []
+            
+    if len(message_ids) > 0:
+        await client.delete_messages(chat_id=message.chat.id, message_ids=message_ids, revoke=True)
+        
+    await message.delete()
+    del_msg = await message.reply(f"<emoji id=6111742817304841054>✅</emoji> **Cʜᴀᴛ Pᴜʀɢᴇᴅ Sᴜᴄᴄᴇssғᴜʟʟʏ!** Kᴀᴄʜʀᴀ sᴀᴀғ ᴋᴀʀ ᴅɪʏᴀ ᴍᴀᴀʟɪᴋ.")
+    await asyncio.sleep(4)
+    await del_msg.delete()
+
+
+# ==========================================
+# ☠️ 6. WARN COMMAND ☠️
+# ==========================================
+@app.on_message(filters.command(["warn"]) & filters.group)
+async def premium_warn(client, message):
+    if not await is_admin(message.chat.id, message.from_user.id, client):
+        return await message.reply("<emoji id=5354924568492383911>😈</emoji> **ᴏᴜᴋᴀᴀᴛ ᴍᴇ ʀᴇʜ!**")
+
+    target_user, reason = await get_target_user(client, message)
+    if not target_user:
+        return await message.reply("<emoji id=6307821174017496029>🔥</emoji> **ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜꜱᴇʀ ᴏʀ ɢɪᴠᴇ ᴜꜱᴇʀɴᴀᴍᴇ/ɪᴅ.**")
+
+    if await is_admin(message.chat.id, target_user.id, client):
+        return await message.reply("<emoji id=6123040393769521180>☄️</emoji> **ᴀᴅᴍɪɴ ᴋᴏ ᴡᴀʀɴ ɴᴀʜɪ ᴋᴀʀ ꜱᴀᴋᴛᴀ!**")
+
+    chat_id = message.chat.id
+    user_id = target_user.id
+
+    if chat_id not in WARNS:
+        WARNS[chat_id] = {}
+    if user_id not in WARNS[chat_id]:
+        WARNS[chat_id][user_id] = 0
+
+    WARNS[chat_id][user_id] += 1
+    current_warns = WARNS[chat_id][user_id]
+
+    if current_warns >= 3:
         try:
-            user_id = int(message.command[1])
-            first_name = "User"
-        except:
-            user_obj = await get_userid_from_username(message.command[1])
-            if user_obj == None:
-                    return await message.reply_text("I can't find that user")
-            user_id = user_obj[0]
-            first_name = user_obj[1]
-
-    elif message.reply_to_message:
-        user_id = message.reply_to_message.from_user.id
-        first_name = message.reply_to_message.from_user.first_name
+            await client.ban_chat_member(chat_id, user_id)
+            del WARNS[chat_id][user_id] # Reset warns after ban
+            await message.reply(
+                f"<emoji id=6123040393769521180>☄️</emoji> **Mᴀx ᴡᴀʀɴɪɴɢs ʀᴇᴀᴄʜᴇᴅ (3/3). Usᴇʀ ʙᴀɴɴᴇᴅ!**\n\n"
+                f"<emoji id=5354924568492383911>😈</emoji> **Usᴇʀ:** {target_user.mention}\n"
+                f"<emoji id=6307821174017496029>🔥</emoji> **Lᴀsᴛ Rᴇᴀsᴏɴ:** `{reason}`"
+            )
+        except Exception as e:
+            await message.reply(f"❌ **Eʀʀᴏʀ:** `{e}`")
     else:
-        await message.reply_text("Please specify a valid user or reply to that user's message")
-        return
-        
-    msg_text = await unban_user(user_id, first_name, admin_id, admin_name, chat_id)
-    await message.reply_text(msg_text)
-
-
-
-
-@app.on_message(filters.command(["mute"]))
-async def mute_command_handler(client, message):
-    chat = message.chat
-    chat_id = chat.id
-    admin_id = message.from_user.id
-    admin_name = message.from_user.first_name
-    member = await chat.get_member(admin_id)
-    if member.status == enums.ChatMemberStatus.ADMINISTRATOR or member.status == enums.ChatMemberStatus.OWNER:
-        if member.privileges.can_restrict_members:
-            pass
-        else:
-            msg_text = "You dont have permission to mute someone"
-            return await message.reply_text(msg_text)
-    else:
-        msg_text = "You dont have permission to mute someone"
-        return await message.reply_text(msg_text)
-
-    # Extract the user ID from the command or reply
-    if len(message.command) > 1:
-        if message.reply_to_message:
-            user_id = message.reply_to_message.from_user.id
-            first_name = message.reply_to_message.from_user.first_name
-            reason = message.text.split(None, 1)[1]
-        else:
-            try:
-                user_id = int(message.command[1])
-                first_name = "User"
-            except:
-                user_obj = await get_userid_from_username(message.command[1])
-                if user_obj == None:
-                    return await message.reply_text("I can't find that user")
-                user_id = user_obj[0]
-                first_name = user_obj[1]
-
-            try:
-                reason = message.text.partition(message.command[1])[2]
-            except:
-                reason = None
-
-    elif message.reply_to_message:
-        user_id = message.reply_to_message.from_user.id
-        first_name = message.reply_to_message.from_user.first_name
-        reason = None
-    else:
-        await message.reply_text("Please specify a valid user or reply to that user's message")
-        return
-    
-    msg_text, result = await mute_user(user_id, first_name, admin_id, admin_name, chat_id, reason)
-    if result == True:
-        await message.reply_text(msg_text)
-           
-    if result == False:
-        await message.reply_text(msg_text)
-
-
-@app.on_message(filters.command(["unmute"]))
-async def unmute_command_handler(client, message):
-    chat = message.chat
-    chat_id = chat.id
-    admin_id = message.from_user.id
-    admin_name = message.from_user.first_name
-    member = await chat.get_member(admin_id)
-    if member.status == enums.ChatMemberStatus.ADMINISTRATOR or member.status == enums.ChatMemberStatus.OWNER:
-        if member.privileges.can_restrict_members:
-            pass
-        else:
-            msg_text = "You dont have permission to unmute someone"
-            return await message.reply_text(msg_text)
-    else:
-        msg_text = "You dont have permission to unmute someone"
-        return await message.reply_text(msg_text)
-
-    # Extract the user ID from the command or reply
-    if len(message.command) > 1:
-        try:
-            user_id = int(message.command[1])
-            first_name = "User"
-        except:
-            user_obj = await get_userid_from_username(message.command[1])
-            if user_obj == None:
-                    return await message.reply_text("I can't find that user")
-            user_id = user_obj[0]
-            first_name = user_obj[1]
-
-    elif message.reply_to_message:
-        user_id = message.reply_to_message.from_user.id
-        first_name = message.reply_to_message.from_user.first_name
-    else:
-        await message.reply_text("Please specify a valid user or reply to that user's message")
-        return
-        
-    msg_text = await unmute_user(user_id, first_name, admin_id, admin_name, chat_id)
-    await message.reply_text(msg_text)
-
-
-
-
-
-@app.on_message(filters.command(["tmute"]))
-async def tmute_command_handler(client, message):
-    chat = message.chat
-    chat_id = chat.id
-    admin_id = message.from_user.id
-    admin_name = message.from_user.first_name
-    member = await chat.get_member(admin_id)
-    if member.status == enums.ChatMemberStatus.ADMINISTRATOR or member.status == enums.ChatMemberStatus.OWNER:
-        if member.privileges.can_restrict_members:
-            pass
-        else:
-            msg_text = "You dont have permission to mute someone"
-            return await message.reply_text(msg_text)
-    else:
-        msg_text = "You dont have permission to mute someone"
-        return await message.reply_text(msg_text)
-
-    # Extract the user ID from the command or reply
-    if len(message.command) > 1:
-        if message.reply_to_message:
-            user_id = message.reply_to_message.from_user.id
-            first_name = message.reply_to_message.from_user.first_name
-            time = message.text.split(None, 1)[1]
-
-            try:
-                time_amount = time.split(time[-1])[0]
-                time_amount = int(time_amount)
-            except:
-                return await message.reply_text("wrong format!!\nFormat: `/tmute 2m`")
-
-            if time[-1] == "m":
-                mute_duration = datetime.timedelta(minutes=time_amount)
-            elif time[-1] == "h":
-                mute_duration = datetime.timedelta(hours=time_amount)
-            elif time[-1] == "d":
-                mute_duration = datetime.timedelta(days=time_amount)
-            else:
-                return await message.reply_text("wrong format!!\nFormat:\nm: Minutes\nh: Hours\nd: Days")
-        else:
-            try:
-                user_id = int(message.command[1])
-                first_name = "User"
-            except:
-                user_obj = await get_userid_from_username(message.command[1])
-                if user_obj == None:
-                    return await message.reply_text("I can't find that user")
-                user_id = user_obj[0]
-                first_name = user_obj[1]
-
-            try:
-                time = message.text.partition(message.command[1])[2]
-                try:
-                    time_amount = time.split(time[-1])[0]
-                    time_amount = int(time_amount)
-                except:
-                    return await message.reply_text("wrong format!!\nFormat: `/tmute 2m`")
-
-                if time[-1] == "m":
-                    mute_duration = datetime.timedelta(minutes=time_amount)
-                elif time[-1] == "h":
-                    mute_duration = datetime.timedelta(hours=time_amount)
-                elif time[-1] == "d":
-                    mute_duration = datetime.timedelta(days=time_amount)
-                else:
-                    return await message.reply_text("wrong format!!\nFormat:\nm: Minutes\nh: Hours\nd: Days")
-            except:
-                return await message.reply_text("Please specify a valid user or reply to that user's message\nFormat: `/tmute @user 2m`")
-
-    else:
-        await message.reply_text("Please specify a valid user or reply to that user's message\nFormat: /tmute <username> <time>")
-        return
-    
-    msg_text, result = await mute_user(user_id, first_name, admin_id, admin_name, chat_id, reason=None, time=mute_duration)
-    if result == True:
-        await message.reply_text(msg_text)
-    if result == False:
-        await message.reply_text(msg_text)
+        await message.reply(
+            f"<emoji id=6307346833534359338>🍷</emoji> **Wᴀʀɴɪɴɢ Issᴜᴇᴅ!** ({current_warns}/3)\n\n"
+            f"<emoji id=5354924568492383911>😈</emoji> **Usᴇʀ:** {target_user.mention}\n"
+            f"<emoji id=6307750079423845494>👑</emoji> **Aᴅᴍɪɴ:** {message.from_user.mention}\n"
+            f"<emoji id=6307821174017496029>🔥</emoji> **Rᴇᴀsᴏɴ:** `{reason}`\n\n"
+            f"*(Sᴜᴅʜᴀʀ ᴊᴀ ʙʜᴀɪ, 3 ᴡᴀʀɴɪɴɢ ᴘᴇ sɪᴅʜᴀ ʙᴀɴ ʜᴏɢᴀ!)*"
+        )
