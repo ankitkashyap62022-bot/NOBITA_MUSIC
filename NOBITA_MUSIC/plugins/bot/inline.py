@@ -16,7 +16,7 @@ from config import BANNED_USERS
 async def premium_inline_query_handler(client, query):
     text = query.query.strip().lower()
     
-    # ☠️ STEP 1: EMPTY QUERY HANDLER (DEFAULT BUTTONS) ☠️
+    # ☠️ STEP 1: EMPTY QUERY HANDLER ☠️
     if text.strip() == "":
         try:
             await client.answer_inline_query(query.id, results=answer, cache_time=10)
@@ -30,43 +30,40 @@ async def premium_inline_query_handler(client, query):
         search = VideosSearch(text, limit=15)
         results = (await search.next()).get("result")
         
-        # If no results found from YouTube
         if not results:
             return
 
-        # ☠️ STEP 3: DYNAMIC DATA EXTRACTION (NO INDEX ERROR) ☠️
+        # ☠️ STEP 3: DYNAMIC DATA EXTRACTION ☠️
         for result in results:
             title = result.get("title", "Unknown Title").title()
             duration = result.get("duration", "Unknown")
             views = result.get("viewCount", {}).get("short", "Unknown Views")
-            video_id = result.get("id", "") # ☠️ Extracting Video ID for Play/Download ☠️
             
             try:
                 thumbnail = result["thumbnails"][0]["url"].split("?")[0]
             except Exception:
-                thumbnail = "https://telegra.ph/file/default_music_thumb.jpg" # Fallback Image
+                thumbnail = "https://telegra.ph/file/default_music_thumb.jpg" 
                 
             channellink = result.get("channel", {}).get("link", "https://youtube.com")
             channel = result.get("channel", {}).get("name", "Unknown Channel")
             link = result.get("link", "https://youtube.com")
             published = result.get("publishedTime", "Unknown")
 
-            # Inline Popup Description
             description = f"👀 {views} | ⏳ {duration} ᴍɪɴ | 🎥 {channel}"
 
-            # 💎 ULTRA PREMIUM BUTTONS WITH VC & DOWNLOAD 💎
+            # 💎 THE SIGMA BYPASS BUTTONS (JioSaavn Linker) 💎
             buttons = InlineKeyboardMarkup([
                 [
                     InlineKeyboardButton(text="🎥 ᴡᴀᴛᴄʜ ᴏɴ ʏᴏᴜᴛᴜʙᴇ", url=link),
                     InlineKeyboardButton(text="🍷 ꜱʜᴀʀᴇ", switch_inline_query=text)
                 ],
                 [
-                    InlineKeyboardButton(text="🎧 ᴘʟᴀʏ ɪɴ ᴠᴄ", callback_data=f"InlinePlay_{video_id}"),
-                    InlineKeyboardButton(text="📥 ᴅᴏᴡɴʟᴏᴀᴅ", callback_data=f"InlineDownload_{video_id}")
+                    # ☠️ YAHAN MAGIC HAI! Ye direct chat me /play auto-fill kar dega! ☠️
+                    InlineKeyboardButton(text="🎧 ᴘʟᴀʏ ɪɴ ᴠᴄ", switch_inline_query_current_chat=f"/play {title}"),
+                    InlineKeyboardButton(text="📥 ᴅᴏᴡɴʟᴏᴀᴅ", switch_inline_query_current_chat=f"/song {title}")
                 ]
             ])
 
-            # 💎 PREMIUM UI WITH CUSTOM EMOJIS 💎
             searched_text = f"""
 <emoji id=6123040393769521180>☄️</emoji> **ʏᴏᴜᴛᴜʙᴇ ꜱᴇᴀʀᴄʜ ʀᴇꜱᴜʟᴛꜱ** <emoji id=6123040393769521180>☄️</emoji>
 
@@ -89,13 +86,12 @@ async def premium_inline_query_handler(client, query):
                 )
             )
 
-        # ☠️ STEP 4: DELIVERING RESULTS TO TELEGRAM ☠️
+        # ☠️ STEP 4: DELIVERING RESULTS ☠️
         if answers:
             try:
                 await client.answer_inline_query(query.id, results=answers, cache_time=10)
             except Exception as e:
-                print(f"Inline Answer Error: {e}")
+                pass
                 
     except Exception as e:
-        print(f"YouTube Search Crash Prevented: {e}")
         return
