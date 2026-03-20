@@ -39,6 +39,7 @@ async def premium_inline_query_handler(client, query):
             title = result.get("title", "Unknown Title").title()
             duration = result.get("duration", "Unknown")
             views = result.get("viewCount", {}).get("short", "Unknown Views")
+            video_id = result.get("id", "") # ☠️ Extracting Video ID for Play/Download ☠️
             
             try:
                 thumbnail = result["thumbnails"][0]["url"].split("?")[0]
@@ -53,11 +54,15 @@ async def premium_inline_query_handler(client, query):
             # Inline Popup Description
             description = f"👀 {views} | ⏳ {duration} ᴍɪɴ | 🎥 {channel}"
 
-            # 💎 ULTRA PREMIUM BUTTONS 💎
+            # 💎 ULTRA PREMIUM BUTTONS WITH VC & DOWNLOAD 💎
             buttons = InlineKeyboardMarkup([
                 [
                     InlineKeyboardButton(text="🎥 ᴡᴀᴛᴄʜ ᴏɴ ʏᴏᴜᴛᴜʙᴇ", url=link),
                     InlineKeyboardButton(text="🍷 ꜱʜᴀʀᴇ", switch_inline_query=text)
+                ],
+                [
+                    InlineKeyboardButton(text="🎧 ᴘʟᴀʏ ɪɴ ᴠᴄ", callback_data=f"InlinePlay_{video_id}"),
+                    InlineKeyboardButton(text="📥 ᴅᴏᴡɴʟᴏᴀᴅ", callback_data=f"InlineDownload_{video_id}")
                 ]
             ])
 
