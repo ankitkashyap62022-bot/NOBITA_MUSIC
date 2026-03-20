@@ -9,21 +9,22 @@ from NOBITA_MUSIC import app
 from SafoneAPI import SafoneAPI
 
 # ==========================================
-# 💎 PREMIUM EMOJIS LOADED FROM ANU DB 💎
+# 💎 BOSS KE KHUD KE PREMIUM EMOJIS 💎
 # ==========================================
 E_DEVIL = "<emoji id='5352542184493031170'>😈</emoji>"
 E_CROWN = "<emoji id='6307750079423845494'>👑</emoji>"
 E_DIAMOND = "<emoji id='4929195195225867512'>💎</emoji>"
 E_MAGIC = "<emoji id='5352870513267973607'>✨</emoji>"
-E_CROSS = "<emoji id='6151981777490548710'>❌</emoji>"
-E_SEARCH = "<emoji id='6001712411556351999'>🔍</emoji>"
-E_APP = "<emoji id='5998592160912674805'>📱</emoji>"
+E_CROSS = "<emoji id='4926993814033269936'>🖕</emoji>"  # The Boss Error Emoji
+E_TICK = "<emoji id='6001589602085771497'>✅</emoji>"
+E_APP = "<emoji id='4929369656797431200'>🪐</emoji>"
+E_SEARCH = "<emoji id='6307605493644793241'>📒</emoji>"
 
 # 🛠️ Helper function to run sync Google search in async way
 def safe_google_search(query):
     results = []
     try:
-        # 🔥 FIX: Limited to 5 results to prevent MessageTooLong Crash
+        # Limited to 5 results to prevent MessageTooLong Crash
         for count, result in enumerate(search(query, advanced=True)):
             if count >= 5:
                 break
@@ -51,23 +52,20 @@ async def google_search(bot, message):
     msg = await message.reply_text(f"{E_SEARCH} <i>Anu Mainframe: Hacking Google Database...</i>", parse_mode=ParseMode.HTML)
     
     try:
-        # 🔥 FIX: CPU Block bachane ke liye asyncio.to_thread lagaya
         search_results = await asyncio.to_thread(safe_google_search, user_input)
         
         if not search_results:
-            return await msg.edit_text(f"{E_CROSS} <b>Anu Error:</b> <i>Google baba ko kuch nahi mila! 😂</i>", parse_mode=ParseMode.HTML)
+            return await msg.edit_text(f"{E_CROSS} <b>Anu Error:</b> <i>Google baba ko kuch nahi mila!</i>", parse_mode=ParseMode.HTML)
 
         txt = f"{E_DIAMOND} <b>『 𝗔 𝗡 𝗨  𝗚 𝗢 𝗢 𝗚 𝗟 𝗘  』</b> {E_DIAMOND}\n━━━━━━━━━━━━━━━━━━━━\n"
         txt += f"{E_SEARCH} <b>𝗤𝘂𝗲𝗿𝘆 :</b> <code>{user_input}</code>\n\n"
         
         for result in search_results:
-            # Cleanly formatting HTML
             txt += f"{E_CROWN} <b><a href='{result.url}'>{result.title}</a></b>\n"
             txt += f"<i>{result.description[:150]}...</i>\n\n"
             
         txt += f"━━━━━━━━━━━━━━━━━━━━\n{E_DEVIL} <i>Anu Empire Search System.</i>"
         
-        # Adding an inline button to search more on browser
         keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("🌐 𝗢𝗽𝗲𝗻 𝗜𝗻 𝗕𝗿𝗼𝘄𝘀𝗲𝗿", url=f"https://www.google.com/search?q={user_input.replace(' ', '+')}")]])
         
         await msg.edit_text(txt, disable_web_page_preview=True, reply_markup=keyboard, parse_mode=ParseMode.HTML)
@@ -98,9 +96,8 @@ async def app_search(bot, message):
     try:
         api_response = await SafoneAPI().apps(user_input, 1)
         
-        # 🔥 FIX: Safe fetching to prevent IndexError crash
         if not api_response or not api_response.get("results"):
-            return await msg.edit_text(f"{E_CROSS} <b>Anu Error:</b> <i>Play Store pe aisi koi app nahi hai! Ganja foonk ke search mat kar! 😂</i>", parse_mode=ParseMode.HTML)
+            return await msg.edit_text(f"{E_CROSS} <b>Anu Error:</b> <i>Play Store pe aisi koi app nahi hai!</i>", parse_mode=ParseMode.HTML)
             
         app_data = api_response["results"][0]
         
@@ -111,7 +108,6 @@ async def app_search(bot, message):
         dev = app_data.get("developer", "Unknown Dev")
         description = app_data.get("description", "No Description")
         
-        # 🔥 FIX: Caption Limit (Max 1024 chars allowed by Telegram for photos)
         if len(description) > 400:
             description = description[:400] + "... [Read More On Playstore]"
             
