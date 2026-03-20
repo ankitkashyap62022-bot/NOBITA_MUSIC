@@ -11,79 +11,95 @@ from NOBITA_MUSIC.utils.database import (
     remove_active_video_chat,
 )
 
+# ==========================================
+# ☠️ ANU MATRIX ACTIVE STREAMS PROTOCOL ☠️
+# ==========================================
 
-@app.on_message(filters.command(["ac"]) & SUDOERS)
-async def ac(c, m):
+@app.on_message(filters.command(["ac", "active", "stats"]) & SUDOERS)
+async def premium_ac(client, message: Message):
+    mystic = await message.reply_text("<emoji id=6310044717241340733>🔄</emoji> **Fᴇᴛᴄʜɪɴɢ Aɴᴜ Mᴀᴛʀɪx Sᴛʀᴇᴀᴍs...**")
+    
     audio = len(await get_active_chats())
     video = len(await get_active_video_chats())
-    await m.reply_text(f"ᴀᴜᴅɪᴏ - {audio}\nᴠɪᴅᴇᴏ - {video}")
+    total = audio + video
     
-@app.on_message(
-    filters.command(
-        ["activevc", "activevoice"], prefixes=["/", "!", "%", ",", "", ".", "@", "#"]
-    )
-    & SUDOERS
-)
-async def active_voice_chats(client, message):
-    ic = await message.reply_text("» ɢᴇᴛᴛɪɴɢ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs ʟɪsᴛ...")
+    text = f"""
+<emoji id=5354924568492383911>😈</emoji> **A N U  M A T R I X  A C T I V E  S T A T S**
+
+<emoji id=6089186666973500770>🎶</emoji> **Aᴜᴅɪᴏ Sᴛʀᴇᴀᴍs :** `{audio}`
+<emoji id=6152142357727811958>🎥</emoji> **Vɪᴅᴇᴏ Sᴛʀᴇᴀᴍs :** `{video}`
+<emoji id=4929369656797431200>🪐</emoji> **Tᴏᴛᴀʟ Aᴄᴛɪᴠᴇ :** `{total}`
+
+<emoji id=5256131095094652290>⏱️</emoji> **Pᴏᴡᴇʀᴇᴅ Bʏ :** {app.mention}
+"""
+    await mystic.edit_text(text)
+
+
+@app.on_message(filters.command(["activevc", "activevoice"]) & SUDOERS)
+async def premium_active_voice_chats(client, message: Message):
+    mystic = await message.reply_text("<emoji id=6310044717241340733>🔄</emoji> **Sᴄᴀɴɴɪɴɢ Aᴄᴛɪᴠᴇ Aᴜᴅɪᴏ Sᴛʀᴇᴀᴍs...**")
+    
     served_chats = await get_active_chats()
-    text = ""
+    if not served_chats:
+        return await mystic.edit_text(f"<emoji id=5256131095094652290>⏱️</emoji> **Bᴏss, ɴᴏ Aᴄᴛɪᴠᴇ Aᴜᴅɪᴏ Sᴛʀᴇᴀᴍs ᴏɴ {app.mention}.**")
+
+    text = "<emoji id=6089186666973500770>🎶</emoji> **A N U  M A T R I X  A U D I O  L I S T :**\n\n"
     j = 0
+    
     for x in served_chats:
         try:
-            title = (await app.get_chat(x)).title
-        except:
+            # ☠️ Optimized: Calling API only ONCE per chat ☠️
+            chat = await app.get_chat(x)
+            title = chat.title
+            username = chat.username
+        except Exception:
+            # If chat is dead/kicked, remove from DB silently
             await remove_active_chat(x)
             continue
-        try:
-            chat = await app.get_chat(x)
-            if chat.username:
-                user = chat.username
-                text += f"<b>{j + 1}.</b> <a href=https://t.me/{user}>{unidecode(title).upper()}</a> [<code>{x}</code>]\n"
-            else:
-                text += f"<b>{j + 1}.</b> {unidecode(title).upper()} [<code>{x}</code>]\n"
-            j += 1
-        except:
-            continue
-    if not text:
-        await ic.edit_text(f"» ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs ᴏɴ {app.mention}.")
+            
+        if username:
+            text += f"**{j + 1}.** <a href=https://t.me/{username}>{unidecode(title).upper()}</a> [`{x}`]\n"
+        else:
+            text += f"**{j + 1}.** {unidecode(title).upper()} [`{x}`]\n"
+        j += 1
+        
+    if j == 0:
+        await mystic.edit_text(f"<emoji id=5256131095094652290>⏱️</emoji> **Bᴏss, ᴀʟʟ ᴘʀᴇᴠɪᴏᴜs sᴛʀᴇᴀᴍs ᴡᴇʀᴇ ᴅᴇᴀᴅ & ᴄʟᴇᴀɴᴇᴅ!**")
     else:
-        await ic.edit_text(
-            f"<b>» ʟɪsᴛ ᴏғ ᴄᴜʀʀᴇɴᴛʟʏ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs :</b>\n\n{text}",
-            disable_web_page_preview=True,
-        )
-@app.on_message(
-    filters.command(
-        ["activev", "activevideo"], prefixes=["/", "!", "%", ",", "", ".", "@", "#"]
-    )
-    & SUDOERS
-)
-async def activevi_(_, message: Message):
-    mystic = await message.reply_text("» ɢᴇᴛᴛɪɴɢ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs ʟɪsᴛ...")
+        text += f"\n<emoji id=6152142357727811958>✨</emoji> **Tᴏᴛᴀʟ Aᴄᴛɪᴠᴇ : {j}**"
+        await mystic.edit_text(text, disable_web_page_preview=True)
+
+
+@app.on_message(filters.command(["activev", "activevideo"]) & SUDOERS)
+async def premium_active_video_chats(client, message: Message):
+    mystic = await message.reply_text("<emoji id=6310044717241340733>🔄</emoji> **Sᴄᴀɴɴɪɴɢ Aᴄᴛɪᴠᴇ Vɪᴅᴇᴏ Sᴛʀᴇᴀᴍs...**")
+    
     served_chats = await get_active_video_chats()
-    text = ""
+    if not served_chats:
+        return await mystic.edit_text(f"<emoji id=5256131095094652290>⏱️</emoji> **Bᴏss, ɴᴏ Aᴄᴛɪᴠᴇ Vɪᴅᴇᴏ Sᴛʀᴇᴀᴍs ᴏɴ {app.mention}.**")
+
+    text = "<emoji id=6152142357727811958>🎥</emoji> **A N U  M A T R I X  V I D E O  L I S T :**\n\n"
     j = 0
+    
     for x in served_chats:
         try:
-            title = (await app.get_chat(x)).title
-        except:
+            # ☠️ Optimized: Calling API only ONCE per chat ☠️
+            chat = await app.get_chat(x)
+            title = chat.title
+            username = chat.username
+        except Exception:
+            # If chat is dead/kicked, remove from DB silently
             await remove_active_video_chat(x)
             continue
-        try:
-            if (await app.get_chat(x)).username:
-                user = (await app.get_chat(x)).username
-                text += f"<b>{j + 1}.</b> <a href=https://t.me/{user}>{unidecode(title).upper()}</a> [<code>{x}</code>]\n"
-            else:
-                text += (
-                    f"<b>{j + 1}.</b> {unidecode(title).upper()} [<code>{x}</code>]\n"
-                )
-            j += 1
-        except:
-            continue
-    if not text:
-        await mystic.edit_text(f"» ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs ᴏɴ {app.mention}.")
+            
+        if username:
+            text += f"**{j + 1}.** <a href=https://t.me/{username}>{unidecode(title).upper()}</a> [`{x}`]\n"
+        else:
+            text += f"**{j + 1}.** {unidecode(title).upper()} [`{x}`]\n"
+        j += 1
+        
+    if j == 0:
+        await mystic.edit_text(f"<emoji id=5256131095094652290>⏱️</emoji> **Bᴏss, ᴀʟʟ ᴘʀᴇᴠɪᴏᴜs sᴛʀᴇᴀᴍs ᴡᴇʀᴇ ᴅᴇᴀᴅ & ᴄʟᴇᴀɴᴇᴅ!**")
     else:
-        await mystic.edit_text(
-            f"<b>» ʟɪsᴛ ᴏғ ᴄᴜʀʀᴇɴᴛʟʏ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs :</b>\n\n{text}",
-            disable_web_page_preview=True,
-        )
+        text += f"\n<emoji id=6152142357727811958>✨</emoji> **Tᴏᴛᴀʟ Aᴄᴛɪᴠᴇ : {j}**"
+        await mystic.edit_text(text, disable_web_page_preview=True)
