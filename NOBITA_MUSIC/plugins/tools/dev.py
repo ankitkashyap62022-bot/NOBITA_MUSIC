@@ -11,7 +11,7 @@ from pyrogram.enums import ParseMode
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from NOBITA_MUSIC import app
-import config  # 🔥 FIX: For OWNER_ID
+import config  # 🔥 For OWNER_ID
 
 # ==========================================
 # 💎 PREMIUM EMOJIS LOADED FROM ANU DB 💎
@@ -39,7 +39,6 @@ async def edit_or_reply(msg: Message, **kwargs):
 # ==========================================
 # 🚀 ANU SUPREME PYTHON EXECUTOR (/eval) ☠️
 # ==========================================
-# 🔥 FIX: SUDOERS hata kar filters.user(config.OWNER_ID) laga diya (Only Owner Access)
 @app.on_edited_message(filters.command("eval") & filters.user(config.OWNER_ID) & ~filters.forwarded & ~filters.via_bot)
 @app.on_message(filters.command("eval") & filters.user(config.OWNER_ID) & ~filters.forwarded & ~filters.via_bot)
 async def executor(client: app, message: Message):
@@ -142,7 +141,6 @@ async def forceclose_command(_, CallbackQuery):
 # ==========================================
 # 🚀 ANU SUPREME LINUX SHELL (/sh) ☠️
 # ==========================================
-# 🔥 FIX: Only Owner Access via config.OWNER_ID
 @app.on_edited_message(filters.command("sh") & filters.user(config.OWNER_ID) & ~filters.forwarded & ~filters.via_bot)
 @app.on_message(filters.command("sh") & filters.user(config.OWNER_ID) & ~filters.forwarded & ~filters.via_bot)
 async def shellrunner(_, message: Message):
@@ -172,10 +170,10 @@ async def shellrunner(_, message: Message):
             process = subprocess.Popen(
                 shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
-        except Exception as err:
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            errors = traceback.format_exception(etype=exc_type, value=exc_obj, tb=exc_tb)
-            return await edit_or_reply(message, text=f"{E_CROSS} <b>Anu System Error:</b>\n<pre>{''.join(errors)}</pre>", parse_mode=ParseMode.HTML)
+        except Exception:
+            # 🔥 THIS IS THE MAGIC FIX: Python 3.10+ compatible error formatting!
+            errors = traceback.format_exc()
+            return await edit_or_reply(message, text=f"{E_CROSS} <b>Anu System Error:</b>\n<pre>{errors}</pre>", parse_mode=ParseMode.HTML)
             
         output = process.stdout.read()[:-1].decode("utf-8")
         
