@@ -1,16 +1,14 @@
 import time
 import random
 from pyrogram import filters
-from pyrogram.enums import ChatType
+from pyrogram.enums import ChatType, ParseMode
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from pyrogram.enums import ParseMode
 from youtubesearchpython.__future__ import VideosSearch
 
 import config
 from NOBITA_MUSIC import app
 from NOBITA_MUSIC.misc import _boot_
-from NOBITA_MUSIC.plugins.sudo.sudoers import sudoers_list
-from NOBITA_MUSIC.utils.database import get_served_chats, get_served_users, get_sudoers
+# ☠️ SUDO SYSTEM TERMINATED - Removed sudoers_list import! ☠️
 from NOBITA_MUSIC.utils import bot_sys_stats
 from NOBITA_MUSIC.utils.database import (
     add_served_chat,
@@ -25,6 +23,18 @@ from NOBITA_MUSIC.utils.formatters import get_readable_time
 from NOBITA_MUSIC.utils.inline import help_pannel, private_panel, start_panel
 from config import BANNED_USERS
 from strings import get_string
+
+# ==========================================
+# 💎 BOSS KE KHUD KE PREMIUM HTML EMOJIS 💎
+# ==========================================
+E_DEVIL = "<emoji id='5352542184493031170'>😈</emoji>"
+E_CROWN = "<emoji id='6307750079423845494'>👑</emoji>"
+E_DIAMOND = "<emoji id='4929195195225867512'>💎</emoji>"
+E_MAGIC = "<emoji id='5352870513267973607'>✨</emoji>"
+E_CROSS = "<emoji id='4926993814033269936'>🖕</emoji>"
+E_TICK = "<emoji id='6111742817304841054'>✅</emoji>"
+E_LOAD = "<emoji id='6310044717241340733'>🔄</emoji>"
+E_STAR = "<emoji id='6309709550878463216'>🌟</emoji>"
 
 # 🔥 MONGODB DATABASES FOR DYNAMIC MEDIA 🔥
 from NOBITA_MUSIC.core.mongo import mongodb
@@ -61,22 +71,22 @@ async def get_custom_thumb():
 @app.on_message(filters.command(["setstart"]) & filters.user(config.OWNER_ID))
 async def set_start_cmd(client, message: Message):
     if not message.reply_to_message:
-        return await message.reply_text("<emoji id=5352542184493031170>😈</emoji> ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏ ᴘʜᴏᴛᴏ ᴏʀ ᴠɪᴅᴇᴏ ᴛᴏ sᴇᴛ ɪᴛ ᴀs sᴛᴀʀᴛ ᴍᴇᴅɪᴀ ᴍʏ ʟᴏʀᴅ!")
+        return await message.reply_text(f"{E_DEVIL} **ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏ ᴘʜᴏᴛᴏ ᴏʀ ᴠɪᴅᴇᴏ ᴛᴏ sᴇᴛ ɪᴛ ᴀs sᴛᴀʀᴛ ᴍᴇᴅɪᴀ ᴍʏ ʟᴏʀᴅ!**", parse_mode=ParseMode.HTML)
 
-    mystic = await message.reply_text("⚡ ᴜᴘᴅᴀᴛɪɴɢ ᴀɴᴜ ᴍᴀᴛʀɪx ᴅᴀᴛᴀʙᴀsᴇ...")
+    mystic = await message.reply_text(f"{E_LOAD} <b>ᴜᴘᴅᴀᴛɪɴɢ ᴀɴᴜ ᴍᴀᴛʀɪx ᴅᴀᴛᴀʙᴀsᴇ...</b>", parse_mode=ParseMode.HTML)
 
     if message.reply_to_message.photo:
         file_id = message.reply_to_message.photo.file_id
         await set_start_media("photo", file_id)
-        return await mystic.edit_text("✅ **sᴛᴀʀᴛ ᴘʜᴏᴛᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ!** <emoji id=5352542184493031170>😈</emoji>")
+        return await mystic.edit_text(f"{E_TICK} **sᴛᴀʀᴛ ᴘʜᴏᴛᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ!** {E_DEVIL}", parse_mode=ParseMode.HTML)
 
     elif message.reply_to_message.video:
         file_id = message.reply_to_message.video.file_id
         await set_start_media("video", file_id)
-        return await mystic.edit_text("✅ **sᴛᴀʀᴛ ᴠɪᴅᴇᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ!** <emoji id=5352542184493031170>😈</emoji>")
+        return await mystic.edit_text(f"{E_TICK} **sᴛᴀʀᴛ ᴠɪᴅᴇᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ!** {E_DEVIL}", parse_mode=ParseMode.HTML)
 
     else:
-        return await mystic.edit_text("❌ ʙᴀʙʏ, ᴘʟᴇᴀsᴇ ʀᴇᴘʟʏ ᴏɴʟʏ ᴛᴏ ᴀ ᴘʜᴏᴛᴏ ᴏʀ ᴠɪᴅᴇᴏ!")
+        return await mystic.edit_text(f"{E_CROSS} **ʙᴀʙʏ, ᴘʟᴇᴀsᴇ ʀᴇᴘʟʏ ᴏɴʟʏ ᴛᴏ ᴀ ᴘʜᴏᴛᴏ ᴏʀ ᴠɪᴅᴇᴏ!**", parse_mode=ParseMode.HTML)
 
 # ==========================================
 # ☠️ THE /setply COMMAND (OWNER ONLY)
@@ -84,17 +94,17 @@ async def set_start_cmd(client, message: Message):
 @app.on_message(filters.command(["setply", "setplay"]) & filters.user(config.OWNER_ID))
 async def set_ply_cmd(client, message: Message):
     if not message.reply_to_message or not message.reply_to_message.photo:
-        return await message.reply_text("<emoji id=5352542184493031170>😈</emoji> ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴘʜᴏᴛᴏ ᴛᴏ sᴇᴛ ɪᴛ ᴀs ᴘʟᴀʏ ᴛʜᴜᴍʙɴᴀɪʟ ᴍʏ ʟᴏʀᴅ!")
-        
-    mystic = await message.reply_text("⚡ ᴜᴘᴅᴀᴛɪɴɢ ᴀɴᴜ ᴍᴀᴛʀɪx ᴅᴀᴛᴀʙᴀsᴇ...")
+        return await message.reply_text(f"{E_DEVIL} **ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴘʜᴏᴛᴏ ᴛᴏ sᴇᴛ ɪᴛ ᴀs ᴘʟᴀʏ ᴛʜᴜᴍʙɴᴀɪʟ ᴍʏ ʟᴏʀᴅ!**", parse_mode=ParseMode.HTML)
+
+    mystic = await message.reply_text(f"{E_LOAD} <b>ᴜᴘᴅᴀᴛɪɴɢ ᴀɴᴜ ᴍᴀᴛʀɪx ᴅᴀᴛᴀʙᴀsᴇ...</b>", parse_mode=ParseMode.HTML)
     file_id = message.reply_to_message.photo.file_id
-    
+
     await ply_db.update_one(
         {"_id": "custom_thumb"},
         {"$set": {"file_id": file_id}},
         upsert=True
     )
-    return await mystic.edit_text("✅ **ᴘʟᴀʏ ᴘʜᴏᴛᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ! ᴀʟʟ sᴏɴɢs ᴡɪʟʟ ᴜsᴇ ᴛʜɪs ɴᴏᴡ.** <emoji id=5352542184493031170>😈</emoji>")
+    return await mystic.edit_text(f"{E_TICK} **ᴘʟᴀʏ ᴘʜᴏᴛᴏ ᴜᴘᴅᴀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ! ᴀʟʟ sᴏɴɢs ᴡɪʟʟ ᴜsᴇ ᴛʜɪs ɴᴏᴡ.** {E_DEVIL}", parse_mode=ParseMode.HTML)
 
 # ==========================================
 # ☠️ THE /setlogpic COMMAND (OWNER ONLY)
@@ -102,19 +112,20 @@ async def set_ply_cmd(client, message: Message):
 @app.on_message(filters.command(["setlogpic", "setleftpic"]) & filters.user(config.OWNER_ID))
 async def set_log_pic(client, message: Message):
     if not message.reply_to_message:
-        return await message.reply_text("<emoji id=5352542184493031170>😈</emoji> **हैकर वार्निंग:** किसी फोटो या वीडियो का रिप्लाई करके `/setlogpic` लिखो बॉस!")
-        
-    mystic = await message.reply_text("⚡ ᴜᴘᴅᴀᴛɪɴɢ ᴀɴᴜ ᴍᴀᴛʀɪx ᴅᴀᴛᴀʙᴀsᴇ...")
+        return await message.reply_text(f"{E_DEVIL} **हैकर वार्निंग:** किसी फोटो या वीडियो का रिप्लाई करके <code>/setlogpic</code> लिखो बॉस!", parse_mode=ParseMode.HTML)
+
+    mystic = await message.reply_text(f"{E_LOAD} <b>ᴜᴘᴅᴀᴛɪɴɢ ᴀɴᴜ ᴍᴀᴛʀɪx ᴅᴀᴛᴀʙᴀsᴇ...</b>", parse_mode=ParseMode.HTML)
 
     if message.reply_to_message.photo:
         file_id = message.reply_to_message.photo.file_id
     elif message.reply_to_message.video:
         file_id = message.reply_to_message.video.file_id
     else:
-        return await mystic.edit_text("<emoji id=5352542184493031170>😈</emoji> **एरर:** सिर्फ फोटो या वीडियो ही सपोर्टेड है!")
+        # 🔥 FIX: Added 'return' to prevent UnboundLocalError Crash!
+        return await mystic.edit_text(f"{E_CROSS} **एरर:** सिर्फ फोटो या वीडियो ही सपोर्टेड है!", parse_mode=ParseMode.HTML)
 
     await log_db.update_one({"_id": "custom_log"}, {"$set": {"file_id": file_id}}, upsert=True)
-    await mystic.edit_text("<emoji id=6309709550878463216>🌟</emoji> **ᴀɴᴜ ᴍᴀᴛʀɪx ʟᴏɢ-ᴍᴇᴅɪᴀ ᴜᴘᴅᴀᴛᴇᴅ!**\n\nअब जब भी बॉट किसी ग्रुप में जायेगा या लेफ्ट होगा, तो तेरी सेट की हुई यही मीडिया लॉग ग्रुप में गिरेगी! 🔥")
+    await mystic.edit_text(f"{E_STAR} **ᴀɴᴜ ᴍᴀᴛʀɪx ʟᴏɢ-ᴍᴇᴅɪᴀ ᴜᴘᴅᴀᴛᴇᴅ!**\n\nअब जब भी बॉट किसी ग्रुप में जायेगा या लेफ्ट होगा, तो तेरी सेट की हुई यही मीडिया लॉग ग्रुप में गिरेगी! {E_DEVIL}", parse_mode=ParseMode.HTML)
 
 # ==========================================
 # 🚀 MAIN START COMMANDS
@@ -127,6 +138,8 @@ async def start_pm(client, message: Message, _):
 
     if len(message.text.split()) > 1:
         name = message.text.split(None, 1)[1]
+        
+        # 🆘 HELP MODULE
         if name[0:4] == "help":
             keyboard = help_pannel(_)
             if media_type == "photo":
@@ -134,17 +147,22 @@ async def start_pm(client, message: Message, _):
             else:
                 return await message.reply_video(video=file_id, caption=_["help_1"].format(config.SUPPORT_CHAT), reply_markup=keyboard)
 
+        # 👑 SUDO MODULE (DESTROYED - OWNER ONLY RULE)
         if name[0:3] == "sud":
-            await sudoers_list(client=client, message=message, _=_)
-            if await is_on_off(2):
-                return await app.send_message(
-                    chat_id=config.LOGGER_ID,
-                    text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>sᴜᴅᴏʟɪsᴛ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
-                )
-            return
+            toxic_reply = f"""
+{E_DIAMOND} <b>『 𝗔 𝗡 𝗨  𝗘 𝗠 𝗣 𝗜 𝗥 𝗘 』</b> {E_DIAMOND}
+━━━━━━━━━━━━━━━━━━━━
+{E_CROSS} <b>SUDO SYSTEM TERMINATED!</b>
 
+{E_DEVIL} <i>Yahan koi Sudo-Vudo nahi chalta lode.</i>
+{E_CROWN} <b>Sirf ek hi Baap hai is bot ka: Mera Owner!</b>
+━━━━━━━━━━━━━━━━━━━━
+"""
+            return await message.reply_text(toxic_reply, parse_mode=ParseMode.HTML)
+
+        # 🔎 TRACK INFO MODULE
         if name[0:3] == "inf":
-            m = await message.reply_text("🔎")
+            m = await message.reply_text(f"{E_LOAD} <b>Fᴇᴛᴄʜɪɴɢ ɪɴғᴏ...</b>", parse_mode=ParseMode.HTML)
             query = (str(name)).replace("info_", "", 1)
             query = f"https://www.youtube.com/watch?v={query}"
             results = VideosSearch(query, limit=1)
@@ -157,6 +175,7 @@ async def start_pm(client, message: Message, _):
                 channel = result["channel"]["name"]
                 link = result["link"]
                 published = result["publishedTime"]
+                
             searched_text = _["start_6"].format(title, duration, views, published, channellink, channel, app.mention)
             key = InlineKeyboardMarkup(
                 [
@@ -174,6 +193,7 @@ async def start_pm(client, message: Message, _):
                     text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
                 )
     else:
+        # 🏡 NORMAL START MENU
         out = private_panel(_)
         if media_type == "photo":
             await message.reply_photo(photo=file_id, caption=_["start_2"].format(message.from_user.mention, app.mention), reply_markup=InlineKeyboardMarkup(out))
@@ -240,4 +260,3 @@ async def welcome(client, message: Message):
                 await message.stop_propagation()
         except Exception as ex:
             print(ex)
-
