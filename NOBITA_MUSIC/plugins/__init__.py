@@ -2,7 +2,7 @@ import os
 import glob
 
 # ==========================================
-# ☠️ ANU MATRIX PREMIUM AUTO-LOADER ☠️
+# ☠️ ANU MATRIX PREMIUM AUTO-LOADER (FIXED) ☠️
 # ==========================================
 
 def __list_all_modules():
@@ -13,10 +13,10 @@ def __list_all_modules():
     all_modules = []
     for f in mod_paths:
         if os.path.isfile(f) and f.endswith(".py") and not f.endswith("__init__.py"):
-            # ☠️ CLEAN PATH EXTRACTOR (No Crash Bugs) ☠️
+            # ☠️ THE FIX: Removed lstrip() to preserve the leading dot! ☠️
             rel_path = f.replace(work_dir, "")
-            # Removing leading slashes and converting to dot format
-            module_name = rel_path.lstrip("\\/").replace("\\", ".").replace("/", ".")[:-3]
+            # Converting slashes to dots properly
+            module_name = rel_path.replace("\\", ".").replace("/", ".")[:-3]
             all_modules.append(module_name)
 
     return all_modules
