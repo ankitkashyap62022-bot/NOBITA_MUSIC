@@ -5,7 +5,9 @@ from pyrogram import filters
 from pyrogram.enums import ParseMode
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from NOBITA_MUSIC import app
+import config
 from config import MONGO_DB_URI
+
 
 SUPPORT_CHAT = "NOB1TA_SUPPORT"
 
