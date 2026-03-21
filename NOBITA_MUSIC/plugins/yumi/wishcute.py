@@ -1,26 +1,63 @@
 import random
 import asyncio
-import aiohttp
+from motor.motor_asyncio import AsyncIOMotorClient
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from NOBITA_MUSIC import app 
+from NOBITA_MUSIC import app
+from config import MONGO_DB_URI
 
 SUPPORT_CHAT = "NOB1TA_SUPPORT"
-CUTIE = "https://64.media.tumblr.com/d701f53eb5681e87a957a547980371d2/tumblr_nbjmdrQyje1qa94xto1_500.gif"
 
 # ==========================================
-# ☠️ ANU MATRIX ASYNC GIF MATCHER ☠️
+# ☠️ ANU MATRIX PREMIUM MONGODB ENGINE ☠️
 # ==========================================
-async def get_anime_gif():
-    # 💎 ASYNC HTTP REQUEST (NO BOT FREEZE!) 💎
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get("https://nekos.best/api/v2/happy") as resp:
-                data = await resp.json()
-                return data["results"][0]['url']
-    except Exception:
-        # Fallback GIF if API is down
-        return "https://media.tenor.com/bCZIjhJVyFsAAAAC/cat-stare.gif"
+# Connecting to MongoDB
+mongo_client = AsyncIOMotorClient(MONGO_DB_URI)
+db = mongo_client.AnuMatrixMediaDB
+cute_collection = db.CuteMedia
+wish_collection = db.WishMedia
+
+# ==========================================
+# ☠️ ADD MEDIA COMMANDS (LIFETIME SAVE) ☠️
+# ==========================================
+@app.on_message(filters.command(["addcutev", "addcute"]))
+async def add_cute_media(_, m: Message):
+    if not m.reply_to_message:
+        return await m.reply_text("<emoji id=4929369656797431200>🪐</emoji> **Bᴏss, ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴠɪᴅᴇᴏ ᴏʀ GIF ᴛᴏ ᴀᴅᴅ ɪᴛ ᴛᴏ ᴛʜᴇ Cᴜᴛᴇ ʟɪsᴛ!**")
+    
+    reply = m.reply_to_message
+    if reply.video:
+        media_type, file_id = "video", reply.video.file_id
+    elif reply.animation:
+        media_type, file_id = "animation", reply.animation.file_id
+    else:
+        return await m.reply_text("<emoji id=6307821174017496029>❌</emoji> **I ᴄᴀɴ ᴏɴʟʏ sᴛᴏʀᴇ Vɪᴅᴇᴏs ᴏʀ GIFs ʙᴏss!**")
+        
+    # Saving to MongoDB
+    await cute_collection.insert_one({"type": media_type, "file_id": file_id})
+    total = await cute_collection.count_documents({})
+    
+    await m.reply_text(f"<emoji id=6111742817304841054>✅</emoji> **Sᴜᴄᴄᴇssғᴜʟʟʏ ᴀᴅᴅᴇᴅ ᴛᴏ Cᴜᴛᴇ Mᴇᴅɪᴀ Dᴀᴛᴀʙᴀsᴇ!**\n<emoji id=6307358404176254008>🔥</emoji> **Tᴏᴛᴀʟ Sᴀᴠᴇᴅ:** `{total}`")
+
+
+@app.on_message(filters.command(["addwishv", "addwish"]))
+async def add_wish_media(_, m: Message):
+    if not m.reply_to_message:
+        return await m.reply_text("<emoji id=4929369656797431200>🪐</emoji> **Bᴏss, ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴠɪᴅᴇᴏ ᴏʀ GIF ᴛᴏ ᴀᴅᴅ ɪᴛ ᴛᴏ ᴛʜᴇ Wɪsʜ ʟɪsᴛ!**")
+    
+    reply = m.reply_to_message
+    if reply.video:
+        media_type, file_id = "video", reply.video.file_id
+    elif reply.animation:
+        media_type, file_id = "animation", reply.animation.file_id
+    else:
+        return await m.reply_text("<emoji id=6307821174017496029>❌</emoji> **I ᴄᴀɴ ᴏɴʟʏ sᴛᴏʀᴇ Vɪᴅᴇᴏs ᴏʀ GIFs ʙᴏss!**")
+        
+    # Saving to MongoDB
+    await wish_collection.insert_one({"type": media_type, "file_id": file_id})
+    total = await wish_collection.count_documents({})
+    
+    await m.reply_text(f"<emoji id=6111742817304841054>✅</emoji> **Sᴜᴄᴄᴇssғᴜʟʟʏ ᴀᴅᴅᴇᴅ ᴛᴏ Wɪsʜ Mᴇᴅɪᴀ Dᴀᴛᴀʙᴀsᴇ!**\n<emoji id=6307358404176254008>🔥</emoji> **Tᴏᴛᴀʟ Sᴀᴠᴇᴅ:** `{total}`")
 
 
 # ==========================================
@@ -29,21 +66,27 @@ async def get_anime_gif():
 @app.on_message(filters.command(["wish", "iwish"]))
 async def premium_wish(_, m: Message):
     if len(m.command) < 2:
-        return await m.reply_text("<emoji id=4929369656797431200>🪐</emoji> **Bᴀʙʏ, ᴛᴇʟʟ ᴍᴇ ʏᴏᴜʀ ᴡɪsʜ!**\n✨ **Exᴀᴍᴘʟᴇ:** `/wish I ᴡᴀɴᴛ ᴛᴏ ᴍᴇᴇᴛ ʏᴏᴜ`")
+        return await m.reply_text("<emoji id=4929369656797431200>🪐</emoji> **Bᴀʙʏ, ᴛᴇʟʟ ᴍᴇ ʏᴏᴜʀ ᴡɪsʜ!**\n<emoji id=6152142357727811958>✨</emoji> **Exᴀᴍᴘʟᴇ:** `/wish I ᴡᴀɴᴛ ᴛᴏ ᴍᴇᴇᴛ ʏᴏᴜ`")
+
+    # Fast fetch one random item from MongoDB
+    random_media = await wish_collection.aggregate([{"$sample": {"size": 1}}]).to_list(length=1)
+    
+    if not random_media:
+        return await m.reply_text("⚠️ **Wɪsʜ Dᴀᴛᴀʙᴀsᴇ ɪs ᴇᴍᴘᴛʏ!**\nPʟᴇᴀsᴇ ᴜsᴇ `/addwishv` ʙʏ ʀᴇᴘʟʏɪɴɢ ᴛᴏ ᴀ ᴠɪᴅᴇᴏ ꜰɪʀsᴛ.")
 
     mystic = await m.reply_text("<emoji id=6310044717241340733>🔄</emoji> **Cᴏɴɴᴇᴄᴛɪɴɢ ᴛᴏ ᴛʜᴇ Sᴛᴀʀs...**")
+    await asyncio.sleep(0.5)
 
     text = m.text.split(None, 1)[1]
     wish_count = random.randint(1, 100)
-    url = await get_anime_gif()
 
     # 💎 DYNAMIC ROMANTIC RESPONSES 💎
     if wish_count <= 30:
-        remark = "💔 **Tᴏᴜɢʜ ʟᴜᴄᴋ ʙᴀʙʏ, ʙᴜᴛ ᴍɪʀᴀᴄʟᴇs ᴅᴏ ʜᴀᴘᴘᴇɴ!**"
+        remark = "<emoji id=5260342787882103328>💔</emoji> **Tᴏᴜɢʜ ʟᴜᴄᴋ ʙᴀʙʏ, ʙᴜᴛ ᴍɪʀᴀᴄʟᴇs ᴅᴏ ʜᴀᴘᴘᴇɴ!**"
     elif wish_count <= 70:
-        remark = "❤️‍🩹 **Tʜᴇ sᴛᴀʀs ᴀʀᴇ ᴀʟɪɢɴɪɴɢ... Kᴇᴇᴘ ʜᴏᴘɪɴɢ!**"
+        remark = "<emoji id=5328250499642698740>❤️‍🩹</emoji> **Tʜᴇ sᴛᴀʀs ᴀʀᴇ ᴀʟɪɢɴɪɴɢ... Kᴇᴇᴘ ʜᴏᴘɪɴɢ!**"
     else:
-        remark = "💖 **Yᴏᴜʀ ᴡɪsʜ ɪs ᴍʏ ᴄᴏᴍᴍᴀɴᴅ! Gʀᴀɴᴛᴇᴅ sᴏᴏɴ.**"
+        remark = "<emoji id=5314782352226958463>💖</emoji> **Yᴏᴜʀ ᴡɪsʜ ɪs ᴍʏ ᴄᴏᴍᴍᴀɴᴅ! Gʀᴀɴᴛᴇᴅ sᴏᴏɴ.**"
 
     wish_text = f"""
 <emoji id=5361877607732230009>💘</emoji> **Aɴᴜ Mᴀᴛʀɪx Mᴀɢɪᴄ ᴡɪsʜ** <emoji id=5361877607732230009>💘</emoji>
@@ -54,16 +97,20 @@ async def premium_wish(_, m: Message):
 <emoji id=6307358404176254008>🔥</emoji> **Pʀᴏʙᴀʙɪʟɪᴛʏ:** **{wish_count}%**
 {remark}
 """
+    
+    media_data = random_media[0]
+    markup = InlineKeyboardMarkup([[InlineKeyboardButton("✨ Sᴜᴘᴘᴏʀᴛ ✨", url=f"https://t.me/{SUPPORT_CHAT}")]])
+
     try:
-        await m.reply_animation(
-            animation=url,
-            caption=wish_text,
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("✨ Sᴜᴘᴘᴏʀᴛ ✨", url=f"https://t.me/{SUPPORT_CHAT}")]]),
-            reply_to_message_id=m.id
-        )
+        if media_data["type"] == "video":
+            await m.reply_video(video=media_data["file_id"], caption=wish_text, reply_markup=markup)
+        else:
+            await m.reply_animation(animation=media_data["file_id"], caption=wish_text, reply_markup=markup)
+        
+        # Fixing Edit Bug (Delete loading msg)
         await mystic.delete()
     except Exception as e:
-        await mystic.edit_text(f"❌ **Eʀʀᴏʀ Dᴇᴛᴇᴄᴛᴇᴅ!**\n`{e}`")
+        await mystic.edit_text(f"<emoji id=6307821174017496029>❌</emoji> **Eʀʀᴏʀ Dᴇᴛᴇᴄᴛᴇᴅ!**\n`{e}`")
 
 
 # ==========================================
@@ -71,7 +118,12 @@ async def premium_wish(_, m: Message):
 # ==========================================
 @app.on_message(filters.command(["cute", "cuteness"]))
 async def premium_cute(_, m: Message):
-    # Smart Target Detection
+    # Fast fetch one random item from MongoDB
+    random_media = await cute_collection.aggregate([{"$sample": {"size": 1}}]).to_list(length=1)
+
+    if not random_media:
+        return await m.reply_text("⚠️ **Cᴜᴛᴇ Dᴀᴛᴀʙᴀsᴇ ɪs ᴇᴍᴘᴛʏ!**\nPʟᴇᴀsᴇ ᴜsᴇ `/addcutev` ʙʏ ʀᴇᴘʟʏɪɴɢ ᴛᴏ ᴀ ᴠɪᴅᴇᴏ ꜰɪʀsᴛ.")
+
     target = m.reply_to_message.from_user if m.reply_to_message else m.from_user
     
     mystic = await m.reply_text("<emoji id=6310044717241340733>🔄</emoji> **Sᴄᴀɴɴɪɴɢ Cᴜᴛᴇɴᴇss Lᴇᴠᴇʟs...**")
@@ -81,11 +133,11 @@ async def premium_cute(_, m: Message):
 
     # 💎 DYNAMIC ROMANTIC RESPONSES 💎
     if mm <= 30:
-        remark = "😐 **Yᴏᴜ ʜᴀᴠᴇ ᴀ ʜɪᴅᴅᴇɴ ᴄʜᴀʀᴍ, ᴊᴜsᴛ ᴠᴇʀʏ... ʜɪᴅᴅᴇɴ.**"
+        remark = "<emoji id=5260342787882103328>💔</emoji> **Yᴏᴜ ʜᴀᴠᴇ ᴀ ʜɪᴅᴅᴇɴ ᴄʜᴀʀᴍ, ᴊᴜsᴛ ᴠᴇʀʏ... ʜɪᴅᴅᴇɴ.**"
     elif mm <= 70:
-        remark = "🥰 **Aᴡᴡ! Pʀᴇᴛᴛʏ ᴅᴀᴍɴ ᴄᴜᴛᴇ, I ᴍᴜsᴛ sᴀʏ.**"
+        remark = "<emoji id=5328250499642698740>❤️‍🩹</emoji> **Aᴡᴡ! Pʀᴇᴛᴛʏ ᴅᴀᴍɴ ᴄᴜᴛᴇ, I ᴍᴜsᴛ sᴀʏ.**"
     else:
-        remark = "🥵 **Iʟʟᴇɢᴀʟ ʟᴇᴠᴇʟs ᴏғ ᴄᴜᴛᴇɴᴇss! Aʀʀᴇsᴛ ᴛʜɪs ᴘᴇʀsᴏɴ!**"
+        remark = "<emoji id=5314782352226958463>💖</emoji> **Iʟʟᴇɢᴀʟ ʟᴇᴠᴇʟs ᴏғ ᴄᴜᴛᴇɴᴇss! Aʀʀᴇsᴛ ᴛʜɪs ᴘᴇʀsᴏɴ!**"
 
     cute_text = f"""
 <emoji id=5314782352226958463>💖</emoji> **Aɴᴜ Mᴀᴛʀɪx Cᴜᴛᴇɴᴇss Mᴇᴛᴇʀ** <emoji id=5314782352226958463>💖</emoji>
@@ -95,13 +147,17 @@ async def premium_cute(_, m: Message):
 
 {remark}
 """
+
+    media_data = random_media[0]
+    markup = InlineKeyboardMarkup([[InlineKeyboardButton("✨ Sᴜᴘᴘᴏʀᴛ ✨", url=f"https://t.me/{SUPPORT_CHAT}")]])
+
     try:
-        await m.reply_document(
-            document=CUTIE,
-            caption=cute_text,
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("✨ Sᴜᴘᴘᴏʀᴛ ✨", url=f"https://t.me/{SUPPORT_CHAT}")]]),
-            reply_to_message_id=m.reply_to_message.id if m.reply_to_message else m.id
-        )
+        if media_data["type"] == "video":
+            await m.reply_video(video=media_data["file_id"], caption=cute_text, reply_markup=markup)
+        else:
+            await m.reply_animation(animation=media_data["file_id"], caption=cute_text, reply_markup=markup)
+            
+        # Fixing Edit Bug
         await mystic.delete()
     except Exception as e:
-        await mystic.edit_text(f"❌ **Eʀʀᴏʀ Dᴇᴛᴇᴄᴛᴇᴅ!**\n`{e}`")
+        await mystic.edit_text(f"<emoji id=6307821174017496029>❌</emoji> **Eʀʀᴏʀ Dᴇᴛᴇᴄᴛᴇᴅ!**\n`{e}`")
