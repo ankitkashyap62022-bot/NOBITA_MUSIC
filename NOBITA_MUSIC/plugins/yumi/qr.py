@@ -1,40 +1,64 @@
-from pyrogram import Client, filters
-from pyrogram.types import Message
-import qrcode
-from NOBITA_MUSIC import app
-from PIL import Image
 import io
+import asyncio
+import qrcode
+from pyrogram import filters
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+from NOBITA_MUSIC import app
 
+# ==========================================
+# ☠️ ANU MATRIX PREMIUM QR ENGINE ☠️
+# ==========================================
 
-
-# Function to create a QR code
-def generate_qr_code(text):
+def generate_premium_qr(text):
+    # ☠️ High-Error Correction for Premium Look ☠️
     qr = qrcode.QRCode(
         version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        error_correction=qrcode.constants.ERROR_CORRECT_H, 
         box_size=10,
         border=4,
     )
     qr.add_data(text)
     qr.make(fit=True)
 
-    img = qr.make_image(fill_color="white", back_color="black")
+    # 💎 Black QR on White BG (100% Scannable by all cameras) 💎
+    img = qr.make_image(fill_color="black", back_color="white")
 
-    # Save the QR code to a bytes object to send with Pyrogram
     img_bytes = io.BytesIO()
+    img_bytes.name = "AnuMatrix_QR.png" # Telegram needs a filename
     img.save(img_bytes, format='PNG')
-    img_bytes.seek(0)  # Go to the start of the bytes object
+    img_bytes.seek(0)
 
     return img_bytes
 
 
-@app.on_message(filters.command("qr"))
-def qr_handler(client, message: Message):
-    # Extracting the text passed after the command
-    command_text = message.command
-    if len(command_text) > 1:
-        input_text = " ".join(command_text[1:])
-        qr_image = generate_qr_code(input_text)
-        message.reply_photo(qr_image, caption="Here's your QR Code")
-    else:
-        message.reply_text("Please provide the text for the QR code after the command. Example usage: /qr text")
+@app.on_message(filters.command(["qr", "qrcode", "makeqr"]))
+async def premium_qr_handler(client, message: Message):
+    if len(message.command) < 2:
+        return await message.reply_text("<emoji id=4929369656797431200>🪐</emoji> **Usᴀɢᴇ:** `/qr [Tᴇxᴛ ᴏʀ Lɪɴᴋ]`\n<emoji id=6152142357727811958>✨</emoji> **Exᴀᴍᴘʟᴇ:** `/qr https://google.com`")
+
+    input_text = message.text.split(None, 1)[1]
+
+    # 💎 ANIMATED UI 💎
+    mystic = await message.reply_text("<emoji id=6310044717241340733>🔄</emoji> **Gᴇɴᴇʀᴀᴛɪɴɢ Pʀᴇᴍɪᴜᴍ QR Cᴏᴅᴇ...**")
+
+    try:
+        # ☠️ ASYNC THREAD (No Bot Freeze!) ☠️
+        qr_image = await asyncio.to_thread(generate_premium_qr, input_text)
+
+        caption = f"<emoji id=5354924568492383911>😈</emoji> **Aɴᴜ Mᴀᴛʀɪx QR Gᴇɴᴇʀᴀᴛᴏʀ**\n\n<emoji id=4929369656797431200>🪐</emoji> **Dᴀᴛᴀ:** `{input_text}`\n<emoji id=6111742817304841054>✅</emoji> **Gᴇɴᴇʀᴀᴛᴇᴅ Bʏ:** {message.from_user.mention}"
+        
+        # Adding a cool inline button to share
+        keyboard = InlineKeyboardMarkup(
+            [[InlineKeyboardButton("✨ Sʜᴀʀᴇ Mʏ QR ✨", switch_inline_query=input_text)]]
+        )
+
+        await message.reply_photo(
+            photo=qr_image, 
+            caption=caption,
+            reply_markup=keyboard,
+            reply_to_message_id=message.id
+        )
+        await mystic.delete()
+
+    except Exception as e:
+        await mystic.edit_text(f"<emoji id=6307821174017496029>❌</emoji> **Fᴀɪʟᴇᴅ ᴛᴏ ɢᴇɴᴇʀᴀᴛᴇ QR Cᴏᴅᴇ!**\n`{e}`")
