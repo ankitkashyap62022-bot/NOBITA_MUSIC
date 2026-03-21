@@ -3,7 +3,6 @@ import asyncio
 import hashlib
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from pyrogram.errors import MessageNotModified
 
 from NOBITA_MUSIC import app
 
@@ -45,14 +44,11 @@ async def premium_love_command(client, message: Message):
     name1 = message.command[1].strip()
     name2 = message.command[2].strip()
 
-    # 💎 ANIMATION START WITH PREMIUM EMOJI 💎
+    # 💎 CLEAN ANIMATION START (NO EDIT BUG) 💎
     mystic = await message.reply_text("<emoji id=6310044717241340733>🔄</emoji> **Sᴄᴀɴɴɪɴɢ Hᴇᴀʀᴛʙᴇᴀᴛs...**")
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(1)
     
     try:
-        await mystic.edit_text("<emoji id=6123040393769521180>☄️</emoji> **Mᴀᴛᴄʜɪɴɢ Dᴇsᴛɪɴʏ ᴀɴᴅ DNA...**")
-        await asyncio.sleep(0.5)
-
         # ☠️ SOULMATE HASH ALGORITHM ☠️
         seed_string = "".join(sorted([name1.lower(), name2.lower()]))
         hash_val = int(hashlib.md5(seed_string.encode()).hexdigest(), 16)
@@ -60,7 +56,7 @@ async def premium_love_command(client, message: Message):
 
         love_message = random.choice(get_premium_message(love_percentage))
 
-        # 💎 PREMIUM FINAL RESPONSE 💎
+        # 💎 FINAL RESPONSE WITH PREMIUM EMOJIS 💎
         final_text = f"""
 <emoji id=5361877607732230009>💘</emoji> **Aɴᴜ Mᴀᴛʀɪx Lᴏᴠᴇ Cᴀʟᴄᴜʟᴀᴛᴏʀ** <emoji id=5361877607732230009>💘</emoji>
 
@@ -76,8 +72,9 @@ async def premium_love_command(client, message: Message):
             [[InlineKeyboardButton("✨ Tʀʏ Yᴏᴜʀ Mᴀᴛᴄʜ ✨", switch_inline_query_current_chat="")]]
         )
 
-        await mystic.edit_text(final_text, reply_markup=keyboard)
+        # THE FIX: Deleting the old message and sending a fresh one to avoid Edit Bug!
+        await mystic.delete()
+        await message.reply_text(final_text, reply_markup=keyboard)
 
     except Exception as e:
-        # ☠️ FALLBACK ERROR CATCHER (TAAKI BOT ATKE NAHI) ☠️
-        await mystic.edit_text(f"❌ **Eʀʀᴏʀ Dᴇᴛᴇᴄᴛᴇᴅ!**\n`{e}`\n\n*(Lᴏᴏᴋs ʟɪᴋᴇ ʏᴏᴜʀ ʙᴏᴛ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ Pʀᴇᴍɪᴜᴍ ᴛᴏ ᴜsᴇ ᴛʜᴇsᴇ Eᴍᴏᴊɪs ʙᴏss!)*")
+        await message.reply_text(f"<emoji id=6307821174017496029>❌</emoji> **Eʀʀᴏʀ:** `{e}`")
