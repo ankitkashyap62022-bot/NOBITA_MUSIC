@@ -1,3 +1,4 @@
+import random
 import asyncio
 import hashlib
 from pyrogram import filters
@@ -38,30 +39,29 @@ def get_premium_message(love_percentage):
 
 @app.on_message(filters.command(["love", "couple", "match"]))
 async def premium_love_command(client, message: Message):
-    # ☠️ SAFE SPLITTING & ERROR HANDLING ☠️
     if len(message.command) < 3:
-        return await message.reply_text("<emoji id=4929369656797431200>🪐</emoji> **Usᴀɢᴇ:** `/love [Nᴀᴍᴇ 1] [Nᴀᴍᴇ 2]`\n<emoji id=6152142357727811958>✨</emoji> **Eхᴀᴍᴘʟᴇ:** `/love Nobita Shizuka`")
+        return await message.reply_text("<emoji id=4929369656797431200>🪐</emoji> **Usᴀɢᴇ:** `/love [Nᴀᴍᴇ 1] [Nᴀᴍᴇ 2]`\n<emoji id=6152142357727811958>✨</emoji> **Exᴀᴍᴘʟᴇ:** `/love Nobita Shizuka`")
 
     name1 = message.command[1].strip()
     name2 = message.command[2].strip()
 
-    # 💎 PREMIUM ANIMATION UI 💎
+    # 💎 ANIMATION START WITH PREMIUM EMOJI 💎
     mystic = await message.reply_text("<emoji id=6310044717241340733>🔄</emoji> **Sᴄᴀɴɴɪɴɢ Hᴇᴀʀᴛʙᴇᴀᴛs...**")
     await asyncio.sleep(0.5)
-    await mystic.edit_text("<emoji id=6123040393769521180>☄️</emoji> **Mᴀᴛᴄʜɪɴɢ Dᴇsᴛɪɴʏ ᴀɴᴅ DNA...**")
-    await asyncio.sleep(0.5)
+    
+    try:
+        await mystic.edit_text("<emoji id=6123040393769521180>☄️</emoji> **Mᴀᴛᴄʜɪɴɢ Dᴇsᴛɪɴʏ ᴀɴᴅ DNA...**")
+        await asyncio.sleep(0.5)
 
-    # ☠️ SOULMATE HASH ALGORITHM (Consistent Results) ☠️
-    # Combines names alphabetically so 'Ram Sita' & 'Sita Ram' give the same result
-    seed_string = "".join(sorted([name1.lower(), name2.lower()]))
-    hash_val = int(hashlib.md5(seed_string.encode()).hexdigest(), 16)
-    love_percentage = (hash_val % 91) + 10  # Generates 10 to 100%
+        # ☠️ SOULMATE HASH ALGORITHM ☠️
+        seed_string = "".join(sorted([name1.lower(), name2.lower()]))
+        hash_val = int(hashlib.md5(seed_string.encode()).hexdigest(), 16)
+        love_percentage = (hash_val % 91) + 10  # Generates 10 to 100%
 
-    import random
-    love_message = random.choice(get_premium_message(love_percentage))
+        love_message = random.choice(get_premium_message(love_percentage))
 
-    # 💎 PREMIUM FINAL RESPONSE 💎
-    final_text = f"""
+        # 💎 PREMIUM FINAL RESPONSE 💎
+        final_text = f"""
 <emoji id=5361877607732230009>💘</emoji> **Aɴᴜ Mᴀᴛʀɪx Lᴏᴠᴇ Cᴀʟᴄᴜʟᴀᴛᴏʀ** <emoji id=5361877607732230009>💘</emoji>
 
 <emoji id=5854743260840596378>👦</emoji> **Bᴏʏ:** `{name1}`
@@ -71,13 +71,13 @@ async def premium_love_command(client, message: Message):
 
 {love_message}
 """
-    
-    # Adding a cute inline button
-    keyboard = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("✨ Tʀʏ Yᴏᴜʀ Mᴀᴛᴄʜ ✨", switch_inline_query_current_chat="")]]
-    )
+        
+        keyboard = InlineKeyboardMarkup(
+            [[InlineKeyboardButton("✨ Tʀʏ Yᴏᴜʀ Mᴀᴛᴄʜ ✨", switch_inline_query_current_chat="")]]
+        )
 
-    try:
         await mystic.edit_text(final_text, reply_markup=keyboard)
-    except MessageNotModified:
-        pass
+
+    except Exception as e:
+        # ☠️ FALLBACK ERROR CATCHER (TAAKI BOT ATKE NAHI) ☠️
+        await mystic.edit_text(f"❌ **Eʀʀᴏʀ Dᴇᴛᴇᴄᴛᴇᴅ!**\n`{e}`\n\n*(Lᴏᴏᴋs ʟɪᴋᴇ ʏᴏᴜʀ ʙᴏᴛ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ Pʀᴇᴍɪᴜᴍ ᴛᴏ ᴜsᴇ ᴛʜᴇsᴇ Eᴍᴏᴊɪs ʙᴏss!)*")
