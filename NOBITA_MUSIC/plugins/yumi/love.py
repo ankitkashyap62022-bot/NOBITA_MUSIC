@@ -2,54 +2,71 @@ import random
 import asyncio
 import hashlib
 from pyrogram import filters
+from pyrogram.enums import ParseMode
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from NOBITA_MUSIC import app
 
 # ==========================================
+# 💎 BOSS KE KHUD KE PREMIUM HTML EMOJIS 💎
+# ==========================================
+E_DEVIL = "<emoji id='5352542184493031170'>😈</emoji>"
+E_DIAMOND = "<emoji id='4929195195225867512'>💎</emoji>"
+E_MAGIC = "<emoji id='5352870513267973607'>✨</emoji>"
+E_CROSS = "<emoji id='4926993814033269936'>🖕</emoji>"
+E_LOAD = "<emoji id='6310044717241340733'>🔄</emoji>"
+E_HEART = "<emoji id='6298684666182371615'>❤️</emoji>"
+E_HEART_PINK = "<emoji id='6154635934135490309'>💗</emoji>"
+E_SPARKLE_HEART = "<emoji id='5999210495146465994'>💖</emoji>"
+E_FIRE = "<emoji id='6307821174017496029'>🔥</emoji>"
+
+# ==========================================
 # ☠️ ANU MATRIX PREMIUM SOULMATE ENGINE ☠️
 # ==========================================
-
 def get_premium_message(love_percentage):
     if love_percentage <= 30:
         return [
-            "<emoji id=5260342787882103328>💔</emoji> **Aʟᴇʀᴛ! Fʀɪᴇɴᴅᴢᴏɴᴇ ᴅᴇᴛᴇᴄᴛᴇᴅ! Mᴏᴠᴇ ᴏɴ ʙᴏss.**",
-            "<emoji id=5260342787882103328>💔</emoji> **Nᴀʜ, ɴᴏᴛ ᴍᴇᴀɴᴛ ᴛᴏ ʙᴇ. Sᴀᴠᴇ ʏᴏᴜʀ ᴛᴇᴀʀs!**",
-            "<emoji id=5260342787882103328>💔</emoji> **Oᴜᴄʜ! Tʜᴀᴛ's ᴀ ᴅɪsᴀsᴛᴇʀ ᴡᴀɪᴛɪɴɢ ᴛᴏ ʜᴀᴘᴘᴇɴ!**"
+            f"{E_CROSS} <b>Abe kat jayega tera! Padhai pe dhyan de lode!</b>",
+            f"{E_CROSS} <b>Ghanta love! Friendzone me marega tu! 😂</b>",
+            f"{E_CROSS} <b>Shakal dekhi hai apni aaine me? Move on kar!</b>"
         ]
     elif love_percentage <= 60:
         return [
-            "<emoji id=5328250499642698740>❤️‍🩹</emoji> **Gᴏᴏᴅ sᴛᴀʀᴛ! Iᴛ ɴᴇᴇᴅs ᴀ ʟɪᴛᴛʟᴇ ᴍᴏʀᴇ ᴍᴀɢɪᴄ.**",
-            "<emoji id=5328250499642698740>❤️‍🩹</emoji> **Tʜᴇʀᴇ ɪs ᴀ ᴄʜᴀɴᴄᴇ... Bᴜᴛ ʏᴏᴜ ɴᴇᴇᴅ ᴛᴏ ᴡᴏʀᴋ ʜᴀʀᴅ!**",
-            "<emoji id=5328250499642698740>❤️‍🩹</emoji> **50-50 ᴄʜᴀɴᴄᴇ! Lᴇᴛ's ʜᴏᴘᴇ ғᴏʀ ᴛʜᴇ ʙᴇsᴛ!**"
+            f"{E_HEART_PINK} <b>Kuch chance hai, par paisa kharch karna padega! 💸</b>",
+            f"{E_HEART_PINK} <b>Timepass theek chal raha hai, jyada ummid mat rakh!</b>",
+            f"{E_HEART_PINK} <b>50-50 wala scene hai! Ek aadh saal me pata chal jayega!</b>"
         ]
     elif love_percentage <= 85:
         return [
-            "<emoji id=5361877607732230009>💘</emoji> **Wᴏᴡ! Tʜᴇ ᴄʜᴇᴍɪsᴛʀʏ ɪs ᴏɴ ғɪʀᴇ ʙʀᴏ!**",
-            "<emoji id=5361877607732230009>💘</emoji> **Sᴛʀᴏɴɢ ᴄᴏɴɴᴇᴄᴛɪᴏɴ! Cʜᴇʀɪsʜ ᴛʜɪs ʙᴏɴᴅ.**",
-            "<emoji id=5361877607732230009>💘</emoji> **Lᴏᴏᴋs ʟɪᴋᴇ sᴏᴍᴇᴏɴᴇ ɪs ɪɴ ᴅᴇᴇᴘ ʟᴏᴠᴇ!**"
+            f"{E_HEART} <b>Bhai ka setting pakka ho gaya lagta hai! 🔥</b>",
+            f"{E_HEART} <b>Chemistry badhiya hai, ab shadi ka card bhej dena!</b>",
+            f"{E_HEART} <b>Oho! Full Ashiqui baazi chal rahi hai yaha toh! 😍</b>"
         ]
     else:
         return [
-            "<emoji id=5314782352226958463>💖</emoji> **Pᴇʀғᴇᴄᴛ Mᴀᴛᴄʜ! A ᴍᴀᴛᴄʜ ᴍᴀᴅᴇ ɪɴ ʜᴇᴀᴠᴇɴ!**",
-            "<emoji id=5314782352226958463>💖</emoji> **Sᴏᴜʟᴍᴀᴛᴇs ᴅᴇᴛᴇᴄᴛᴇᴅ! Wʜᴇɴ ɪs ᴛʜᴇ ᴡᴇᴅᴅɪɴɢ?**",
-            "<emoji id=5314782352226958463>💖</emoji> **Dᴇsᴛɪɴᴇᴅ ᴛᴏ ʙᴇ ᴛᴏɢᴇᴛʜᴇʀ. 100% Pᴜʀᴇ Lᴏᴠᴇ!**"
+            f"{E_SPARKLE_HEART} <b>Made for each other! Ekdum Nibba-Nibbi pro max! 💍</b>",
+            f"{E_SPARKLE_HEART} <b>Soulmates detected! Jalao auro ko bsdk! 😂</b>",
+            f"{E_SPARKLE_HEART} <b>100% Pure Love! Bhai ne aukaat se baahar setting ki hai!</b>"
         ]
 
 @app.on_message(filters.command(["love", "couple", "match"]))
 async def premium_love_command(client, message: Message):
     if len(message.command) < 3:
-        return await message.reply_text("<emoji id=4929369656797431200>🪐</emoji> **Usᴀɢᴇ:** `/love [Nᴀᴍᴇ 1] [Nᴀᴍᴇ 2]`\n<emoji id=6152142357727811958>✨</emoji> **Exᴀᴍᴘʟᴇ:** `/love Nobita Shizuka`")
+        return await message.reply_text(
+            f"{E_DEVIL} <b>Abe lode! Kiska kiske sath check karna hai naam toh likh!</b>\n{E_MAGIC} <b>Exᴀᴍᴘʟᴇ:</b> <code>/love Anu Boss</code>",
+            parse_mode=ParseMode.HTML
+        )
 
     name1 = message.command[1].strip()
-    name2 = message.command[2].strip()
+    name2 = " ".join(message.command[2:]).strip()
 
     # 💎 CLEAN ANIMATION START (NO EDIT BUG) 💎
-    mystic = await message.reply_text("<emoji id=6310044717241340733>🔄</emoji> **Sᴄᴀɴɴɪɴɢ Hᴇᴀʀᴛʙᴇᴀᴛs...**")
-    await asyncio.sleep(1)
+    mystic = await message.reply_text(f"{E_LOAD} <b>Anu Mainframe: Scanning Kundali & Heartbeats...</b>", parse_mode=ParseMode.HTML)
+    await asyncio.sleep(1.5)
     
     try:
         # ☠️ SOULMATE HASH ALGORITHM ☠️
+        # Generates the exact same percentage every time for the same pair!
         seed_string = "".join(sorted([name1.lower(), name2.lower()]))
         hash_val = int(hashlib.md5(seed_string.encode()).hexdigest(), 16)
         love_percentage = (hash_val % 91) + 10  # Generates 10 to 100%
@@ -58,23 +75,25 @@ async def premium_love_command(client, message: Message):
 
         # 💎 FINAL RESPONSE WITH PREMIUM EMOJIS 💎
         final_text = f"""
-<emoji id=5361877607732230009>💘</emoji> **Aɴᴜ Mᴀᴛʀɪx Lᴏᴠᴇ Cᴀʟᴄᴜʟᴀᴛᴏʀ** <emoji id=5361877607732230009>💘</emoji>
+{E_DIAMOND} <b>『 𝗔 𝗡 𝗨  𝗟 𝗢 𝗩 𝗘  𝗠 𝗘 𝗧 𝗘 𝗥 』</b> {E_DIAMOND}
+━━━━━━━━━━━━━━━━━━━━
 
-<emoji id=5854743260840596378>👦</emoji> **Bᴏʏ:** `{name1}`
-<emoji id=5854753555826870233>👧</emoji> **Gɪʀʟ:** `{name2}`
+💖 <b>Nᴀᴍᴇ 1:</b> <code>{name1}</code>
+💖 <b>Nᴀᴍᴇ 2:</b> <code>{name2}</code>
 
-<emoji id=6307358404176254008>🔥</emoji> **Lᴏᴠᴇ Pᴇʀᴄᴇɴᴛᴀɢᴇ:** **{love_percentage}%**
+{E_FIRE} <b>Lᴏᴠᴇ Pᴇʀᴄᴇɴᴛᴀɢᴇ:</b> <code>{love_percentage}%</code>
 
 {love_message}
+━━━━━━━━━━━━━━━━━━━━
 """
         
         keyboard = InlineKeyboardMarkup(
-            [[InlineKeyboardButton("✨ Tʀʏ Yᴏᴜʀ Mᴀᴛᴄʜ ✨", switch_inline_query_current_chat="")]]
+            [[InlineKeyboardButton("✨ 𝗧𝗿𝘆 𝗬𝗼𝘂𝗿 𝗠𝗮𝘁𝗰𝗵 ✨", switch_inline_query_current_chat="")]]
         )
 
-        # THE FIX: Deleting the old message and sending a fresh one to avoid Edit Bug!
+        # Deleting old loading msg to prevent Parse Mode edit bugs
         await mystic.delete()
-        await message.reply_text(final_text, reply_markup=keyboard)
+        await message.reply_text(final_text, reply_markup=keyboard, parse_mode=ParseMode.HTML)
 
     except Exception as e:
-        await message.reply_text(f"<emoji id=6307821174017496029>❌</emoji> **Eʀʀᴏʀ:** `{e}`")
+        await message.reply_text(f"{E_CROSS} <b>Anu System Fucked Up:</b>\n<code>{e}</code>", parse_mode=ParseMode.HTML)
